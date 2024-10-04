@@ -10,7 +10,7 @@
 void UTP_GunComponent::Fire()
 {
 	bFiredWeapon = true;
-
+	//Hello
 	UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
 	UE_LOG(LogTemp, Warning, TEXT("Current Magazine: %f"), Magazine);
 
