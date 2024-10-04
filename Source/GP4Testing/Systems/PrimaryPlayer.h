@@ -52,6 +52,8 @@ public: //Add Callbacks For Input Here!
 private:
 	void CreatePlayerSystems();
 	void SetupPlayerSystemsDependencies() noexcept;
+	void InitPlayerSystems() noexcept;
+	void StartPlayerSystems() noexcept;
 
 private: //Player  Systems
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Systems", meta = (AllowPrivateAccess = "true"))

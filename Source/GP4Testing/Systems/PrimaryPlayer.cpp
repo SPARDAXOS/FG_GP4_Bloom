@@ -23,9 +23,10 @@ APrimaryPlayer::APrimaryPlayer() {
 void APrimaryPlayer::Init() {
 	CreatePlayerSystems();
 	SetupPlayerSystemsDependencies();
+	InitPlayerSystems();
 }
 void APrimaryPlayer::Start() {
-
+	StartPlayerSystems();
 }
 void APrimaryPlayer::Update(float deltaTime) {
 
@@ -130,4 +131,29 @@ void APrimaryPlayer::SetupPlayerSystemsDependencies() noexcept {
 
 	}
 }
-
+void APrimaryPlayer::InitPlayerSystems() noexcept {
+	//if (playerMovementSystemRef)
+	//	playerMovementSystemRef->Init();
+	//
+	//if (playerHealthSystemRef)
+	//	playerHealthSystemRef->Init();
+	//
+	//if (weaponManagementSystemRef)
+	//	weaponManagementSystemRef->Init();
+	//
+	//if (pickupManagementSystemRef)
+	//	pickupManagementSystemRef->Init();
+}
+void APrimaryPlayer::StartPlayerSystems() noexcept {
+	//if (playerMovementSystemRef)
+	//	playerMovementSystemRef->Start();
+	//
+	//if (playerHealthSystemRef)
+	//	playerHealthSystemRef->Start();
+	//
+	//if (weaponManagementSystemRef)
+	//	weaponManagementSystemRef->Start();
+	//
+	//if (pickupManagementSystemRef)
+	//	pickupManagementSystemRef->Start();
+}
