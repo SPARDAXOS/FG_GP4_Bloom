@@ -32,6 +32,7 @@ void ARangedAIBullet::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	APrimaryPlayer* Player = Cast<APrimaryPlayer>(OtherActor);
 	if (Player)
 	{
+		UE_LOG(LogTemp, Log, TEXT("I have hit the player"))
 		Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
 	}
 	Destroy();
