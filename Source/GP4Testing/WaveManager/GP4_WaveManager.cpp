@@ -28,6 +28,7 @@ void AGP4_WaveManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+  
 
 void AGP4_WaveManager::StartWave()
 {
