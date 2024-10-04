@@ -7,6 +7,7 @@
 #include "../Systems/PrimaryPlayerController.h"
 #include "../Systems/PrimaryPlayer.h"
 #include <GP4Testing/Components/HealthComponent.h>
+#include "../AI/EnemyAIBase.h"
 
 void UGunComponent::Fire()
 {
@@ -50,13 +51,14 @@ void UGunComponent::Fire()
 			}
 
 			// Do damage if enemy is hit
-			if (Hit.bBlockingHit && IsValid(Hit.GetActor()))
+			if (Hit.bBlockingHit)
 			{
-				UHealthComponent* health = Cast<UHealthComponent>(Hit.GetActor());
-				if (health != nullptr)
+				AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Hit.GetActor());
+
+				if (Enemy->HealthComponent != nullptr)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), health->CurrentHealth);
-					health->TakeDamage(WeaponDamage);
+					UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
+					Enemy->HealthComponent->TakeDamage(WeaponDamage);
 				}
 			}
 		}
