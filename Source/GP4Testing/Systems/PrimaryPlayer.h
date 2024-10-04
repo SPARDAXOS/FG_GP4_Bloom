@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Entity.h"
 
+#include "GP4Testing/Utility/Timer.h"
 #include "PrimaryPlayer.generated.h"
 
 
@@ -51,6 +52,8 @@ public: //Add Callbacks For Input Here!
 private:
 	void CreatePlayerSystems();
 	void SetupPlayerSystemsDependencies() noexcept;
+	void InitPlayerSystems() noexcept;
+	void StartPlayerSystems() noexcept;
 
 private: //Player  Systems
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Systems", meta = (AllowPrivateAccess = "true"))
