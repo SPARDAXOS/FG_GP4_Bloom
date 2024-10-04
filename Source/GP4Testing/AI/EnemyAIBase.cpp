@@ -13,6 +13,7 @@ AEnemyAIBase::AEnemyAIBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
+	HealthComponent->OnDeath.AddUniqueDynamic(this, &AEnemyAIBase::Die);
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +50,11 @@ void AEnemyAIBase::Tick(float DeltaTime)
 void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AEnemyAIBase::Die()
+{
+	Destroy();
 }
 
 void AEnemyAIBase::Attack()
