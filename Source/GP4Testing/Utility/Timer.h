@@ -13,6 +13,10 @@
 //Use Setup(float value, Callback onCompleted); if "value" is just a copy or a literal.
 //Use Setup(const float* ref, Callback onCompleted); if "value" is a member variable that is to be edited in BP.
 //Callback is set by doing std::bind(&Class::Function, this)).
+// 
+// 3. Usage
+// To start the timer, call Update(deltaTime). You have full control over when does the timer get updated and by how much.
+// The Timer is retriggerable by default.
 
 
 

@@ -10,7 +10,6 @@
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 
 #include "GP4Testing/Utility/Debugging.h"
-#include <functional>
 
 
 APrimaryPlayer::APrimaryPlayer() {

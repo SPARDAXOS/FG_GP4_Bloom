@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Entity.h"
-#include "GP4Testing/Utility/Timer.h"
 
+#include "GP4Testing/Utility/Timer.h"
 #include "PrimaryPlayer.generated.h"
 
 
@@ -69,9 +69,6 @@ private: //Player  Systems
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player|Debugging", meta = (AllowPrivateAccess = "true"))
 	bool active = false;
-	Timer timerTest;
-
-	void Func(){ }
 
 private:
 	TObjectPtr<AWeaponManagementSystem> weaponManagementSystemRef = nullptr;
