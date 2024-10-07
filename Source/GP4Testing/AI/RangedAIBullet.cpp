@@ -15,6 +15,7 @@ ARangedAIBullet::ARangedAIBullet()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
+	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ARangedAIBullet::HandleBeginOverlap);
 	RootComponent = Sphere;
 }
 
@@ -25,22 +26,24 @@ void ARangedAIBullet::BeginPlay()
 	
 }
 
+void ARangedAIBullet::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APrimaryPlayer* Player = Cast<APrimaryPlayer>(OtherActor);
+	if (Player)
+	{
+		UE_LOG(LogTemp, Log, TEXT("I have hit the player"))
+		Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
+	}
+	Destroy();
+}
+
 // Called every frame
 void ARangedAIBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	FHitResult SweepHit;
-	AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime, true, &SweepHit);
-	if(SweepHit.bBlockingHit)
-	{
-		APrimaryPlayer* Player = Cast<APrimaryPlayer>(SweepHit.GetActor());
-		if(Player)
-		{
-			Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
-		}
-		Destroy();
-	}
+	
+	AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime);
 }
 
 void ARangedAIBullet::SetDamage(float NewDamage)

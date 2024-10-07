@@ -19,7 +19,10 @@ void ARangedAI::Attack()
 			{
 				const FDamageEvent event;
 				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, GetActorLocation(), GetActorRotation());
-				SpawnedBullet->SetDamage(Damage);
+				if(SpawnedBullet)
+				{
+					SpawnedBullet->SetDamage(Damage);
+				}
 			}
 		}
 	}
