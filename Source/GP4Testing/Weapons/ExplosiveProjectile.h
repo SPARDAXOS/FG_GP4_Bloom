@@ -4,18 +4,47 @@
 #include "GameFramework/Actor.h"
 #include "ExplosiveProjectile.generated.h"
 
+class USphereComponent;
+class UProjectileMovementComponent;
+
 UCLASS()
 class GP4TESTING_API AExplosiveProjectile : public AActor
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
 	
 public:	
 	AExplosiveProjectile();
 
-protected:
-	virtual void BeginPlay() override;
+	UPROPERTY(VisibleAnywhere, Category = Projectile)
+	USphereComponent* ExplosionRadiusComp;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere, Category = Projectile)
+	USphereComponent* CollisionComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	UProjectileMovementComponent* ProjectileMovement;
+
+	/*UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);*/
+
+	UFUNCTION()
+	void Explode();
+
+	USphereComponent* GetCollisionComp() const { return CollisionComp; }
+
+	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
+private:
+	FTimerHandle TimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile Settings")
+	float FuseTime = 2.f;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile Settings")
+	float ExplosionDamage = 60;
+
+	void DestroyProjectile();
 };

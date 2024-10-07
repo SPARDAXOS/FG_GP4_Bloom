@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include <GP4Testing/PlayerSystems/WeaponTypes.h>
+#include "ExplosiveProjectile.h"
 #include "GunComponent.generated.h"
 
 class APrimaryPlayer;
@@ -13,6 +14,8 @@ class GP4TESTING_API UGunComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 public:
+	UGunComponent();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	USoundBase* FireSound;
 
@@ -33,6 +36,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void StartFire();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Grenade Launcher")
+	TSubclassOf<AExplosiveProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Grenade Launcher")
+	FVector GL_MuzzleOffset;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings");
 	WeaponType TypeOfWeapon = WeaponType::NONE;
