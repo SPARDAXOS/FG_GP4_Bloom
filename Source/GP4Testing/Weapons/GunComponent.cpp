@@ -97,21 +97,6 @@ FVector UGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
 	return Direction;
 }
 
-void UGunComponent::FireDelay()
-{
-	if (!bFiredWeapon)
-	{
-		Fire();
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::StopFireDelay, SingleFireDelay, false);
-	}
-}
-
-void UGunComponent::StopFireDelay()
-{
-	bFiredWeapon = false;
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-}
-
 void UGunComponent::Reload()
 {
 	if (Magazine < MaxMagazine && Ammo > 0)
@@ -127,14 +112,26 @@ void UGunComponent::Reload()
 	}
 }
 
-void UGunComponent::StartAutomaticFire()
+void UGunComponent::StartFire()
 {
-	Fire();
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::Fire, AutomaticFireRate, true);
+	if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+	{
+		Fire();
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::Fire, AutoFireRate, true);
+	}
+	if (TypeOfWeapon == WeaponType::SHOTGUN)
+	{
+		if (!bFiredWeapon)
+		{
+			Fire();
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::StopFire, NonAutoFireRate, false);
+		}
+	}
 }
 
-void UGunComponent::StopAutomaticFire()
+void UGunComponent::StopFire()
 {
+	bFiredWeapon = false;
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
@@ -160,14 +157,14 @@ void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 	{
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
-			if (bAutomatic)
+			if (TypeOfWeapon == WeaponType::MACHINE_GUN)
 			{
-				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &UGunComponent::StartAutomaticFire);
-				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &UGunComponent::StopAutomaticFire);
+				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &UGunComponent::StartFire);
+				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &UGunComponent::StopFire);
 			}
-			else
+			if (TypeOfWeapon == WeaponType::SHOTGUN)
 			{
-				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &UGunComponent::FireDelay);
+				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &UGunComponent::StartFire);
 			}
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &UGunComponent::Reload);
 		}
