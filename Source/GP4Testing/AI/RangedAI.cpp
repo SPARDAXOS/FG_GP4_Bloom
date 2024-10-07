@@ -20,12 +20,15 @@ void ARangedAI::Attack()
 			{
 				const FDamageEvent event;
 				FVector ShootDirection = GetActorLocation() - Player->GetActorLocation();
+				ShootDirection.Normalize();
+				FRotator ShootRotation = UKismetMathLibrary::MakeRotFromX(ShootDirection);
+
 				float ShootAngle = atan2(ShootDirection.Y, ShootDirection.X);
-				ShootAngle = UKismetMathLibrary::RadiansToDegrees(ShootAngle) - 180;
 				FRotator ShootRotator = FRotator::ZeroRotator;
-				ShootRotator.Yaw = ShootAngle;
+				float ShootYaw = UKismetMathLibrary::RadiansToDegrees(ShootAngle) - 180;
+				ShootRotator.Yaw = ShootYaw;
 				
-				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, GetActorLocation(), ShootRotator);
+				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, GetActorLocation(), FRotator(-ShootRotation.Pitch, ShootRotator.Yaw, 0.f));
 				if(SpawnedBullet)
 				{
 					SpawnedBullet->SetDamage(Damage);
