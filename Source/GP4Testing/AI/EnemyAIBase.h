@@ -55,7 +55,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	ACharacter* Player = nullptr;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetPlayerRef(ACharacter* PlayerCharacter);
 
 	UBlackboardComponent* Blackboard = nullptr;
