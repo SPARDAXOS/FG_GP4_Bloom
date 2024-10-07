@@ -20,15 +20,13 @@ AEnemyAIBase::AEnemyAIBase()
 void AEnemyAIBase::BeginPlay()
 {
 	Super::BeginPlay();
-	Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	Cast<AAIController>(GetController())->GetBlackboardComponent()->SetValueAsObject(TEXT("Player"), Player);
 }
 
 FHitResult AEnemyAIBase::GetHitDetectionResult() const
 {
 	FHitResult Hit;
 	FVector TraceStart = GetCapsuleComponent()->GetComponentLocation();
-	FVector TraceEnd = (GetCapsuleComponent()->GetForwardVector() * AttackRange) + TraceStart;
+	FVector TraceEnd = Player->GetActorLocation();
 	FCollisionQueryParams TraceParams;
 	
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_GameTraceChannel2, TraceParams);
@@ -40,6 +38,12 @@ FHitResult AEnemyAIBase::GetHitDetectionResult() const
 void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (Player != nullptr && !PlayerHasBeenSet)
+	{
+		Blackboard = Cast<AAIController>(GetController())->GetBlackboardComponent();
+		Blackboard->SetValueAsObject(TEXT("Player"), Player);
+		PlayerHasBeenSet = true;
+	}
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
@@ -70,4 +74,10 @@ void AEnemyAIBase::ResetAttack()
 	bCanPlayAttackAnim = false;
 	bCanAttack = true;
 }
+
+void AEnemyAIBase::SetPlayerRef(ACharacter* PlayerCharacter)
+{
+	Player = PlayerCharacter;
+}
+
 
