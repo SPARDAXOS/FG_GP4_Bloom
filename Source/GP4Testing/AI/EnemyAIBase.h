@@ -55,15 +55,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	ACharacter* Player = nullptr;
 
-	UFUNCTION(BlueprintCallable)
-	void SetPlayerRef(ACharacter* PlayerCharacter);
-
 	UBlackboardComponent* Blackboard = nullptr;
 
 	FTimerHandle AttackTimerHandle;
 
 	UHealthComponent* HealthComponent = nullptr;
-
-	bool PlayerHasBeenSet = false;
 
 };
