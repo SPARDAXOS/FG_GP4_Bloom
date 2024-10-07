@@ -32,9 +32,13 @@ public:
 	//GetCurrentWeapon()
 	//GetLoadedAmmo()
 	//GetTotalAmmo()
-	//HasWeapon()
+
+	void SetHasWeapon(bool hasWeapon);
+	bool GetHasWeapon();
+
 
 private:
 	APrimaryPlayer* primaryPlayerRef;
 
+	bool bHasWeapon = false;
 };
