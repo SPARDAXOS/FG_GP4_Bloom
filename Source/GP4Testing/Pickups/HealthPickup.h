@@ -19,4 +19,8 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "HealthPickup")
 	float value = 1.0f;
+
+public:
+	AHealthPickup();
+
 };
