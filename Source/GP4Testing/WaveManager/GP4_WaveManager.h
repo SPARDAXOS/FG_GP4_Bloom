@@ -34,6 +34,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere, Category = "AI SPAWNING")
+	ACharacter* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
 	TSubclassOf<ACharacter> AIClassToSpawn;
