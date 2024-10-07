@@ -8,6 +8,12 @@
 #include "../Systems/PrimaryPlayer.h"
 #include <GP4Testing/Components/HealthComponent.h>
 #include "../AI/EnemyAIBase.h"
+#include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+
+UGunComponent::UGunComponent()
+{
+	GL_MuzzleOffset = FVector(100, 0, 10);
+}
 
 void UGunComponent::Fire()
 {
@@ -18,6 +24,12 @@ void UGunComponent::Fire()
 
 	if (Character == nullptr || Character->GetController() == nullptr)
 	{
+		return;
+	}
+
+	if (TypeOfWeapon == WeaponType::NONE)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Weapon type has not been set!"));
 		return;
 	}
 
@@ -39,15 +51,28 @@ void UGunComponent::Fire()
 
 			FVector ViewForward = ViewRotation.Quaternion().GetForwardVector();
 
-			for (int i = 0; i < BulletsPerShot; i++)
+			if (TypeOfWeapon == WeaponType::GRENADE_LAUNCHER)
 			{
-				World->LineTraceSingleByChannel(
-					Hit,
-					ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward),
-					ECollisionChannel::ECC_GameTraceChannel3
-				);
+				const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+				const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(GL_MuzzleOffset);
 
-				DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 5.0f, 0, 1.0f);
+				FActorSpawnParameters ActorSpawnParams;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+				World->SpawnActor<AExplosiveProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			}
+			else
+			{
+				for (int i = 0; i < BulletsPerShot; i++)
+				{
+					World->LineTraceSingleByChannel(
+						Hit,
+						ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward),
+						ECollisionChannel::ECC_GameTraceChannel3
+					);
+
+					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 5.0f, 0, 1.0f);
+				}
 			}
 
 			// Do damage if enemy is hit
@@ -119,7 +144,7 @@ void UGunComponent::StartFire()
 		Fire();
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::Fire, AutoFireRate, true);
 	}
-	if (TypeOfWeapon == WeaponType::SHOTGUN)
+	if (TypeOfWeapon == WeaponType::SHOTGUN || TypeOfWeapon == WeaponType::GRENADE_LAUNCHER)
 	{
 		if (!bFiredWeapon)
 		{
@@ -140,33 +165,40 @@ void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 {
 	Character = TargetCharacter;
 
-	Magazine = MaxMagazine;
-	Ammo = MaxAmmo;
-
 	if (Character == nullptr)
 	{
 		return;
 	}
 
-	// Attach to player mesh
-	USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
-	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+	bool HasWeapon = Character->GetWeaponManagementSystem().GetHasWeapon();
 
-	if (APrimaryPlayerController* PlayerController = Cast<APrimaryPlayerController>(Character->GetController()))
+	if (!HasWeapon)
 	{
-		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
+		Character->GetWeaponManagementSystem().SetHasWeapon(true);
+
+		Magazine = MaxMagazine;
+		Ammo = MaxAmmo;
+
+		// Attach to player mesh
+		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+
+		if (APrimaryPlayerController* PlayerController = Cast<APrimaryPlayerController>(Character->GetController()))
 		{
-			if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+			if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 			{
-				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &UGunComponent::StartFire);
-				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &UGunComponent::StopFire);
+				if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+				{
+					EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &UGunComponent::StartFire);
+					EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &UGunComponent::StopFire);
+				}
+				if (TypeOfWeapon == WeaponType::SHOTGUN || TypeOfWeapon == WeaponType::GRENADE_LAUNCHER)
+				{
+					EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &UGunComponent::StartFire);
+				}
+				EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &UGunComponent::Reload);
 			}
-			if (TypeOfWeapon == WeaponType::SHOTGUN)
-			{
-				EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &UGunComponent::StartFire);
-			}
-			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &UGunComponent::Reload);
 		}
 	}
 }
