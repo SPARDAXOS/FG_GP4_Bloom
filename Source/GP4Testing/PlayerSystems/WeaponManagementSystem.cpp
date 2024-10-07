@@ -31,3 +31,13 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type) noexcept {
 void AWeaponManagementSystem::SetupStartingState() noexcept {
 
 }
+
+void AWeaponManagementSystem::SetHasWeapon(bool hasWeapon)
+{
+	bHasWeapon = hasWeapon;
+}
+
+bool AWeaponManagementSystem::GetHasWeapon()
+{
+	return bHasWeapon;
+}
