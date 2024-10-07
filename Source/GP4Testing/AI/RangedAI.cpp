@@ -5,6 +5,7 @@
 
 #include "RangedAIBullet.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void ARangedAI::Attack()
 {
@@ -18,7 +19,13 @@ void ARangedAI::Attack()
 			if (Hit.GetActor()->ActorHasTag("Player"))
 			{
 				const FDamageEvent event;
-				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, GetActorLocation(), GetActorRotation());
+				FVector ShootDirection = GetActorLocation() - Player->GetActorLocation();
+				float ShootAngle = atan2(ShootDirection.Y, ShootDirection.X);
+				ShootAngle = UKismetMathLibrary::RadiansToDegrees(ShootAngle) - 180;
+				FRotator ShootRotator = FRotator::ZeroRotator;
+				ShootRotator.Yaw = ShootAngle;
+				
+				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, GetActorLocation(), ShootRotator);
 				if(SpawnedBullet)
 				{
 					SpawnedBullet->SetDamage(Damage);
