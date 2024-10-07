@@ -22,7 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public: 
-	//ddddd
 
 	UPROPERTY(Editanywhere)
 	USceneComponent* PickUpRoot;

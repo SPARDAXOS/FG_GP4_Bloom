@@ -1,16 +1,34 @@
 
 #include "PickupManagementSystem.h"
+#include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/PlayerSystems/PlayerMovementSystem.h" //For movement related stuff
+#include "GP4Testing/PlayerSystems/PlayerHealthSystem.h" //For health related stuff
+#include "GP4Testing/PlayerSystems/WeaponManagementSystem.h" //For picking up weapons
 
-bool APickupManagementSystem::RegisterPickup(const PickupType& type, float amount) noexcept
+
+#include "GP4Testing/Pickups/HealthPickup.h"
+#include "GP4Testing/Pickups/Pickup.h"
+
+bool APickupManagementSystem::RegisterPickup(APickup& pickup) noexcept
 {
-	if (type == PickupType::HEALTH)
+	
+
+	if (pickup.pickupType == PickupType::HEALTH)
 	{
-		amount = 10;
+		AHealthPickup* targetPickup = Cast<AHealthPickup>(&pickup);
+		if (!targetPickup)
+			return false;
+
+		APlayerHealthSystem* healthSystem = &primaryPlayerRef->GetPlayerHealthSystem();
+		if (!healthSystem)
+			return false;
+
+		//return 	healthSystem->AddHealth(targetPickup->value);
 	}
 
-	if (type == PickupType::AMMO)
+	if (pickup.pickupType == PickupType::AMMO)
 	{
-		amount = 10;
+		
 	}
 
 	return true;
