@@ -28,6 +28,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void Die();
+
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack();
 
@@ -42,9 +45,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Damage = 30;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int Health = 100;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AttackRange = 140;
