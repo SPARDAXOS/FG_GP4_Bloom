@@ -47,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
 	int SpawnAmount;
 
+	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
+	float timeBetweenWaves;
+
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int currentWave;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
@@ -55,8 +58,7 @@ public:
 	int enemiesAlive;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int totalEnemiesKilled;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	float timeBetweenWaves = 5.0f;
+	
 
 	FTimerHandle waveDelayTimer;
 };
