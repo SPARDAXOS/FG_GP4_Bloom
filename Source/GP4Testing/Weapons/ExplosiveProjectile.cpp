@@ -12,7 +12,7 @@ AExplosiveProjectile::AExplosiveProjectile()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	/*CollisionComp->OnComponentHit.AddDynamic(this, &AExplosiveProjectile::OnHit);*/
+	CollisionComp->OnComponentHit.AddDynamic(this, &AExplosiveProjectile::OnHit);
 
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
@@ -38,19 +38,21 @@ void AExplosiveProjectile::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AExplosiveProjectile::Explode, FuseTime, false);
 }
 
-// For if grenade is sticky
-//void AExplosiveProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-//{
-//	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AExplosiveProjectile::Explode, FuseTime, false);
-//}
+void AExplosiveProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(OtherActor))
+	{
+		Explode();
+	}
+}
 
 void AExplosiveProjectile::Explode()
 {
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AExplosiveProjectile::DestroyProjectile, 1, false);
-
 	// Check overlapping actors
 	TArray<AActor*> OverlappingActors;
 	ExplosionRadiusComp->GetOverlappingActors(OverlappingActors);
+
+	UE_LOG(LogTemp, Warning, TEXT("Overlapping actors count: %f"), OverlappingActors.Num());
 
 	for (AActor* Actor : OverlappingActors)
 	{
@@ -64,12 +66,12 @@ void AExplosiveProjectile::Explode()
 			Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(ExplosionDamage);
 			UE_LOG(LogTemp, Warning, TEXT("Player HP: %f"), Player->GetPlayerHealthSystem().HealthComponent->CurrentHealth);
 		}
+		Destroy();
 	}
 
-}
-
-void AExplosiveProjectile::DestroyProjectile()
-{
-	Destroy();
+	if (OverlappingActors.Num() == 0)
+	{
+		Destroy();
+	}
 }
 
