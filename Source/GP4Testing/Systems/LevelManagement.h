@@ -10,7 +10,7 @@
 
 
 
-using OnOperationCompletedCallback = std::function<void>(void);
+using OnOperationCompletedCallback = std::function<void(void)>;
 
 
 USTRUCT(BlueprintType)
@@ -29,13 +29,13 @@ struct FLevelOperationSpec {
 
 	OnOperationCompletedCallback callback;
 
-	FLevelOperationSpec() 
-		:	name("None"), linkageID(-1), 
+	FLevelOperationSpec()
+		: name("None"), linkageID(-1), UUID(-1), callback(nullptr)
 	{
 
 	}
 
-}
+};
 
 
 
