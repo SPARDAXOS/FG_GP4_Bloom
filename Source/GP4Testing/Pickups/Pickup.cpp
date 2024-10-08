@@ -32,10 +32,13 @@ void APickup::BeginPlay()
 void APickup::OnPlayerInteraction(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults)
 {
-	if (OtherActor->ActorHasTag("Player"))
-	{
-		Destroy();
-	}
+	OnPickup(OverlappedComp, OtherActor, otherComp, OtherBodyIndex, bFromSweep, SweepResults);
+	
+}
+void APickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults) 
+{
+
 }
 
 // Called every frame
