@@ -33,19 +33,17 @@ public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
 
 public:
-	//GetCurrentWeapon()
-	//GetLoadedAmmo()
-	//GetTotalAmmo()
+	UGunComponent* GetCurrentWeapon();
 
-	void SetHasWeapon(bool hasWeapon);
-	bool GetHasWeapon();
+	float GetMaxAmmo();
+	float GetAmmo();
 
+	float GetMaxMagazine();
+	float GetLoadedMagazine();
 
 private:
 	APrimaryPlayer* primaryPlayerRef;
 
 	TMap<WeaponType, UGunComponent*> AcquiredWeapons;
 	WeaponType EquippedWeapon;
-
-	bool bHasWeapon = false;
 };
