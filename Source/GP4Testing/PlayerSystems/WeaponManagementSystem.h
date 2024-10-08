@@ -15,7 +15,7 @@ class GP4TESTING_API AWeaponManagementSystem : public AActor {
 	GENERATED_BODY()
 
 public:
-	bool UseCurrentWeapon() noexcept; //Called by player to use current weapon.
+	bool UseCurrentWeapon() noexcept; //Called by player to use/shoot current weapon.
 
 public:
 	bool SwitchNextWeapon() noexcept;

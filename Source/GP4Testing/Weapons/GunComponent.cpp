@@ -27,12 +27,6 @@ void UGunComponent::Fire()
 		return;
 	}
 
-	if (TypeOfWeapon == WeaponType::NONE)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Weapon type has not been set!"));
-		return;
-	}
-
 	if (Magazine > 0)
 	{
 		UWorld* const World = GetWorld();
@@ -167,6 +161,12 @@ void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 
 	if (Character == nullptr)
 	{
+		return;
+	}
+
+	if (TypeOfWeapon == WeaponType::NONE)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Weapon type has not been set!"));
 		return;
 	}
 

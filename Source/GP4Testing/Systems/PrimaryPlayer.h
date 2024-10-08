@@ -47,6 +47,7 @@ public: //Add Callbacks For Input Here!
 	void HandleJumpInput() noexcept;
 	void HandleShootInput(bool& input) noexcept;
 	void HandlePauseInput() noexcept;
+	void HandleReloadInput() noexcept;
 
 
 private:
