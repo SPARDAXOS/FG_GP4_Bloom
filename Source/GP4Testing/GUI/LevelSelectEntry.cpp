@@ -14,8 +14,20 @@
 void ULevelSelectEntry::NativeOnInitialized() {
 	UMenuWidgetBase::NativeOnInitialized();
 
+	Debugging::CustomError("CREATE!");
 	//selectButton->button->OnClicked.AddDynamic(this, &ULevelSelectEntry::SelectButtonClicked);
 }
+void ULevelSelectEntry::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
+	UMenuWidgetBase::NativeTick(MyGeometry, InDeltaTime);
+
+
+	if (targetSpec) {
+		SetSplashImage(*targetSpec->splash);
+		Debugging::PrintString("Set!");
+	}
+}
+
+
 void ULevelSelectEntry::SetSplashImage(UMaterialInterface& splash) noexcept {
 	splashImage->SetBrushFromMaterial(&splash);
 

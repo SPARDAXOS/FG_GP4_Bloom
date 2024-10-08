@@ -40,11 +40,15 @@ void ULevelSelectMenuWidget::CreateLevelSelectEntries() noexcept {
 
 	for (auto& entry : levelEntriesSpecs) {
 		ULevelSelectEntry* newItem = CreateWidget<ULevelSelectEntry>(GetWorld(), levelSelectEntryClass);
-		newItem->SetLevelSelectMenuReference(*this);
-		newItem->SetTargetLevelSelectEntrySpec(&entry);
 		tileView->AddItem(newItem);
-		createdLevelEntries.Add(newItem);
-		newItem->SetSplashImage(*entry.splash);
+		ULevelSelectEntry* item = Cast<ULevelSelectEntry>(tileView->GetItemAt(tileView->GetNumItems() - 1));
+
+		item->SetLevelSelectMenuReference(*this);
+		item->SetTargetLevelSelectEntrySpec(&entry);
+		item->SetSplashImage(*entry.splash);
+		//item->AddToViewport(0);
+
+		createdLevelEntries.Add(item);
 
 	}
 }

@@ -20,6 +20,7 @@ class ULevelSelectEntry : public UMenuWidgetBase, public IUserObjectListEntry {
 
 public:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
 	void SetSplashImage(UMaterialInterface& splash) noexcept;
