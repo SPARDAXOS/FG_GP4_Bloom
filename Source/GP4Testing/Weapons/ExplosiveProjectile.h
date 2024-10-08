@@ -27,8 +27,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
-	/*UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);*/
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION()
 	void Explode();
@@ -45,6 +45,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Projectile Settings")
 	float ExplosionDamage = 60;
-
-	void DestroyProjectile();
 };
