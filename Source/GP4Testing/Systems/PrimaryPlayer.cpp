@@ -83,8 +83,10 @@ void APrimaryPlayer::HandleJumpInput() noexcept {
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
 	//input == false => Released
+	if (!weaponManagementSystemRef)
+		return;
 
-
+	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
 void APrimaryPlayer::HandlePauseInput() noexcept {
 	if (!primaryGameModeRef->GetGamePaused())
@@ -95,7 +97,10 @@ void APrimaryPlayer::HandlePauseInput() noexcept {
 
 void APrimaryPlayer::HandleReloadInput() noexcept
 {
+	if (!weaponManagementSystemRef)
+		return;
 
+	weaponManagementSystemRef->ReloadWeapon();
 }
 
 void APrimaryPlayer::CreatePlayerSystems() {
