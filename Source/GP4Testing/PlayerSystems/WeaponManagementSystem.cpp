@@ -4,10 +4,17 @@
 
 
 
-bool AWeaponManagementSystem::UseCurrentWeapon() noexcept {
+bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
+
 
 
 	return true;
+}
+
+bool AWeaponManagementSystem::ReloadWeapon() noexcept
+{
+
+	return false;
 }
 
 
