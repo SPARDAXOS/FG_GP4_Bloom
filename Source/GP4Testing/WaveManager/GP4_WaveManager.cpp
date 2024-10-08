@@ -4,7 +4,9 @@
 #include "GP4Testing/WaveManager/GP4_WaveManager.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "GP4Testing/AI/EnemyAIBase.h"
 #include "AIController.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AGP4_WaveManager::AGP4_WaveManager()
@@ -19,8 +21,21 @@ void AGP4_WaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
-
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		PlayerCharacter = Cast<ACharacter>(PlayerController->GetPawn());
+	}
+	if (PlayerCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PLAYER IS NOT NULL"));
+		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("PLAYER IS NULL"));
+		return;
+	}	
 }
 
 // Called every frame
@@ -35,10 +50,9 @@ void AGP4_WaveManager::StartWave()
 	enemiesAlive = 0;
 	totalEnemiesKilled = 0;
 
-	//enemyToSpawn = 10 + (currentWave - 1) * 1;
-	enemyToSpawn = 2;
+	enemyToSpawn = 10 + (currentWave - 1) * 5;
 	SpawnAIWave();
-	GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::OnAIKilled, 2, false);
+	//GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::OnAIKilled, 2, false);
 }
 
 void AGP4_WaveManager::SpawnAIWave()
@@ -62,11 +76,34 @@ void AGP4_WaveManager::SpawnAI()
 		int32 randIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
 		AActor* spawnPoint = SpawnPoints[randIndex];
 
+		if (!spawnPoint)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Spawn Point is nullptr!"));
+			return;
+		}
+
 		FActorSpawnParameters spawnParam;
 		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(AIClassToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
+
 		if (spawnAI)
 		{
 			enemiesAlive++;
+			UE_LOG(LogTemp, Warning, TEXT("Spawn AI: &s"), *spawnAI->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("failed to spawn AI!"));
+		}
+	}
+	else
+	{
+		if (AIClassToSpawn == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AIClassToSpawn is nullptr!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("No Spawn Points available!"));
 		}
 	}
 }
@@ -75,7 +112,6 @@ void AGP4_WaveManager::OnAIKilled()
 	enemiesAlive--;
 	totalEnemiesKilled++;
 
-	
 	if (enemiesAlive <= 0)
 	{
 		StartNextWave();

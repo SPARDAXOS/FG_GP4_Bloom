@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
+#include <GP4Testing/PlayerSystems/WeaponTypes.h>
+#include "ExplosiveProjectile.h"
 #include "GunComponent.generated.h"
 
 class APrimaryPlayer;
@@ -12,6 +14,8 @@ class GP4TESTING_API UGunComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 public:
+	UGunComponent();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	USoundBase* FireSound;
 
@@ -28,16 +32,19 @@ public:
 	void AttachWeapon(APrimaryPlayer* TargetCharacter);
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void Fire();
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void Reload();
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void StartAutomaticFire();
+	void StartFire();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void StopAutomaticFire();
+	UPROPERTY(EditDefaultsOnly, Category = "Grenade Launcher")
+	TSubclassOf<AExplosiveProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Grenade Launcher")
+	FVector GL_MuzzleOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings");
+	WeaponType TypeOfWeapon = WeaponType::NONE;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
 	float MaxMagazine;
@@ -62,24 +69,21 @@ private:
 	float BulletSpread = 5.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	bool bAutomatic = false;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float AutomaticFireRate = 0.15f;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
 	float BulletsPerShot = 1.f;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float SingleFireDelay = 1.5f;
+	UPROPERTY(EditAnywhere, Category = "Non Auto Weapon Settings")
+	float NonAutoFireRate = 1.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Auto Weapon Settings")
+	float AutoFireRate = 0.15f;
 
 	FVector GetBulletSpread(FVector ViewOrigin, FVector ViewForward);
 
 	FTimerHandle TimerHandle;
 
-	void FireDelay();
+	void Fire();
 
-	void StopFireDelay();
+	void StopFire();
 
 	bool bFiredWeapon = false;
 };
