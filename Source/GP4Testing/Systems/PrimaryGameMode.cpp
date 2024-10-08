@@ -8,9 +8,10 @@
 #include "PrimaryPlayerController.h"
 #include "PrimaryHUD.h"
 
+#include "LevelManagement.h"
+
 
 #include "Kismet/GameplayStatics.h"
-
 #include "GP4Testing/Utility/Debugging.h"
 
 
@@ -184,15 +185,15 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 void APrimaryGameMode::CreateSystems() noexcept {
 
 	//Example
-	//if (levelManagementClass) {
-	//	levelManagementRef = GetWorld()->SpawnActor<ALevelManagement>(levelManagementClass);
-	//	if (!levelManagementRef)
-	//		Debugging::CustomError("Failed to spawn LevelManagement actor!");
-	//	else
-	//		Debugging::CustomLog("LevelManagement was created successfully!");
-	//}
-	//else
-	//	Debugging::CustomWarning("LevelManagementClass is invalid! - LevelManagement will not created!");
+	if (levelManagementClass) {
+		levelManagementRef = GetWorld()->SpawnActor<ALevelManagement>(levelManagementClass);
+		if (!levelManagementRef)
+			Debugging::CustomError("Failed to spawn LevelManagement actor!");
+		else
+			Debugging::CustomLog("LevelManagement was created successfully!");
+	}
+	else
+		Debugging::CustomWarning("LevelManagementClass is invalid! - LevelManagement will not created!");
 }
 void APrimaryGameMode::SetupDependencies() noexcept {
 	//Inject any dependencies required by any system.
