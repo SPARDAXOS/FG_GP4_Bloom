@@ -24,7 +24,6 @@ protected:
 
 	void SpawnAIWave();
 
-	void OnAIKilled();
 
 	void StartNextWave();
 
@@ -33,6 +32,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void OnAIKilled();
 
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
 	ACharacter* PlayerCharacter;
