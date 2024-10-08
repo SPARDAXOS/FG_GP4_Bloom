@@ -39,9 +39,13 @@ public:
 	ACharacter* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
-	TSubclassOf<ACharacter> AIClassToSpawn;
+	TArray<TSubclassOf<ACharacter>> AIClassToSpawn;
+	
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
 	TArray<AActor*> SpawnPoints;
+
+	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
+	int SpawnAmount;
 
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int currentWave;
