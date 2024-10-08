@@ -7,6 +7,7 @@
 #include "GP4Testing/AI/EnemyAIBase.h"
 #include "AIController.h"
 #include <Kismet/GameplayStatics.h>
+#include <List>
 
 // Sets default values
 AGP4_WaveManager::AGP4_WaveManager()
@@ -50,9 +51,8 @@ void AGP4_WaveManager::StartWave()
 	enemiesAlive = 0;
 	totalEnemiesKilled = 0;
 
-	enemyToSpawn = 10 + (currentWave - 1) * 5;
+	enemyToSpawn = 10 + (currentWave - 1) * SpawnAmount;
 	SpawnAIWave();
-	//GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::OnAIKilled, 2, false);
 }
 
 void AGP4_WaveManager::SpawnAIWave()
@@ -67,11 +67,12 @@ void AGP4_WaveManager::StartNextWave()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ENEMIES KILLED, STARTING NEXT WAVE"));
 	currentWave++;
+	GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
 }
 
 void AGP4_WaveManager::SpawnAI()
 {
-	if (SpawnPoints.Num() > 0 && AIClassToSpawn)
+	if (SpawnPoints.Num() > 0 && AIClassToSpawn.Num() > 0)
 	{
 		int32 randIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
 		AActor* spawnPoint = SpawnPoints[randIndex];
@@ -82,8 +83,11 @@ void AGP4_WaveManager::SpawnAI()
 			return;
 		}
 
+		int randCharacterIndex = FMath::RandRange(0, AIClassToSpawn.Num() - 1);
+		TSubclassOf<ACharacter> charactersToSpawn = AIClassToSpawn[randCharacterIndex];
+
 		FActorSpawnParameters spawnParam;
-		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(AIClassToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
+		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(charactersToSpawn, spawnPoint->GetActorLocation() + 10, FRotator::ZeroRotator, spawnParam);
 
 		if (spawnAI)
 		{
@@ -97,14 +101,7 @@ void AGP4_WaveManager::SpawnAI()
 	}
 	else
 	{
-		if (AIClassToSpawn == nullptr)
-		{
-			UE_LOG(LogTemp, Error, TEXT("AIClassToSpawn is nullptr!"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("No Spawn Points available!"));
-		}
+		//add debug or some
 	}
 }
 void AGP4_WaveManager::OnAIKilled()

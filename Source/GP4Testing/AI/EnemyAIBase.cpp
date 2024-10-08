@@ -5,6 +5,7 @@
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GP4Testing/WaveManager/GP4_WaveManager.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -55,6 +56,10 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AEnemyAIBase::Die()
 {
+	AGP4_WaveManager* Wave;
+	Wave = Cast<AGP4_WaveManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGP4_WaveManager::StaticClass()));
+	Wave->OnAIKilled();
+
 	Destroy();
 }
 
