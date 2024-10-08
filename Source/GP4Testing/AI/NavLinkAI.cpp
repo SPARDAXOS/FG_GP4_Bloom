@@ -24,6 +24,6 @@ void ANavLinkAI::CallJumpFunction(AActor* Actor, const FVector& Destination)
 	AEnemyAIBase* EnemyAI = Cast<AEnemyAIBase>(Actor);
 	if (EnemyAI)
 	{
-		
+		EnemyAI->NavLinkJump(Destination);
 	}
 }

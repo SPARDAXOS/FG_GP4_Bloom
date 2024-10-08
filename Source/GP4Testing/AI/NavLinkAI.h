@@ -15,5 +15,7 @@ class GP4TESTING_API ANavLinkAI : public ANavLinkProxy
 	GENERATED_BODY()
 	ANavLinkAI();
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
 	void CallJumpFunction(AActor* Actor, const FVector& Destination);
 };
