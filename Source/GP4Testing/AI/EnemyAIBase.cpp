@@ -2,7 +2,6 @@
 
 
 #include "EnemyAIBase.h"
-
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -20,6 +19,9 @@ AEnemyAIBase::AEnemyAIBase()
 void AEnemyAIBase::BeginPlay()
 {
 	Super::BeginPlay();
+	Player = GetWorld()->GetFirstPlayerController()->GetCharacter();
+	Blackboard = Cast<AAIController>(GetController())->GetBlackboardComponent();
+	Blackboard->SetValueAsObject(TEXT("Player"), Player);
 }
 
 FHitResult AEnemyAIBase::GetHitDetectionResult() const
@@ -38,12 +40,7 @@ FHitResult AEnemyAIBase::GetHitDetectionResult() const
 void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (Player != nullptr && !PlayerHasBeenSet)
-	{
-		Blackboard = Cast<AAIController>(GetController())->GetBlackboardComponent();
-		Blackboard->SetValueAsObject(TEXT("Player"), Player);
-		PlayerHasBeenSet = true;
-	}
+	
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
@@ -73,11 +70,6 @@ void AEnemyAIBase::ResetAttack()
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 	bCanPlayAttackAnim = false;
 	bCanAttack = true;
-}
-
-void AEnemyAIBase::SetPlayerRef(ACharacter* PlayerCharacter)
-{
-	Player = PlayerCharacter;
 }
 
 
