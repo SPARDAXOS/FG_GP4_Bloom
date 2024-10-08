@@ -42,13 +42,15 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	checkf(jump, TEXT("jump action is invalid!"));
 	checkf(shoot, TEXT("shoot action is invalid!"));
 	checkf(pauseToggle, TEXT("pauseToggle action is invalid!"));
+	checkf(reload, TEXT("pauseToggle action is invalid!"));
 
 	enhancedInputComponentRef->BindAction(movement, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleMovement);
 	enhancedInputComponentRef->BindAction(look, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleLook);
 	enhancedInputComponentRef->BindAction(jump, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleJump);
 	enhancedInputComponentRef->BindAction(shoot, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleShoot);
 	enhancedInputComponentRef->BindAction(pauseToggle, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandlePause);
-	
+	enhancedInputComponentRef->BindAction(reload, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleReload);
+
 }
 
 
@@ -153,4 +155,10 @@ void APrimaryPlayerController::HandlePause() {
 		return;
 
 	primaryPlayerRef->HandlePauseInput();
+}
+void APrimaryPlayerController::HandleReload() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleReloadInput();
 }

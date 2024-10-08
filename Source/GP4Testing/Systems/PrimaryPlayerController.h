@@ -49,6 +49,7 @@ protected:
 	void HandleJump();
 	void HandleShoot(const FInputActionValue& value);
 	void HandlePause();
+	void HandleReload();
 
 private:
 	void SetupInputMappingContext() const noexcept;
@@ -82,6 +83,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Options", meta = (AllowPrivateAccess = "true"));
 	TObjectPtr<UInputAction> pauseToggle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> reload = nullptr;
 
 private:
 	UEnhancedInputLocalPlayerSubsystem* inputSubsystemRef = nullptr;
