@@ -67,6 +67,7 @@ void AGP4_WaveManager::StartNextWave()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ENEMIES KILLED, STARTING NEXT WAVE"));
 	currentWave++;
+	GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
 }
 
 void AGP4_WaveManager::SpawnAI()
@@ -83,7 +84,7 @@ void AGP4_WaveManager::SpawnAI()
 		}
 
 		FActorSpawnParameters spawnParam;
-		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(AIClassToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
+		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(AIClassToSpawn, spawnPoint->GetActorLocation() + 10, FRotator::ZeroRotator, spawnParam);
 
 		if (spawnAI)
 		{
