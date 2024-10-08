@@ -93,6 +93,11 @@ void APrimaryPlayer::HandlePauseInput() noexcept {
 		primaryGameModeRef->UnpauseGame();
 }
 
+void APrimaryPlayer::HandleReloadInput() noexcept
+{
+
+}
+
 void APrimaryPlayer::CreatePlayerSystems() {
 	checkf(playerMovementSystemAsset, TEXT("PlayerMovementSystemAsset ref is null!"));
 	playerMovementSystemRef = GetWorld()->SpawnActor<APlayerMovementSystem>(playerMovementSystemAsset);
