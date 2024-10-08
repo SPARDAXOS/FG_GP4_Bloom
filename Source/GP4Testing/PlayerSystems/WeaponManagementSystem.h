@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "WeaponTypes.h"
+#include <GP4Testing/Weapons/GunComponent.h>
 
 
 #include "WeaponManagementSystem.generated.h"
@@ -15,12 +16,15 @@ class GP4TESTING_API AWeaponManagementSystem : public AActor {
 	GENERATED_BODY()
 
 public:
-	bool UseCurrentWeapon() noexcept; //Called by player to use current weapon.
+	bool UseCurrentWeapon(bool& input) noexcept; //Called by player to use/shoot current weapon.
+	bool ReloadWeapon() noexcept;
 
 public:
 	bool SwitchNextWeapon() noexcept;
 	bool SwitchPreviousWeapon() noexcept;
-	bool AcquireWeapon(WeaponType type) noexcept;
+
+public:
+	bool AcquireWeapon(WeaponType type, UGunComponent* weapon) noexcept;
 
 public:
 	void SetupStartingState() noexcept;
@@ -29,16 +33,17 @@ public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
 
 public:
-	//GetCurrentWeapon()
-	//GetLoadedAmmo()
-	//GetTotalAmmo()
+	UGunComponent* GetCurrentWeapon();
 
-	void SetHasWeapon(bool hasWeapon);
-	bool GetHasWeapon();
+	float GetMaxAmmo();
+	float GetAmmo();
 
+	float GetMaxMagazine();
+	float GetLoadedMagazine();
 
 private:
 	APrimaryPlayer* primaryPlayerRef;
 
-	bool bHasWeapon = false;
+	TMap<WeaponType, UGunComponent*> AcquiredWeapons;
+	WeaponType EquippedWeapon;
 };

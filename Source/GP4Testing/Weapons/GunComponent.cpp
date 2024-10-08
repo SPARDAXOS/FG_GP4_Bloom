@@ -27,12 +27,6 @@ void UGunComponent::Fire()
 		return;
 	}
 
-	if (TypeOfWeapon == WeaponType::NONE)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Weapon type has not been set!"));
-		return;
-	}
-
 	if (Magazine > 0)
 	{
 		UWorld* const World = GetWorld();
@@ -170,35 +164,19 @@ void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		return;
 	}
 
-	bool HasWeapon = Character->GetWeaponManagementSystem().GetHasWeapon();
-
-	if (!HasWeapon)
+	if (TypeOfWeapon == WeaponType::NONE)
 	{
-		Character->GetWeaponManagementSystem().SetHasWeapon(true);
-
-		Magazine = MaxMagazine;
-		Ammo = MaxAmmo;
-
-		// Attach to player mesh
-		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
-		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
-
-		if (APrimaryPlayerController* PlayerController = Cast<APrimaryPlayerController>(Character->GetController()))
-		{
-			if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
-			{
-				if (TypeOfWeapon == WeaponType::MACHINE_GUN)
-				{
-					EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &UGunComponent::StartFire);
-					EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &UGunComponent::StopFire);
-				}
-				if (TypeOfWeapon == WeaponType::SHOTGUN || TypeOfWeapon == WeaponType::GRENADE_LAUNCHER)
-				{
-					EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &UGunComponent::StartFire);
-				}
-				EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &UGunComponent::Reload);
-			}
-		}
+		UE_LOG(LogTemp, Error, TEXT("Weapon type has not been set!"));
+		return;
 	}
+
+	Character->GetWeaponManagementSystem().AcquireWeapon(TypeOfWeapon, this);
+
+	Magazine = MaxMagazine;
+	Ammo = MaxAmmo;
+
+	// Attach to player mesh
+	USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+	AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
 }
