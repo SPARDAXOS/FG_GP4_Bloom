@@ -17,6 +17,11 @@ class GP4TESTING_API ARangedAI : public AEnemyAIBase
 	
 	virtual void Attack() override;
 	virtual void ResetAttack() override;
+	virtual void Tick(float DeltaSeconds) override;
+	bool bCanSeePlayer();
+
+	UPROPERTY(EditDefaultsOnly)
+	float VisionRange = 1000;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ARangedAIBullet> Bullet;
