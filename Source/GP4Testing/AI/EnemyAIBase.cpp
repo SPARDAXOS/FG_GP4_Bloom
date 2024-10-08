@@ -59,8 +59,10 @@ void AEnemyAIBase::Die()
 {
 	AGP4_WaveManager* Wave;
 	Wave = Cast<AGP4_WaveManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGP4_WaveManager::StaticClass()));
-	Wave->OnAIKilled();
-
+	if (Wave)
+	{
+		Wave->OnAIKilled();
+	}
 	Destroy();
 }
 
