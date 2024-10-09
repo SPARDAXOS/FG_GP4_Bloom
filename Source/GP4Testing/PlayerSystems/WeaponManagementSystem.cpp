@@ -44,74 +44,21 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	UE_LOG(LogTemp, Warning, TEXT("Next"));
 
-	// WIP
-	/*if (AcquiredWeapons.Num() > 1)
+	
+	if (AcquiredWeapons.Num() > 1)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
-		Weapon->StopFire();
-		Weapon->SetVisibility(false);
-
-		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
-
-		WeaponType Next;
-		for (int i = 0; i < weapons.Num(); i++)
-		{
-			if (weapons[i] == EquippedWeapon)
-			{
-				if (weapons[weapons.Num() - 1] == EquippedWeapon)
-				{
-					Next = weapons[0];
-				}
-				else
-				{
-					Next = weapons[++i];
-				}
-			}
-		}
-		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(Next);
-		NextWeapon->SetVisibility(true);
-		EquippedWeapon = Next;
-	}*/
+		
+	}
 
 	return true;
 }
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	UE_LOG(LogTemp, Warning, TEXT("Prev"));
 
-	// WIP
-	/*if (AcquiredWeapons.Num() > 1)
+	if (AcquiredWeapons.Num() > 1)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
-		Weapon->StopFire();
-		Weapon->SetVisibility(false);
-
-		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
-
-		WeaponType Prev;
-		for (int i = 0; i < weapons.Num(); i++)
-		{
-			if (weapons[i] == EquippedWeapon)
-			{
-				if (weapons[0] == EquippedWeapon)
-				{
-					Prev = weapons[weapons.Num() - 1];
-				}
-				else
-				{
-					Prev = weapons[--i];
-				}
-			}
-		}
-		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(Prev);
-		NextWeapon->SetVisibility(true);
-		EquippedWeapon = Prev;
-	}*/
+		
+	}
 
 	return true;
 }
