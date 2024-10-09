@@ -43,7 +43,7 @@ public:
 	float GetMaxAmmo();
 	float GetAmmo();
 
-	void SetAmmo(float newAmmo);
+	bool SetAmmo(float newAmmo);
 
 	float GetMaxMagazine();
 	float GetLoadedMagazine();
