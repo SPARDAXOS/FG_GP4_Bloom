@@ -9,6 +9,7 @@
 #include "PrimaryHUD.h"
 
 #include "LevelManagement.h"
+#include "GP4TestinG/DataAssets/LevelSelectEntrySpec.h"
 
 
 #include "Kismet/GameplayStatics.h"
@@ -69,9 +70,18 @@ void APrimaryGameMode::BroadcastStart() {
 
 //Start
 void APrimaryGameMode::SetupApplicationStartState() noexcept {
-	//Main Menu Music
-	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
-	primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+
+	if (launchInDebugMode) {
+		SetupPrePlayingState();
+		SetupPlayingState();
+		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+
+	}
+	else {
+		//Main Menu Music
+		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
+		primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+	}
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
 	primaryPlayerRef->SetupStartingState();
@@ -122,20 +132,28 @@ void APrimaryGameMode::UpdatePlayingStateSystems(float deltaTime) {
 
 
 //Game State
-bool APrimaryGameMode::StartGame() noexcept {
+bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 	if (gameStarted)
 		return false;
 
-	SetupPrePlayingState();
-	SetupPlayingState();
+	if (launchInDebugMode) {
+		SetupPrePlayingState();
+		SetupPlayingState();
 
-	//Load Levels
-	//Set Input mode to NONE?
-	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-	primaryHUDRef->ClearViewport(); //No transition for now
+		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+		primaryHUDRef->ClearViewport(); //No transition for now
+	}
+	else {
+		levelManagementRef->LoadLevel(spec.key, [this]() {
+			SetupPrePlayingState();
+			SetupPlayingState();
+			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+			primaryHUDRef->ClearViewport(); //No transition for now
+			gameStarted = true;
+		});
+	}
 
-	gameStarted = true;
-	return gameStarted;
+	return true;
 }
 void APrimaryGameMode::EndGame() noexcept {
 	if (!gameStarted)

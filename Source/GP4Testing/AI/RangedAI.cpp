@@ -9,19 +9,25 @@
 #include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/KismetMathLibrary.h"
 
+ARangedAI::ARangedAI()
+{
+	Muzzle = CreateDefaultSubobject<USceneComponent>("Muzzle");
+	Muzzle->SetupAttachment(GetRootComponent());
+}
+
 void ARangedAI::Attack()
 {
 	if(bCanAttack)
 	{
 		Super::Attack();
-		FHitResult Hit = GetHitDetectionResult();
+		FHitResult Hit = GetHitDetectionResult(Muzzle->GetComponentLocation());
 
 		if (Hit.bBlockingHit)
 		{
 			if (Hit.GetActor()->ActorHasTag("Player"))
 			{
 				const FDamageEvent event;
-				FVector ShootDirection = GetActorLocation() - Player->GetActorLocation();
+				FVector ShootDirection = Muzzle->GetComponentLocation() - Player->GetActorLocation();
 				ShootDirection.Normalize();
 				FRotator ShootRotation = UKismetMathLibrary::MakeRotFromX(ShootDirection);
 
@@ -30,7 +36,9 @@ void ARangedAI::Attack()
 				float ShootYaw = UKismetMathLibrary::RadiansToDegrees(ShootAngle) - 180;
 				ShootRotator.Yaw = ShootYaw;
 				
-				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, GetActorLocation(), FRotator(-ShootRotation.Pitch, ShootRotator.Yaw, 0.f));
+				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, Muzzle->GetComponentLocation(), FRotator(-ShootRotation.Pitch, ShootRotator.Yaw, 0.f));
+                //FString stri = SpawnedBullet->GetActorLocation().ToString();
+				//Debugging::PrintString(stri);
 				if(SpawnedBullet)
 				{
 					SpawnedBullet->SetDamage(Damage);

@@ -4,9 +4,9 @@
 #include "RangedAIBullet.h"
 
 #include "Chaos/Interface/SQTypes.h"
-#include  "Engine/DamageEvents.h"
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/Utility/Debugging.h"
 
 // Sets default values
 ARangedAIBullet::ARangedAIBullet()
@@ -16,6 +16,7 @@ ARangedAIBullet::ARangedAIBullet()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ARangedAIBullet::HandleBeginOverlap);
+	Sphere->OnComponentEndOverlap.AddDynamic(this, &ARangedAIBullet::HandeEndOverlap);
 	RootComponent = Sphere;
 }
 
@@ -29,21 +30,27 @@ void ARangedAIBullet::BeginPlay()
 void ARangedAIBullet::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Log, TEXT("I have hit an object"))
+	Debugging::PrintString("Hit an object");
 	APrimaryPlayer* Player = Cast<APrimaryPlayer>(OtherActor);
 	if (Player)
 	{
-		UE_LOG(LogTemp, Log, TEXT("I have hit the player"))
+		Debugging::PrintString("Hit player");
 		Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
 	}
+	
 	Destroy();
+}
+
+void ARangedAIBullet::HandeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	
 }
 
 // Called every frame
 void ARangedAIBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
 	AddActorLocalOffset(FVector::ForwardVector * Speed * DeltaTime);
 }
 
