@@ -34,5 +34,5 @@ public:
 
 protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
-		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults);
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults) override;
 };
