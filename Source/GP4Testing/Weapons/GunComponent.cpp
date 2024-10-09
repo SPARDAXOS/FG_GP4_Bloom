@@ -170,13 +170,26 @@ void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		return;
 	}
 
-	Character->GetWeaponManagementSystem().AcquireWeapon(TypeOfWeapon, this);
+	TMap<WeaponType, UGunComponent*> AcquiredWeapons = Character->GetWeaponManagementSystem().GetAcquiredWeapons();
+	bool HasWeapon = false;
+	for (auto Weapon : AcquiredWeapons)
+	{
+		if (Weapon.Key == TypeOfWeapon)
+		{
+			HasWeapon = true;
+		}
+	}
 
-	Magazine = MaxMagazine;
-	Ammo = MaxAmmo;
+	if (!HasWeapon)
+	{
+		Character->GetWeaponManagementSystem().AcquireWeapon(TypeOfWeapon, this);
 
-	// Attach to player mesh
-	USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
-	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+		Magazine = MaxMagazine;
+		Ammo = MaxAmmo;
+
+		// Attach to player mesh
+		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+	}
 }

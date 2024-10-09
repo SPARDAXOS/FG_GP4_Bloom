@@ -42,7 +42,12 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	checkf(jump, TEXT("jump action is invalid!"));
 	checkf(shoot, TEXT("shoot action is invalid!"));
 	checkf(pauseToggle, TEXT("pauseToggle action is invalid!"));
-	checkf(reload, TEXT("pauseToggle action is invalid!"));
+	checkf(reload, TEXT("reload action is invalid!"));
+	checkf(switchNextWeapon, TEXT("switchNextWeapon action is invalid!"));
+	checkf(switchPreviousWeapon, TEXT("switchPreviousWeapon action is invalid!"));
+	checkf(weaponSlot1, TEXT("weaponSlot1 action is invalid!"));
+	checkf(weaponSlot2, TEXT("weaponSlot2 action is invalid!"));
+	checkf(weaponSlot3, TEXT("weaponSlot3 action is invalid!"));
 
 	enhancedInputComponentRef->BindAction(movement, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleMovement);
 	enhancedInputComponentRef->BindAction(look, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleLook);
@@ -50,6 +55,11 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	enhancedInputComponentRef->BindAction(shoot, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleShoot);
 	enhancedInputComponentRef->BindAction(pauseToggle, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandlePause);
 	enhancedInputComponentRef->BindAction(reload, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleReload);
+	enhancedInputComponentRef->BindAction(switchNextWeapon, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleSwitchNextWeapon);
+	enhancedInputComponentRef->BindAction(switchPreviousWeapon, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleSwitchPreviousWeapon);
+	enhancedInputComponentRef->BindAction(weaponSlot1, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleWeaponSlot1);
+	enhancedInputComponentRef->BindAction(weaponSlot2, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleWeaponSlot2);
+	enhancedInputComponentRef->BindAction(weaponSlot3, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleWeaponSlot3);
 
 }
 
@@ -161,4 +171,34 @@ void APrimaryPlayerController::HandleReload() {
 		return;
 
 	primaryPlayerRef->HandleReloadInput();
+}
+void APrimaryPlayerController::HandleSwitchNextWeapon() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+	
+	primaryPlayerRef->HandleSwitchNextWeaponInput();
+}
+void APrimaryPlayerController::HandleSwitchPreviousWeapon() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleSwitchPreviousWeaponInput();
+}
+void APrimaryPlayerController::HandleWeaponSlot1() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleWeaponSlot1Input();
+}
+void APrimaryPlayerController::HandleWeaponSlot2() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleWeaponSlot2Input();
+}
+void APrimaryPlayerController::HandleWeaponSlot3() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleWeaponSlot3Input();
 }
