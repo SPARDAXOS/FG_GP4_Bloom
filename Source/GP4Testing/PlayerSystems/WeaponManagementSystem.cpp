@@ -44,20 +44,36 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	UE_LOG(LogTemp, Warning, TEXT("Next"));
 
-	if (AcquiredWeapons.Num() > 1)
+	/*if (AcquiredWeapons.Num() > 1)
 	{
-		
-	}
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+	}*/
 
 	return true;
 }
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	UE_LOG(LogTemp, Warning, TEXT("Prev"));
 
-	if (AcquiredWeapons.Num() > 1)
+	/*if (AcquiredWeapons.Num() > 1)
 	{
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
 
-	}
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+	}*/
 
 	return true;
 }
@@ -184,7 +200,7 @@ float AWeaponManagementSystem::GetAmmo()
 	return Ammo;
 }
 
-void AWeaponManagementSystem::SetAmmo(float newAmmo)
+bool AWeaponManagementSystem::SetAmmo(float newAmmo)
 {
 	UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 	if (Weapon != nullptr)
@@ -196,13 +212,16 @@ void AWeaponManagementSystem::SetAmmo(float newAmmo)
 				float NoAdd = (Weapon->Ammo + newAmmo) - Weapon->MaxAmmo;
 				float Add = newAmmo - NoAdd;
 				Weapon->Ammo += Add;
+				return true;
 			}
 			else
 			{
 				Weapon->Ammo += newAmmo;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 float AWeaponManagementSystem::GetMaxMagazine()
