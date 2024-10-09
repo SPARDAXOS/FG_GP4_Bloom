@@ -5,6 +5,8 @@
 
 #include "RangedAIBullet.h"
 #include "Engine/DamageEvents.h"
+#include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/KismetMathLibrary.h"
 
 void ARangedAI::Attack()
@@ -41,4 +43,31 @@ void ARangedAI::Attack()
 void ARangedAI::ResetAttack()
 {
 	Super::ResetAttack();
+}
+
+void ARangedAI::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	Blackboard->SetValueAsBool("bCanSeePlayer", bCanSeePlayer());
+}
+
+bool ARangedAI::bCanSeePlayer()
+{
+	FCollisionQueryParams TraceParams;
+	FHitResult Hit;
+	GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), Player->GetActorLocation(), ECC_Visibility, TraceParams);
+
+	if (Hit.GetActor())
+	{
+		APrimaryPlayer* HitPlayer = Cast<APrimaryPlayer>(Hit.GetActor());
+		if(HitPlayer)
+		{
+			float distance = FVector::Distance(GetActorLocation(), HitPlayer->GetActorLocation());
+			if(distance <= VisionRange)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
