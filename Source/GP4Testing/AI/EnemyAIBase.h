@@ -19,7 +19,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	FHitResult GetHitDetectionResult() const;
+	FHitResult GetHitDetectionResult(FVector Location) const;
 
 public:	
 	// Called every frame
@@ -57,9 +57,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	ACharacter* Player = nullptr;
-
-	UPROPERTY(EditDefaultsOnly)
-	float JumpForce = 10.f;
 
 	UBlackboardComponent* Blackboard = nullptr;
 
