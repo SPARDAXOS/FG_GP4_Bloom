@@ -55,6 +55,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float AttackCooldown = 1;
 
+	UPROPERTY(EditDefaultsOnly)
+	float JumpForce = 2;
+
 	UPROPERTY(VisibleAnywhere)
 	ACharacter* Player = nullptr;
 

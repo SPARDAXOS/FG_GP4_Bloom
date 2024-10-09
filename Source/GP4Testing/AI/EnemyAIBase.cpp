@@ -86,6 +86,7 @@ void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 	Debugging::PrintString("Trying to jump");
 	FVector OutLaunch;
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(),  OutLaunch, GetActorLocation(), Destination);
+	OutLaunch.Z = OutLaunch.Z * JumpForce;
 	LaunchCharacter(OutLaunch, true, true);
 }
 
