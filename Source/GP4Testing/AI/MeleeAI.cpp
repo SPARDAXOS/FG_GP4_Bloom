@@ -2,6 +2,8 @@
 
 
 #include "MeleeAI.h"
+
+#include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
@@ -12,7 +14,7 @@ void AMeleeAI::Attack()
 	if(bCanAttack)
 	{
 		Super::Attack();
-		FHitResult Hit = GetHitDetectionResult();
+		FHitResult Hit = GetHitDetectionResult(GetCapsuleComponent()->GetComponentLocation());
 		if (Hit.bBlockingHit)
 		{
 			if(Hit.GetActor()->ActorHasTag("Player")) // CHECK IF ENGINE TRACE HAS BEEN ADDED IF THIS DOESN'T FUNCTION
