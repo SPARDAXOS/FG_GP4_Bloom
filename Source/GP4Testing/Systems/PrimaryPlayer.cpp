@@ -94,14 +94,29 @@ void APrimaryPlayer::HandlePauseInput() noexcept {
 	else
 		primaryGameModeRef->UnpauseGame();
 }
-
-void APrimaryPlayer::HandleReloadInput() noexcept
-{
+void APrimaryPlayer::HandleReloadInput() noexcept {
 	if (!weaponManagementSystemRef)
 		return;
 
 	weaponManagementSystemRef->ReloadWeapon();
 }
+void APrimaryPlayer::HandleSwitchNextWeaponInput() noexcept {
+
+}
+void APrimaryPlayer::HandleSwitchPreviousWeaponInput() noexcept {
+
+}
+void APrimaryPlayer::HandleWeaponSlot1Input() noexcept {
+
+}
+void APrimaryPlayer::HandleWeaponSlot2Input() noexcept {
+
+}
+void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
+
+}
+
+
 
 void APrimaryPlayer::CreatePlayerSystems() {
 	checkf(playerMovementSystemAsset, TEXT("PlayerMovementSystemAsset ref is null!"));

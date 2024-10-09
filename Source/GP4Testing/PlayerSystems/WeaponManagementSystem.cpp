@@ -9,13 +9,20 @@ bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
 	{
 		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 
-		if (input)
+		if (EquippedWeapon == WeaponType::MACHINE_GUN)
 		{
-			Weapon->StartFire();
+			if (input)
+			{
+				Weapon->StartFire();
+			}
+			else
+			{
+				Weapon->StopFire();
+			}
 		}
 		else
 		{
-			Weapon->StopFire();
+			Weapon->StartFire();
 		}
 	}
 
@@ -35,36 +42,24 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 
 
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
-	/*UGunComponent* CurrentWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+	UGunComponent* CurrentWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
 	CurrentWeapon->SetVisibility(false);
 	
 	for (auto Weapon = AcquiredWeapons.CreateIterator(); Weapon; ++Weapon)
 	{
 		if (Weapon->Key == EquippedWeapon)
 		{
-			++Weapon;
-			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(Weapon->Key);
-			NextWeapon->SetVisibility(true);
-			EquippedWeapon = Weapon->Key;
+			auto NextWeapon = ++Weapon;
+			NextWeapon->Value->SetVisibility(true);
+			EquippedWeapon = NextWeapon->Key;
 		}
-	}*/
+	}
 
 	return true;
 }
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
-	/*UGunComponent* CurrentWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
-	CurrentWeapon->SetVisibility(false);
+	
 
-	for (auto Weapon = AcquiredWeapons.CreateIterator(); Weapon; ++Weapon)
-	{
-		if (Weapon->Key == EquippedWeapon)
-		{
-			++Weapon;
-			UGunComponent * NextWeapon = AcquiredWeapons.FindRef(Weapon->Key);
-			NextWeapon->SetVisibility(true);
-			EquippedWeapon = Weapon->Key;
-		}
-	}*/
 
 	return true;
 }
@@ -99,6 +94,11 @@ UGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
 	return Weapon;
 }
 
+TMap<WeaponType, UGunComponent*> AWeaponManagementSystem::GetAcquiredWeapons()
+{
+	return AcquiredWeapons;
+}
+
 float AWeaponManagementSystem::GetMaxAmmo()
 {
 	UGunComponent* Weapon = nullptr;
@@ -121,6 +121,27 @@ float AWeaponManagementSystem::GetAmmo()
 		Ammo = Weapon->Ammo;
 	}
 	return Ammo;
+}
+
+void AWeaponManagementSystem::SetAmmo(float newAmmo)
+{
+	UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+	if (Weapon != nullptr)
+	{
+		if (Weapon->Ammo < Weapon->MaxAmmo)
+		{
+			if ((Weapon->Ammo + newAmmo) > Weapon->MaxAmmo)
+			{
+				float NoAdd = (Weapon->Ammo + newAmmo) - Weapon->MaxAmmo;
+				float Add = newAmmo - NoAdd;
+				Weapon->Ammo += Add;
+			}
+			else
+			{
+				Weapon->Ammo += newAmmo;
+			}
+		}
+	}
 }
 
 float AWeaponManagementSystem::GetMaxMagazine()

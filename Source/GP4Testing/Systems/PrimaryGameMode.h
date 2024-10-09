@@ -22,6 +22,8 @@ class APrimaryPlayer;
 class APrimaryPlayerController;
 class APrimaryHUD;
 
+class ALevelManagement;
+
 
 UCLASS(abstract)
 class GP4TESTING_API APrimaryGameMode : public AGameModeBase {
@@ -35,6 +37,13 @@ protected:
 	virtual void Tick(float deltaTime) override;
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	virtual void StartPlay() override;
+
+public:
+	inline APrimaryPlayer* GetPrimaryPlayer() const noexcept { return primaryPlayerRef; }
+	inline APrimaryPlayerController* GetPrimaryPlayerController() const noexcept { return primaryPlayerControllerRef; }
+	inline APrimaryHUD* GetPrimaryHUD() const noexcept { return primaryHUDRef; }
+
+	static inline ALevelManagement* GetLevelManagement() noexcept { return levelManagementRef; }
 
 public:
 	bool StartGame() noexcept;
@@ -71,6 +80,10 @@ private:
 	void CacheMainSystemsReferences() noexcept;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
+	TSubclassOf<ALevelManagement> levelManagementClass;
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|LevelManagement", meta = (AllowPrivateAcces = "true"))
 	TArray<FName> loadedLevelsOnGameStart;
 
@@ -92,5 +105,7 @@ private:
 	TObjectPtr<APrimaryPlayerController> primaryPlayerControllerRef = nullptr;
 	TObjectPtr<APrimaryHUD> primaryHUDRef = nullptr;
 
+private:
+	inline static TObjectPtr<ALevelManagement> levelManagementRef = nullptr;
 
 };

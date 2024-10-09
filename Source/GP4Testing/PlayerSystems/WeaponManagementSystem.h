@@ -34,9 +34,12 @@ public:
 
 public:
 	UGunComponent* GetCurrentWeapon();
+	TMap<WeaponType, UGunComponent*> GetAcquiredWeapons();
 
 	float GetMaxAmmo();
 	float GetAmmo();
+
+	void SetAmmo(float newAmmo);
 
 	float GetMaxMagazine();
 	float GetLoadedMagazine();
