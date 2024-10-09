@@ -16,4 +16,6 @@ class GP4TESTING_API AMeleeAI : public AEnemyAIBase
 	
 	virtual void Attack() override;
 	virtual void ResetAttack() override;
+	virtual void Tick(float DeltaSeconds) override;
+	bool bCanAttackPlayer();
 };

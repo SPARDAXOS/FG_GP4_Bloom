@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ResetAttack();
 
+	UFUNCTION(BlueprintCallable)
+	void NavLinkJump(const FVector& Destination);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanAttack = true;
 
@@ -54,6 +57,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	ACharacter* Player = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	float JumpForce = 10.f;
 
 	UBlackboardComponent* Blackboard = nullptr;
 

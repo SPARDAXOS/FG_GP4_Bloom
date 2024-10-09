@@ -37,6 +37,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void StartFire();
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StopFire();
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "Grenade Launcher")
 	TSubclassOf<AExplosiveProjectile> ProjectileClass;
 
@@ -82,8 +86,6 @@ private:
 	FTimerHandle TimerHandle;
 
 	void Fire();
-
-	void StopFire();
 
 	bool bFiredWeapon = false;
 };

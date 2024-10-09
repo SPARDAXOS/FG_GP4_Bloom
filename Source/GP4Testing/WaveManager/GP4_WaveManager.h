@@ -24,7 +24,6 @@ protected:
 
 	void SpawnAIWave();
 
-	void OnAIKilled();
 
 	void StartNextWave();
 
@@ -34,13 +33,22 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void OnAIKilled();
+
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
 	ACharacter* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
-	TSubclassOf<ACharacter> AIClassToSpawn;
+	TArray<TSubclassOf<ACharacter>> AIClassToSpawn;
+	
 	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
 	TArray<AActor*> SpawnPoints;
+
+	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
+	int SpawnAmount;
+
+	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
+	float timeBetweenWaves;
 
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int currentWave;
@@ -50,8 +58,7 @@ public:
 	int enemiesAlive;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int totalEnemiesKilled;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	float timeBetweenWaves = 5.0f;
+	
 
 	FTimerHandle waveDelayTimer;
 };
