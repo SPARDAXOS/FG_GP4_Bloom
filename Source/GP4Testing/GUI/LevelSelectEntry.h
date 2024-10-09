@@ -8,10 +8,11 @@
 
 class ULevelSelectMenuWidget;
 class UImage;
+class UTextBlock;
 
 class UCanvasPanel;
 class UCustomButton;
-struct FLevelSelectEntrySpec;
+class ULevelSelectEntrySpec;
 
 
 UCLASS(Abstract)
@@ -19,26 +20,27 @@ class ULevelSelectEntry : public UMenuWidgetBase, public IUserObjectListEntry {
 	GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
-public:
-	void SetSplashImage(UMaterialInterface& splash) noexcept;
-
-public:
-	void SetLevelSelectMenuReference(ULevelSelectMenuWidget& reference) noexcept { levelSelectMenuWidgetRef = &reference; }
-	void SetTargetLevelSelectEntrySpec(FLevelSelectEntrySpec* spec) noexcept { targetSpec = spec; }
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+	virtual void NativeOnItemSelectionChanged(bool selected) override;
 
 private:
-	UFUNCTION()
-	void SelectButtonClicked();
+	void SetSplashImage(UMaterialInterface& splash) noexcept;
+	void SetNameText(const FName& name) noexcept;
+	void SetTargetLevelSelectEntrySpec(ULevelSelectEntrySpec* spec) noexcept { targetSpec = spec; }
+	void SetLevelSelectMenuReference(ULevelSelectMenuWidget& reference) noexcept { levelSelectMenuWidgetRef = &reference; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UCanvasPanel> mainCanvas = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> splashImage = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UTextBlock> nameText = nullptr;
+
 protected:
-	FLevelSelectEntrySpec* targetSpec = nullptr;
+	ULevelSelectEntrySpec* targetSpec = nullptr;
 
 private:
 	ULevelSelectMenuWidget* levelSelectMenuWidgetRef = nullptr;
