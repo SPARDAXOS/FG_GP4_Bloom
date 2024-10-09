@@ -101,19 +101,34 @@ void APrimaryPlayer::HandleReloadInput() noexcept {
 	weaponManagementSystemRef->ReloadWeapon();
 }
 void APrimaryPlayer::HandleSwitchNextWeaponInput() noexcept {
+	if (!weaponManagementSystemRef)
+		return;
 
+	weaponManagementSystemRef->SwitchNextWeapon();
 }
 void APrimaryPlayer::HandleSwitchPreviousWeaponInput() noexcept {
+	if (!weaponManagementSystemRef)
+		return;
 
+	weaponManagementSystemRef->SwitchPreviousWeapon();
 }
 void APrimaryPlayer::HandleWeaponSlot1Input() noexcept {
+	if (!weaponManagementSystemRef)
+		return;
 
+	weaponManagementSystemRef->WeaponSlot1();
 }
 void APrimaryPlayer::HandleWeaponSlot2Input() noexcept {
+	if (!weaponManagementSystemRef)
+		return;
 
+	weaponManagementSystemRef->WeaponSlot2();
 }
 void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
+	if (!weaponManagementSystemRef)
+		return;
 
+	weaponManagementSystemRef->WeaponSlot3();
 }
 
 
