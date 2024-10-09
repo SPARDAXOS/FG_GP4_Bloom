@@ -5,6 +5,8 @@
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GP4Testing/Utility/Debugging.h"
+#include "GP4Testing/WaveManager/GP4_WaveManager.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -55,6 +57,12 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AEnemyAIBase::Die()
 {
+	AGP4_WaveManager* Wave;
+	Wave = Cast<AGP4_WaveManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGP4_WaveManager::StaticClass()));
+	if (Wave)
+	{
+		Wave->OnAIKilled();
+	}
 	Destroy();
 }
 
@@ -70,6 +78,14 @@ void AEnemyAIBase::ResetAttack()
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 	bCanPlayAttackAnim = false;
 	bCanAttack = true;
+}
+
+void AEnemyAIBase::NavLinkJump(const FVector& Destination)
+{
+	Debugging::PrintString("Trying to jump");
+	FVector OutLaunch;
+	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(),  OutLaunch, GetActorLocation(), Destination);
+	LaunchCharacter(OutLaunch, true, true);
 }
 
 
