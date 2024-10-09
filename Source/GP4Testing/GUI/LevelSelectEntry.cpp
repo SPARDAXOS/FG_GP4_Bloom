@@ -3,39 +3,53 @@
 #include "GP4Testing/GUI/CustomButton.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
+#include "Components/CanvasPanel.h"
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryHUD.h"
 #include "GP4Testing/GUI/LevelSelectMenuWidget.h"
+#include "GP4Testing/DataAssets/LevelSelectEntrySpec.h"
 #include "GP4Testing/Utility/Debugging.h"
 
 
 
-void ULevelSelectEntry::NativeOnInitialized() {
-	UMenuWidgetBase::NativeOnInitialized();
 
-	Debugging::CustomError("CREATE!");
-	//selectButton->button->OnClicked.AddDynamic(this, &ULevelSelectEntry::SelectButtonClicked);
-}
-void ULevelSelectEntry::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
-	UMenuWidgetBase::NativeTick(MyGeometry, InDeltaTime);
+void ULevelSelectEntry::NativeOnListItemObjectSet(UObject* ListItemObject) {
+	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
 
-
-	if (targetSpec) {
-		SetSplashImage(*targetSpec->splash);
-		Debugging::PrintString("Set!");
+	ULevelSelectEntrySpec* spec = Cast<ULevelSelectEntrySpec>(ListItemObject);
+	if (!spec) {
+		Debugging::CustomError("TileView element does not inherit from ULevelSelectEntrySpec");
+		return;
 	}
+
+	SetTargetLevelSelectEntrySpec(spec);
+	SetNameText(spec->name);
+
+	if (!spec->splash)
+		Debugging::CustomWarning("ULevelSelectEntrySpec splash is invalid!");
+	else
+		SetSplashImage(*spec->splash); 
+
+	if (!spec->managingMenu)
+		Debugging::CustomWarning("ULevelSelectEntrySpec managingMenu is invalid!");
+	else
+		SetLevelSelectMenuReference(*spec->managingMenu);
+}
+void ULevelSelectEntry::NativeOnItemSelectionChanged(bool selected) {
+	IUserObjectListEntry::NativeOnItemSelectionChanged(selected);
+
+	if (selected && levelSelectMenuWidgetRef && targetSpec)
+		levelSelectMenuWidgetRef->SetSelectedLevelEntrySpec(targetSpec);
+	else
+		Debugging::CustomError("Failed to set level selection!");
 }
 
 
 void ULevelSelectEntry::SetSplashImage(UMaterialInterface& splash) noexcept {
 	splashImage->SetBrushFromMaterial(&splash);
-
-
-	Debugging::PrintString("Edited splash images!");
 }
-
-
-void ULevelSelectEntry::SelectButtonClicked() {
-	levelSelectMenuWidgetRef->SetSelectedLevelEntry(this);
+void ULevelSelectEntry::SetNameText(const FName& name) noexcept {
+	nameText->SetText(FText::FromName(name));
 }
