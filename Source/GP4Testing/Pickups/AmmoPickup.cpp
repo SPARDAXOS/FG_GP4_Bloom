@@ -3,6 +3,7 @@
 
 #include "GP4Testing/Pickups/AmmoPickup.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 
 // Sets default values
 AAmmoPickup::AAmmoPickup()
@@ -36,7 +37,12 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (!playerRef)
 			return;
 
-		UGunComponent* gunRef = Cast<UGunComponent>(OtherActor);
+		AWeaponManagementSystem* gunRef = &playerRef->GetWeaponManagementSystem();
+		if (!gunRef)
+			return;
+		
+
+		gunRef->SetAmmo(10);
 
 		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("its AMMO"));

@@ -42,15 +42,33 @@ void AGP4_WaveManager::BeginPlay()
 void AGP4_WaveManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	enemySpawnTimer -= DeltaTime;
+
+	if (enemySpawned < enemyToSpawn)
+	{
+		enemySpawnTimer -= DeltaTime;
+
+		if (enemySpawnTimer <= 0.0f)
+		{
+			enemySpawnTimer = 2.0f;
+
+			SpawnAI();
+
+			enemySpawned++;
+		}
+	}
 }
   
 void AGP4_WaveManager::StartWave()
 {
 	enemiesAlive = 0;
+	enemySpawned = 0;
 	totalEnemiesKilled = 0;
 
-	enemyToSpawn = 10 + (currentWave - 1) * SpawnAmount;
-	SpawnAIWave();
+	enemyToSpawn = 10 + (currentWave * SpawnAmount);
+	enemySpawnTimer = 2.0f;
+	//SpawnAIWave();
 }
 
 void AGP4_WaveManager::SpawnAIWave()
@@ -82,7 +100,6 @@ void AGP4_WaveManager::SpawnAI()
 		FActorSpawnParameters spawnParam;
 		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(charactersToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
-
 
 		if (spawnAI)
 		{
