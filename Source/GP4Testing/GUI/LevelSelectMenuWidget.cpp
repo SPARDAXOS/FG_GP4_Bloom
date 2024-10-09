@@ -7,6 +7,7 @@
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryHUD.h"
 #include "GP4Testing/GUI/LevelSelectEntry.h"
+#include "GP4Testing/DataAssets/LevelSelectEntrySpec.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -19,12 +20,36 @@ void ULevelSelectMenuWidget::NativeOnInitialized() {
 	returnButton->button->OnClicked.AddDynamic(this, &ULevelSelectMenuWidget::ReturnButtonClicked);
 
 	CreateLevelSelectEntries();
+	startButton->SetIsEnabled(false);
+}
+void ULevelSelectMenuWidget::SetVisibilityState(ESlateVisibility state) noexcept {
+	UMenuWidgetBase::SetVisibilityState(state);
+
+	if (state == ESlateVisibility::Visible) {
+		if (selectedLevelEntrySpec)
+			startButton->SetIsEnabled(true);
+		else
+			startButton->SetIsEnabled(false);
+	}
+	else if (state == ESlateVisibility::Collapsed)
+		selectedLevelEntrySpec = nullptr;
+}
+
+
+void ULevelSelectMenuWidget::SetSelectedLevelEntrySpec(ULevelSelectEntrySpec* entry) noexcept {
+	selectedLevelEntrySpec = entry; 
+	if (selectedLevelEntrySpec)
+		startButton->SetIsEnabled(true);
+	else
+		startButton->SetIsEnabled(false);
 }
 
 
 void ULevelSelectMenuWidget::StartButtonClicked() {
-	//?? StartGame(LevelData)
-	primaryGameModeRef->StartGame();
+	if (selectedLevelEntrySpec)
+		primaryGameModeRef->StartGame(*selectedLevelEntrySpec);
+	else
+		Debugging::CustomError("Attempted to start the game with no level selected!");
 }
 void ULevelSelectMenuWidget::ReturnButtonClicked() {
 	primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
@@ -33,22 +58,8 @@ void ULevelSelectMenuWidget::ReturnButtonClicked() {
 
 
 void ULevelSelectMenuWidget::CreateLevelSelectEntries() noexcept {
-	if (!levelSelectEntryClass) {
-		Debugging::CustomError("Failed to create level select entries due to levelSelectEntryClass being invalid!");
-		return;
-	}
-
-	for (auto& entry : levelEntriesSpecs) {
-		ULevelSelectEntry* newItem = CreateWidget<ULevelSelectEntry>(GetWorld(), levelSelectEntryClass);
-		tileView->AddItem(newItem);
-		ULevelSelectEntry* item = Cast<ULevelSelectEntry>(tileView->GetItemAt(tileView->GetNumItems() - 1));
-
-		item->SetLevelSelectMenuReference(*this);
-		item->SetTargetLevelSelectEntrySpec(&entry);
-		item->SetSplashImage(*entry.splash);
-		//item->AddToViewport(0);
-
-		createdLevelEntries.Add(item);
-
+	for (auto& entry : levelSelectEntrySpecAssets) {
+		entry->managingMenu = this;
+		tileView->AddItem(entry);
 	}
 }

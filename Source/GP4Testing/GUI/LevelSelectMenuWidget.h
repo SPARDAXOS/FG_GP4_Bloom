@@ -8,29 +8,12 @@ class UCanvasPanel;
 class UCustomButton;
 class UImage;
 class ULevelSelectEntry;
+class ULevelSelectEntrySpec;
 class UTileView;
 
 
 
-USTRUCT(BlueprintType)
-struct FLevelSelectEntrySpec {
 
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, Category = "EntryData")
-	FName key;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EntryData")
-	FName name;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EntryData")
-	UMaterialInterface* splash;
-
-	FLevelSelectEntrySpec() 
-		:	key("None"), name("None"), splash(nullptr)
-	{
-	}
-};
 
 
 UCLASS(Abstract)
@@ -39,9 +22,10 @@ class ULevelSelectMenuWidget : public UMenuWidgetBase {
 
 public:
 	virtual void NativeOnInitialized() override;
+	virtual void SetVisibilityState(ESlateVisibility state) noexcept;
 
 public:
-	inline void SetSelectedLevelEntry(ULevelSelectEntry* entry) noexcept { selectedLevelEntry = entry; }
+	void SetSelectedLevelEntrySpec(ULevelSelectEntrySpec* entry) noexcept;
 
 private:
 	UFUNCTION()
@@ -71,14 +55,10 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<ULevelSelectEntry> levelSelectEntryClass = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TArray<FLevelSelectEntrySpec> levelEntriesSpecs;
+	TArray<ULevelSelectEntrySpec*> levelSelectEntrySpecAssets;
 	
 	
 	
-private:
-	TArray<ULevelSelectEntry*> createdLevelEntries;
-	ULevelSelectEntry* selectedLevelEntry = nullptr;
+protected:
+	ULevelSelectEntrySpec* selectedLevelEntrySpec = nullptr;
 };

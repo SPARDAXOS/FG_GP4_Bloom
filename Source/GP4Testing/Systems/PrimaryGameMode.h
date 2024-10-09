@@ -23,6 +23,7 @@ class APrimaryPlayerController;
 class APrimaryHUD;
 
 class ALevelManagement;
+class ULevelSelectEntrySpec;
 
 
 UCLASS(abstract)
@@ -46,7 +47,7 @@ public:
 	static inline ALevelManagement* GetLevelManagement() noexcept { return levelManagementRef; }
 
 public:
-	bool StartGame() noexcept;
+	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
 	void EndGame() noexcept;
 	void QuitGame() noexcept;
 
@@ -99,6 +100,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	bool gamePaused = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	bool launchInDebugMode = false;
 
 private:
 	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
