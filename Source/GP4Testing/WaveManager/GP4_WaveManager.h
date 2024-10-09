@@ -55,9 +55,13 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int enemyToSpawn;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
+	int enemySpawned;
+	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int enemiesAlive;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int totalEnemiesKilled;
+	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
+	float enemySpawnTimer;
 	
 
 	FTimerHandle waveDelayTimer;
