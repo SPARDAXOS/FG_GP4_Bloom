@@ -14,6 +14,7 @@ UCLASS()
 class GP4TESTING_API ARangedAI : public AEnemyAIBase
 {
 	GENERATED_BODY()
+	ARangedAI();
 	
 	virtual void Attack() override;
 	virtual void ResetAttack() override;
@@ -25,4 +26,7 @@ class GP4TESTING_API ARangedAI : public AEnemyAIBase
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ARangedAIBullet> Bullet;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* Muzzle = nullptr;
 };

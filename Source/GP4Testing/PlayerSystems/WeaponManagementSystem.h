@@ -23,6 +23,10 @@ public:
 	bool SwitchNextWeapon() noexcept;
 	bool SwitchPreviousWeapon() noexcept;
 
+	bool WeaponSlot1() noexcept;
+	bool WeaponSlot2() noexcept;
+	bool WeaponSlot3() noexcept;
+
 public:
 	bool AcquireWeapon(WeaponType type, UGunComponent* weapon) noexcept;
 
@@ -39,7 +43,7 @@ public:
 	float GetMaxAmmo();
 	float GetAmmo();
 
-	void SetAmmo(float newAmmo);
+	bool SetAmmo(float newAmmo);
 
 	float GetMaxMagazine();
 	float GetLoadedMagazine();
