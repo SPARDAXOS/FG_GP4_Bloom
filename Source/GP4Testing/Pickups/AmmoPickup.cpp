@@ -36,7 +36,8 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (!playerRef)
 			return;
 
-		//playerRef->
+		UGunComponent* gunRef = Cast<UGunComponent>(OtherActor);
+
 		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("its AMMO"));
 	}
