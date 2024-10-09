@@ -42,31 +42,92 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 
 
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
-	UGunComponent* CurrentWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
-	CurrentWeapon->SetVisibility(false);
-	
-	for (auto Weapon = AcquiredWeapons.CreateIterator(); Weapon; ++Weapon)
+	UE_LOG(LogTemp, Warning, TEXT("Next"));
+
+	if (AcquiredWeapons.Num() > 1)
 	{
-		if (Weapon->Key == EquippedWeapon)
-		{
-			auto NextWeapon = ++Weapon;
-			NextWeapon->Value->SetVisibility(true);
-			EquippedWeapon = NextWeapon->Key;
-		}
+		
 	}
 
 	return true;
 }
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
-	
+	UE_LOG(LogTemp, Warning, TEXT("Prev"));
 
+	if (AcquiredWeapons.Num() > 1)
+	{
+
+	}
 
 	return true;
 }
 
+bool AWeaponManagementSystem::WeaponSlot1() noexcept
+{
+	if (AcquiredWeapons.Num() > 0)
+	{
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[0]);
+		NextWeapon->SetVisibility(true);
+		EquippedWeapon = weapons[0];
+	}
+	
+	return false;
+}
+
+bool AWeaponManagementSystem::WeaponSlot2() noexcept
+{
+	if (AcquiredWeapons.Num() > 1)
+	{
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[1]);
+		NextWeapon->SetVisibility(true);
+		EquippedWeapon = weapons[1];
+	}
+	
+	return false;
+}
+
+bool AWeaponManagementSystem::WeaponSlot3() noexcept
+{
+	if (AcquiredWeapons.Num() > 2)
+	{
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[2]);
+		NextWeapon->SetVisibility(true);
+		EquippedWeapon = weapons[2];
+	}
+	
+	return false;
+}
+
 
 bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, UGunComponent* weapon) noexcept {
-	if (AcquiredWeapons.Num() > 0)
+	if (AcquiredWeapons.Num() >= 1)
 	{
 		// Hide current weapon
 		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
