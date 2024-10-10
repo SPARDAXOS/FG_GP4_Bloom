@@ -2,6 +2,7 @@
 #include "GP4Testing/PlayerSystems/PlayerMovementSystem.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 
 void APlayerMovementSystem::UpdateMovement(FVector2D axis) noexcept {
@@ -29,18 +30,15 @@ void APlayerMovementSystem::Dash() noexcept
 {
 	if (bCanDash && primaryPlayerRef)
 	{
-		FVector DashDir = primaryPlayerRef->GetLastMovementInputVector().GetSafeNormal();
+		FVector DashDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 		FVector DashVel = DashDir * DashStrength;
 		primaryPlayerRef->LaunchCharacter(DashVel, true, true);
 
 		bCanDash = false;
 
-		// Stop dash after duration
+
 		GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerMovementSystem::StopDash, DashDuration, false);
-
-		// Reset dash after cooldown
 		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &APlayerMovementSystem::ResetDash, DashCooldown, false);
-
 	}
 }
 
