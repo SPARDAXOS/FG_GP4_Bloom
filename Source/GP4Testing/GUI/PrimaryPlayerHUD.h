@@ -2,7 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "GP4Testing/Systems/Entity.h"
 
 #include "PrimaryPlayerHUD.generated.h"
@@ -25,6 +26,7 @@ public:
 public:
 	virtual void SetVisibilityState(ESlateVisibility state) noexcept;
 	virtual void SetWidgetOpacity(float value) noexcept;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
 	inline void SetPrimaryPlayerReference(APrimaryPlayer& reference) noexcept { primaryPlayerRef = &reference; }
@@ -33,6 +35,12 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> mainCanvas = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UProgressBar> HealthBar = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UTextBlock> AmmoText = nullptr;
 
 protected:
 	ESlateVisibility visible;
