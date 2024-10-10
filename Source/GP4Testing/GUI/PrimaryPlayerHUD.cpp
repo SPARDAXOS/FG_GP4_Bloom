@@ -31,7 +31,18 @@ void UPrimaryPlayerHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	float PercentToShow = (primaryPlayerRef->GetPlayerHealthSystem().HealthComponent->CurrentHealth / primaryPlayerRef->GetPlayerHealthSystem().HealthComponent->MaxHealth);
 	HealthBar->SetPercent(PercentToShow);
 	//Ammo counter
-	AmmoText->Text = primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Ammo
+	if (primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon())
+	{
+		FString CurrentAmmoString = FString::SanitizeFloat(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Magazine);
+		FString TotalAmmoString = FString::SanitizeFloat(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Ammo);
+		FText TextToDisplay = FText::FromString(CurrentAmmoString+"/"+TotalAmmoString);
+		AmmoText->SetText(TextToDisplay);
+	}
+	else
+	{
+		FText Text = FText::FromString("");
+		AmmoText->SetText(Text);
+	}
 }
 
 
