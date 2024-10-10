@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "WeaponTypes.h"
 #include <GP4Testing/Weapons/GunComponent.h>
+#include "PickupTypes.h"
 
 
 #include "WeaponManagementSystem.generated.h"
@@ -43,7 +44,7 @@ public:
 	float GetMaxAmmo();
 	float GetAmmo();
 
-	bool SetAmmo(float newAmmo);
+	bool AddAmmo(PickupType type, float newAmmo);
 
 	float GetMaxMagazine();
 	float GetLoadedMagazine();
