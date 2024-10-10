@@ -79,8 +79,10 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 	}
 	else {
 		//Main Menu Music
-		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
-		primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+		levelManagementRef->LoadLevel("MainMenu", [this]() {
+			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
+			primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+			});
 	}
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
@@ -144,12 +146,15 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 		primaryHUDRef->ClearViewport(); //No transition for now
 	}
 	else {
+		//This is so janky.
 		levelManagementRef->LoadLevel(spec.key, [this]() {
-			SetupPrePlayingState();
-			SetupPlayingState();
-			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-			primaryHUDRef->ClearViewport(); //No transition for now
-			gameStarted = true;
+			levelManagementRef->UnloadLevel("MainMenu", [this]() {
+				SetupPrePlayingState();
+				SetupPlayingState();
+				primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+				primaryHUDRef->ClearViewport(); //No transition for now
+				gameStarted = true;
+				});
 		});
 	}
 
