@@ -30,16 +30,42 @@ void APlayerMovementSystem::Dash() noexcept
 {
 	if (bCanDash && primaryPlayerRef)
 	{
+		StoredVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
+
 		FVector DashDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 		FVector DashVel = DashDir * DashStrength;
 		primaryPlayerRef->LaunchCharacter(DashVel, true, true);
+		
 
 		bCanDash = false;
-
+		bIsDashing = true;;
 
 		GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerMovementSystem::StopDash, DashDuration, false);
-		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &APlayerMovementSystem::ResetDash, DashCooldown, false);
+		
+		GetWorld()->GetTimerManager().SetTimer(DashCooldownTimerHandle, this, &APlayerMovementSystem::resetDash, DashCooldown, false);
 	}
+}
+
+void APlayerMovementSystem::Slide() noexcept
+{
+	if (bCanSlide && primaryPlayerRef) 
+	{
+		StoredVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
+
+		FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
+		FVector SlideVel = SlideDir * SlideSpeed;
+		primaryPlayerRef->LaunchCharacter(SlideVel, true, true);
+
+		bCanSlide = false;
+		bIsSliding = true;
+
+		GetWorld()->GetTimerManager().SetTimer(SlideTimerHandle, this, &APlayerMovementSystem::StopSlide, SlideDuration, false);
+
+		GetWorld()->GetTimerManager().SetTimer(SlideCooldownTimerHandle, this, &APlayerMovementSystem::resetSlide, SlideCooldown, false);
+
+	}
+
+
 }
 
 void APlayerMovementSystem::SetupStartingState() noexcept {
@@ -50,19 +76,39 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 	}
 }
 
+void APlayerMovementSystem::StopSlide()
+{
+	primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	
+	bIsSliding = false;
+}
+
 void APlayerMovementSystem::StopDash()
 {
-	if (primaryPlayerRef)
-	{
-		primaryPlayerRef->GetCharacterMovement()->Velocity = FVector::ZeroVector;
-	}
-
+	primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	
+	bIsDashing = false;
 }
 
-void APlayerMovementSystem::ResetDash()
+void APlayerMovementSystem::resetSlide()
 {
+	bCanSlide = true;
+}
 
+void APlayerMovementSystem::resetDash()
+{
 	bCanDash = true;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
