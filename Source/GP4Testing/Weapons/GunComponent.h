@@ -41,44 +41,44 @@ public:
 	void StopFire();
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Grenade Launcher")
+	UPROPERTY(EditDefaultsOnly, Category = "Grenade Launcher", meta = (EditCondition = "TypeOfWeapon == WeaponType::GRENADE_LAUNCHER", EditConditionHides))
 	TSubclassOf<AExplosiveProjectile> ProjectileClass;
 
-	UPROPERTY(EditAnywhere, Category = "Grenade Launcher")
+	UPROPERTY(EditAnywhere, Category = "Grenade Launcher", meta = (EditCondition = "TypeOfWeapon == WeaponType::GRENADE_LAUNCHER", EditConditionHides))
 	FVector GL_MuzzleOffset;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings");
 	WeaponType TypeOfWeapon = WeaponType::NONE;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float MaxMagazine;
+	int MaxMagazine;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float MaxAmmo;
+	int MaxAmmo;
 
-	float Magazine;
+	int Magazine;
 
-	float Ammo;
+	int Ammo;
 
 private:
 	APrimaryPlayer* Character;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float WeaponDamage = 20;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float LineTraceDistance = 20000.f;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float BulletSpread = 5.f;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float BulletsPerShot = 1.f;
 
-	UPROPERTY(EditAnywhere, Category = "Non Auto Weapon Settings")
+	UPROPERTY(EditAnywhere, Category = "Non Auto Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float NonAutoFireRate = 1.5f;
 
-	UPROPERTY(EditAnywhere, Category = "Auto Weapon Settings")
+	UPROPERTY(EditAnywhere, Category = "Auto Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN", EditConditionHides))
 	float AutoFireRate = 0.15f;
 
 	FVector GetBulletSpread(FVector ViewOrigin, FVector ViewForward);
