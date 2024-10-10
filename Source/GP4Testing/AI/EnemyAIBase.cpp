@@ -6,7 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
-#include "GP4Testing/WaveManager/GP4_WaveManager.h"
+//#include "GP4Testing/WaveManager/GP4_WaveManager.h"
 #include "GP4Testing/Weapons/GunComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -58,13 +58,13 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AEnemyAIBase::Die()
 {
-	AGP4_WaveManager* Wave;
-	Wave = Cast<AGP4_WaveManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGP4_WaveManager::StaticClass()));
-	if (Wave)
-	{
-		Wave->OnAIKilled();
-	}
-	Destroy();
+	//AWaveManager* Wave;
+	//Wave = Cast<AWaveManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWaveManager::StaticClass()));
+	//if (Wave)
+	//{
+	//	Wave->OnAIKilled();
+	//}
+	//Destroy();
 }
 
 void AEnemyAIBase::Attack()

@@ -1,27 +1,28 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GP4Testing/WaveManager/GP4_WaveManager.h"
+#include "GP4Testing/Systems/WaveManager.h"
+
+#include "GP4Testing/DataAssets/WaveManagerSpec.h"
+#include "GP4Testing/DataAssets/WaveSpec.h"
+
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "GP4Testing/AI/EnemyAIBase.h"
 #include "EngineGlobals.h"
 #include "AIController.h"
+
+
 #include <Kismet/GameplayStatics.h>
 
-// Sets default values
-AGP4_WaveManager::AGP4_WaveManager()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	bIsWaveInProgress = false;
-}
 
-// Called when the game starts or when spawned
-void AGP4_WaveManager::BeginPlay()
-{
-	Super::BeginPlay();
-	
+
+
+void AWaveManager::Start() {
+
+
+	bIsWaveInProgress = false;
+
+	// why is this necessary?
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
@@ -30,25 +31,21 @@ void AGP4_WaveManager::BeginPlay()
 	if (PlayerCharacter)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PLAYER IS NOT NULL"));
-		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
+		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AWaveManager::StartWave, timeBetweenWaves, false);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("PLAYER IS NULL"));
 		return;
-	}	
+	}
+
 }
+void AWaveManager::Update(float deltaTime) {
 
-// Called every frame
-void AGP4_WaveManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	enemySpawnTimer -= DeltaTime;
 
 	if (bIsWaveInProgress)
 	{
-		enemySpawnTimer -= DeltaTime;
+		enemySpawnTimer -= deltaTime;
 
 		if (enemySpawned < enemyToSpawn)
 		{
@@ -62,10 +59,21 @@ void AGP4_WaveManager::Tick(float DeltaTime)
 			}
 		}
 	}
-	
 }
+
+
+bool AWaveManager::StartWave(const UWaveManagerSpec& spec) {
+	//Copy it 
+	activeWaveManagerSpec = &spec;
+
+	//Copy current wave data and use it to keep track of current wave state.
+	activeWaveSpecData = spec.waves[0]->data;
+
+	return true;
+}
+
   
-void AGP4_WaveManager::StartWave()
+void AWaveManager::StartWave()
 {
 	bIsWaveInProgress = true;
 	enemiesAlive = 0;
@@ -78,7 +86,7 @@ void AGP4_WaveManager::StartWave()
 	//SpawnAIWave();
 }
 
-void AGP4_WaveManager::SpawnAIWave()
+void AWaveManager::SpawnAIWave()
 {
 	if (bIsWaveInProgress)
 	{
@@ -90,8 +98,8 @@ void AGP4_WaveManager::SpawnAIWave()
 	
 }
 
-void AGP4_WaveManager::SpawnAI()
-{
+void AWaveManager::SpawnAI() {
+
 	if (SpawnPoints.Num() > 0 && AIClassToSpawn.Num() > 0)
 	{
 		//randomize the spawn points
@@ -128,7 +136,7 @@ void AGP4_WaveManager::SpawnAI()
 	}
 }
 
-void AGP4_WaveManager::OnAIKilled()
+void AWaveManager::OnAIKilled()
 {
 	enemiesAlive--;
 	totalEnemiesKilled++;
@@ -140,7 +148,7 @@ void AGP4_WaveManager::OnAIKilled()
 	}
 }
 
-void AGP4_WaveManager::StartNextWave()
+void AWaveManager::StartNextWave()
 {
 	if (!bIsWaveInProgress)
 	{
@@ -150,6 +158,6 @@ void AGP4_WaveManager::StartNextWave()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Wave: %d"), currentWave));
 
-		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
+		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AWaveManager::StartWave, timeBetweenWaves, false);
 	}
 }
