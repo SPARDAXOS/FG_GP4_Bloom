@@ -42,7 +42,7 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 			return;
 		
 
-		/*gunRef->SetAmmo(10);*/
+		/*gunRef->AddAmmo(10);*/
 
 		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("its AMMO"));
