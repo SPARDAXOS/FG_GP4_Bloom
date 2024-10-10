@@ -40,6 +40,8 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	checkf(movement, TEXT("movement action is invalid!"));
 	checkf(look, TEXT("look action is invalid!"));
 	checkf(jump, TEXT("jump action is invalid!"));
+	checkf(dash, TEXT("dash action is invalid!"));
+	checkf(slide, TEXT("slide action is invalid!"));
 	checkf(shoot, TEXT("shoot action is invalid!"));
 	checkf(pauseToggle, TEXT("pauseToggle action is invalid!"));
 	checkf(reload, TEXT("reload action is invalid!"));
@@ -52,6 +54,8 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	enhancedInputComponentRef->BindAction(movement, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleMovement);
 	enhancedInputComponentRef->BindAction(look, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleLook);
 	enhancedInputComponentRef->BindAction(jump, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleJump);
+	enhancedInputComponentRef->BindAction(dash, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleDash);
+	enhancedInputComponentRef->BindAction(slide, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleSlide);
 	enhancedInputComponentRef->BindAction(shoot, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleShoot);
 	enhancedInputComponentRef->BindAction(pauseToggle, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandlePause);
 	enhancedInputComponentRef->BindAction(reload, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleReload);
@@ -152,6 +156,18 @@ void APrimaryPlayerController::HandleJump() {
 		return;
 
 	primaryPlayerRef->HandleJumpInput();
+}
+void APrimaryPlayerController::HandleDash() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleDashInput();
+}
+void APrimaryPlayerController::HandleSlide() {
+	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+		return;
+
+	primaryPlayerRef->HandleSlideInput();
 }
 void APrimaryPlayerController::HandleShoot(const FInputActionValue& value) {
 	if (currentControllerInputMode == ControllerInputMode::PAUSED)
