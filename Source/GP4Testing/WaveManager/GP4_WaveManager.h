@@ -51,7 +51,7 @@ public:
 	float timeBetweenWaves;
 
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	int currentWave;
+	int currentWave = 1;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	int enemyToSpawn;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
@@ -62,6 +62,8 @@ public:
 	int totalEnemiesKilled;
 	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
 	float enemySpawnTimer;
+	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
+	bool bIsWaveInProgress;
 	
 
 	FTimerHandle waveDelayTimer;
