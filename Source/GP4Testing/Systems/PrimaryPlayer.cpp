@@ -80,6 +80,18 @@ void APrimaryPlayer::HandleJumpInput() noexcept {
 
 	playerMovementSystemRef->Jump();
 }
+void APrimaryPlayer::HandleDashInput() noexcept {
+	if (!playerMovementSystemRef)
+		return;
+
+
+}
+void APrimaryPlayer::HandleSlideInput() noexcept {
+	if (!playerMovementSystemRef)
+		return;
+
+
+}
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
 	//input == false => Released
