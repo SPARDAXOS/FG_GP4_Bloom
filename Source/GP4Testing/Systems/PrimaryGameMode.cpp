@@ -8,9 +8,11 @@
 #include "PrimaryPlayerController.h"
 #include "PrimaryHUD.h"
 
+#include "LevelManagement.h"
+#include "GP4TestinG/DataAssets/LevelSelectEntrySpec.h"
+
 
 #include "Kismet/GameplayStatics.h"
-
 #include "GP4Testing/Utility/Debugging.h"
 
 
@@ -68,9 +70,18 @@ void APrimaryGameMode::BroadcastStart() {
 
 //Start
 void APrimaryGameMode::SetupApplicationStartState() noexcept {
-	//Main Menu Music
-	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
-	primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+
+	if (launchInDebugMode) {
+		SetupPrePlayingState();
+		SetupPlayingState();
+		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+
+	}
+	else {
+		//Main Menu Music
+		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
+		primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+	}
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
 	primaryPlayerRef->SetupStartingState();
@@ -121,20 +132,28 @@ void APrimaryGameMode::UpdatePlayingStateSystems(float deltaTime) {
 
 
 //Game State
-bool APrimaryGameMode::StartGame() noexcept {
+bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 	if (gameStarted)
 		return false;
 
-	SetupPrePlayingState();
-	SetupPlayingState();
+	if (launchInDebugMode) {
+		SetupPrePlayingState();
+		SetupPlayingState();
 
-	//Load Levels
-	//Set Input mode to NONE?
-	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-	primaryHUDRef->ClearViewport(); //No transition for now
+		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+		primaryHUDRef->ClearViewport(); //No transition for now
+	}
+	else {
+		levelManagementRef->LoadLevel(spec.key, [this]() {
+			SetupPrePlayingState();
+			SetupPlayingState();
+			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+			primaryHUDRef->ClearViewport(); //No transition for now
+			gameStarted = true;
+		});
+	}
 
-	gameStarted = true;
-	return gameStarted;
+	return true;
 }
 void APrimaryGameMode::EndGame() noexcept {
 	if (!gameStarted)
@@ -184,15 +203,15 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 void APrimaryGameMode::CreateSystems() noexcept {
 
 	//Example
-	//if (levelManagementClass) {
-	//	levelManagementRef = GetWorld()->SpawnActor<ALevelManagement>(levelManagementClass);
-	//	if (!levelManagementRef)
-	//		Debugging::CustomError("Failed to spawn LevelManagement actor!");
-	//	else
-	//		Debugging::CustomLog("LevelManagement was created successfully!");
-	//}
-	//else
-	//	Debugging::CustomWarning("LevelManagementClass is invalid! - LevelManagement will not created!");
+	if (levelManagementClass) {
+		levelManagementRef = GetWorld()->SpawnActor<ALevelManagement>(levelManagementClass);
+		if (!levelManagementRef)
+			Debugging::CustomError("Failed to spawn LevelManagement actor!");
+		else
+			Debugging::CustomLog("LevelManagement was created successfully!");
+	}
+	else
+		Debugging::CustomWarning("LevelManagementClass is invalid! - LevelManagement will not created!");
 }
 void APrimaryGameMode::SetupDependencies() noexcept {
 	//Inject any dependencies required by any system.

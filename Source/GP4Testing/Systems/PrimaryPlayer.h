@@ -48,6 +48,11 @@ public: //Add Callbacks For Input Here!
 	void HandleShootInput(bool& input) noexcept;
 	void HandlePauseInput() noexcept;
 	void HandleReloadInput() noexcept;
+	void HandleSwitchNextWeaponInput() noexcept;
+	void HandleSwitchPreviousWeaponInput() noexcept;
+	void HandleWeaponSlot1Input() noexcept;
+	void HandleWeaponSlot2Input() noexcept;
+	void HandleWeaponSlot3Input() noexcept;
 
 
 private:

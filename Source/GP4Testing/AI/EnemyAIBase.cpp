@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
 #include "GP4Testing/WaveManager/GP4_WaveManager.h"
+#include "GP4Testing/Weapons/GunComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -26,10 +27,10 @@ void AEnemyAIBase::BeginPlay()
 	Blackboard->SetValueAsObject(TEXT("Player"), Player);
 }
 
-FHitResult AEnemyAIBase::GetHitDetectionResult() const
+FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
 {
 	FHitResult Hit;
-	FVector TraceStart = GetCapsuleComponent()->GetComponentLocation();
+	FVector TraceStart = Location;
 	FVector TraceEnd = Player->GetActorLocation();
 	FCollisionQueryParams TraceParams;
 	
@@ -83,7 +84,10 @@ void AEnemyAIBase::ResetAttack()
 void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 {
 	Debugging::PrintString("Trying to jump");
-	LaunchCharacter(Destination * JumpForce, false, false); // Placeholder
+	FVector OutLaunch;
+	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(),  OutLaunch, GetActorLocation(), Destination);
+	OutLaunch.Z = OutLaunch.Z * JumpForce;
+	LaunchCharacter(OutLaunch, true, true);
 }
 
 

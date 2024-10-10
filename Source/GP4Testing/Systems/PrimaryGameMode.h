@@ -22,6 +22,9 @@ class APrimaryPlayer;
 class APrimaryPlayerController;
 class APrimaryHUD;
 
+class ALevelManagement;
+class ULevelSelectEntrySpec;
+
 
 UCLASS(abstract)
 class GP4TESTING_API APrimaryGameMode : public AGameModeBase {
@@ -37,7 +40,14 @@ protected:
 	virtual void StartPlay() override;
 
 public:
-	bool StartGame() noexcept;
+	inline APrimaryPlayer* GetPrimaryPlayer() const noexcept { return primaryPlayerRef; }
+	inline APrimaryPlayerController* GetPrimaryPlayerController() const noexcept { return primaryPlayerControllerRef; }
+	inline APrimaryHUD* GetPrimaryHUD() const noexcept { return primaryHUDRef; }
+
+	static inline ALevelManagement* GetLevelManagement() noexcept { return levelManagementRef; }
+
+public:
+	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
 	void EndGame() noexcept;
 	void QuitGame() noexcept;
 
@@ -71,6 +81,10 @@ private:
 	void CacheMainSystemsReferences() noexcept;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
+	TSubclassOf<ALevelManagement> levelManagementClass;
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|LevelManagement", meta = (AllowPrivateAcces = "true"))
 	TArray<FName> loadedLevelsOnGameStart;
 
@@ -87,10 +101,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	bool gamePaused = false;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	bool launchInDebugMode = false;
+
 private:
 	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
 	TObjectPtr<APrimaryPlayerController> primaryPlayerControllerRef = nullptr;
 	TObjectPtr<APrimaryHUD> primaryHUDRef = nullptr;
 
+private:
+	inline static TObjectPtr<ALevelManagement> levelManagementRef = nullptr;
 
 };

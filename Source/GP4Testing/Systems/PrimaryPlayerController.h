@@ -50,6 +50,12 @@ protected:
 	void HandleShoot(const FInputActionValue& value);
 	void HandlePause();
 	void HandleReload();
+	void HandleSwitchNextWeapon();
+	void HandleSwitchPreviousWeapon();
+	void HandleWeaponSlot1();
+	void HandleWeaponSlot2();
+	void HandleWeaponSlot3();
+
 
 private:
 	void SetupInputMappingContext() const noexcept;
@@ -86,6 +92,21 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
 	TObjectPtr<UInputAction> reload = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> switchNextWeapon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> switchPreviousWeapon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> weaponSlot1 = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> weaponSlot2 = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> weaponSlot3 = nullptr;
 
 private:
 	UEnhancedInputLocalPlayerSubsystem* inputSubsystemRef = nullptr;

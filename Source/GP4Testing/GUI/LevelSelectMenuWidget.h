@@ -7,6 +7,12 @@
 class UCanvasPanel;
 class UCustomButton;
 class UImage;
+class ULevelSelectEntry;
+class ULevelSelectEntrySpec;
+class UTileView;
+
+
+
 
 
 
@@ -16,6 +22,10 @@ class ULevelSelectMenuWidget : public UMenuWidgetBase {
 
 public:
 	virtual void NativeOnInitialized() override;
+	virtual void SetVisibilityState(ESlateVisibility state) noexcept;
+
+public:
+	void SetSelectedLevelEntrySpec(ULevelSelectEntrySpec* entry) noexcept;
 
 private:
 	UFUNCTION()
@@ -24,9 +34,15 @@ private:
 	UFUNCTION()
 	void ReturnButtonClicked();
 
+private:
+	void CreateLevelSelectEntries() noexcept;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> mainCanvas = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UTileView> tileView = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> background = nullptr;
@@ -36,5 +52,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UCustomButton> returnButton = nullptr;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TArray<ULevelSelectEntrySpec*> levelSelectEntrySpecAssets;
 	
+	
+	
+protected:
+	ULevelSelectEntrySpec* selectedLevelEntrySpec = nullptr;
 };
