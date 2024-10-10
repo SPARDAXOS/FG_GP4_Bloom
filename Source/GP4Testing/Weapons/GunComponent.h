@@ -51,14 +51,14 @@ public:
 	WeaponType TypeOfWeapon = WeaponType::NONE;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float MaxMagazine;
+	int MaxMagazine;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float MaxAmmo;
+	int MaxAmmo;
 
-	float Magazine;
+	int Magazine;
 
-	float Ammo;
+	int Ammo;
 
 private:
 	APrimaryPlayer* Character;
