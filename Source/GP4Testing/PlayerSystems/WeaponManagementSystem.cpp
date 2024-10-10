@@ -1,7 +1,5 @@
 #include "WeaponManagementSystem.h"
 
-
-
 bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
 	if (AcquiredWeapons.Num() > 0)
 	{
@@ -40,9 +38,6 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 
 
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
-	UE_LOG(LogTemp, Warning, TEXT("Next"));
-
-	
 	if (AcquiredWeapons.Num() > 1)
 	{
 		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
@@ -74,8 +69,6 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	return true;
 }
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
-	UE_LOG(LogTemp, Warning, TEXT("Prev"));
-
 	if (AcquiredWeapons.Num() > 1)
 	{
 		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
