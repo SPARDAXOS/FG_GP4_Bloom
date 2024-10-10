@@ -47,7 +47,30 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	
 	if (AcquiredWeapons.Num() > 1)
 	{
-		
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+		int32 CurrentIndex = weapons.Find(EquippedWeapon);
+
+		if (CurrentIndex != weapons.Num() - 1)
+		{
+			int32 NextIndex = CurrentIndex + 1;
+			EquippedWeapon = weapons[NextIndex];
+			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetVisibility(true);
+		}
+		else if (CurrentIndex == weapons.Num() - 1)
+		{
+			EquippedWeapon = weapons[0];
+			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetVisibility(true);
+		}
 	}
 
 	return true;
@@ -57,7 +80,30 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 
 	if (AcquiredWeapons.Num() > 1)
 	{
-		
+		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->StopFire();
+		Weapon->SetVisibility(false);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+		int32 CurrentIndex = weapons.Find(EquippedWeapon);
+
+		if (CurrentIndex != 0)
+		{
+			int32 NextIndex = CurrentIndex - 1;
+			EquippedWeapon = weapons[NextIndex];
+			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetVisibility(true);
+		}
+		else if (CurrentIndex == 0)
+		{
+			EquippedWeapon = weapons[weapons.Num() - 1];
+			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetVisibility(true);
+		}
 	}
 
 	return true;

@@ -1,6 +1,8 @@
 
 #include "PrimaryPlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
@@ -15,6 +17,7 @@
 APrimaryPlayer::APrimaryPlayer() {
 	PrimaryActorTick.bCanEverTick = true;
 
+	SetupCamera();
 }
 
 
@@ -24,6 +27,10 @@ void APrimaryPlayer::Init() {
 	CreatePlayerSystems();
 	SetupPlayerSystemsDependencies();
 	InitPlayerSystems();
+
+
+	springArm->TargetArmLength = springArmLength;
+	springArm->SetRelativeTransform(cameraInitialTransform);
 }
 void APrimaryPlayer::Start() {
 	StartPlayerSystems();
@@ -80,6 +87,18 @@ void APrimaryPlayer::HandleJumpInput() noexcept {
 
 	playerMovementSystemRef->Jump();
 }
+void APrimaryPlayer::HandleDashInput() noexcept {
+	if (!playerMovementSystemRef)
+		return;
+
+	playerMovementSystemRef->Dash();
+}
+void APrimaryPlayer::HandleSlideInput() noexcept {
+	if (!playerMovementSystemRef)
+		return;
+
+	//playerMovementSystemRef->Slide();
+}
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
 	//input == false => Released
@@ -127,6 +146,7 @@ void APrimaryPlayer::HandleWeaponSlot2Input() noexcept {
 void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
 	if (!weaponManagementSystemRef)
 		return;
+	
 
 	weaponManagementSystemRef->WeaponSlot3();
 }
@@ -196,4 +216,15 @@ void APrimaryPlayer::StartPlayerSystems() noexcept {
 	//
 	//if (pickupManagementSystemRef)
 	//	pickupManagementSystemRef->Start();
+}
+void APrimaryPlayer::SetupCamera() noexcept {
+	springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	springArm->SetupAttachment(GetCapsuleComponent());
+	springArm->bUsePawnControlRotation = true;
+	
+	cameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("MainCamera"));
+	cameraComponent->SetupAttachment(springArm);
+	GetMesh()->SetupAttachment(cameraComponent);
+
+
 }
