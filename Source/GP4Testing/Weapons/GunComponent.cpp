@@ -12,7 +12,7 @@
 
 UGunComponent::UGunComponent()
 {
-	GL_MuzzleOffset = FVector(100, 0, 10);
+	GL_MuzzleOffset = FVector(0, 60, 10);
 }
 
 void UGunComponent::Fire()

@@ -4,6 +4,7 @@
 #include "GP4Testing/AI/EnemyAIBase.h"
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include <GP4Testing/Systems/PrimaryPlayer.h>
+#include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 
 AExplosiveProjectile::AExplosiveProjectile()
 {
@@ -58,12 +59,12 @@ void AExplosiveProjectile::Explode()
 	{
 		if (AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Actor))
 		{
-			Enemy->HealthComponent->TakeDamage(ExplosionDamage);
+			Enemy->HealthComponent->TakeDamage(EnemyDamage);
 			UE_LOG(LogTemp, Warning, TEXT("Enemy HP: %f"), Enemy->HealthComponent->CurrentHealth);
 		}
 		if (APrimaryPlayer* Player = Cast<APrimaryPlayer>(Actor))
 		{
-			Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(ExplosionDamage);
+			Player->GetPlayerHealthSystem().HealthComponent->TakeDamage(PlayerDamage);
 			UE_LOG(LogTemp, Warning, TEXT("Player HP: %f"), Player->GetPlayerHealthSystem().HealthComponent->CurrentHealth);
 		}
 		Destroy();
