@@ -16,21 +16,13 @@ class GP4TESTING_API AAmmoPickup : public APickup
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	AAmmoPickup();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "AmmoPickup")
-	float value = 1.0f;
-
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	int value = 1;
 
 protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,

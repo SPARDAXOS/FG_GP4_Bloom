@@ -42,9 +42,10 @@ protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults);
 		
-public:	
 	FName Tag;
 
-	UPROPERTY(EditAnywhere)
+public:	
+
+	UPROPERTY(EditDefaultsOnly)
 	PickupType pickupType;
 };
