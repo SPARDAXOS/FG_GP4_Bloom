@@ -19,7 +19,6 @@ void AMeleeAI::Attack()
 		{
 			if(Hit.GetActor()->ActorHasTag("Player")) // CHECK IF ENGINE TRACE HAS BEEN ADDED IF THIS DOESN'T FUNCTION
 				{
-				const FDamageEvent event;
 				APrimaryPlayer* HitPlayer = Cast<APrimaryPlayer>(Hit.GetActor());
 				HitPlayer->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
 				}

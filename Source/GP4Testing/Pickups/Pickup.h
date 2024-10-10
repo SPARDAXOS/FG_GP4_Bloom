@@ -8,6 +8,7 @@
 #include "GP4Testing/PlayerSystems/PickupTypes.h"
 #include "Pickup.generated.h"
 
+
 UCLASS()
 class GP4TESTING_API APickup : public AActor
 {
@@ -43,5 +44,7 @@ protected:
 		
 public:	
 	FName Tag;
+
+	UPROPERTY(EditAnywhere)
 	PickupType pickupType;
 };
