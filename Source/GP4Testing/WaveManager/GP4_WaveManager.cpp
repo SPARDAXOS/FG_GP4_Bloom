@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "GP4Testing/AI/EnemyAIBase.h"
+#include "EngineGlobals.h"
 #include "AIController.h"
 #include <Kismet/GameplayStatics.h>
 
@@ -13,7 +14,7 @@ AGP4_WaveManager::AGP4_WaveManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	bIsWaveInProgress = false;
 }
 
 // Called when the game starts or when spawned
@@ -45,38 +46,48 @@ void AGP4_WaveManager::Tick(float DeltaTime)
 
 	enemySpawnTimer -= DeltaTime;
 
-	if (enemySpawned < enemyToSpawn)
+	if (bIsWaveInProgress)
 	{
 		enemySpawnTimer -= DeltaTime;
 
-		if (enemySpawnTimer <= 0.0f)
+		if (enemySpawned < enemyToSpawn)
 		{
-			enemySpawnTimer = 2.0f;
+			if (enemySpawnTimer <= 0.0f)
+			{
+				enemySpawnTimer = 5.0f;
 
-			SpawnAI();
+				SpawnAI();
 
-			enemySpawned++;
+				enemySpawned++;
+			}
 		}
 	}
+	
 }
   
 void AGP4_WaveManager::StartWave()
 {
+	bIsWaveInProgress = true;
 	enemiesAlive = 0;
 	enemySpawned = 0;
 	totalEnemiesKilled = 0;
 
-	enemyToSpawn = 10 + (currentWave * SpawnAmount);
-	enemySpawnTimer = 2.0f;
+	enemyToSpawn = 3 + (currentWave - 1) * SpawnAmount;
+	enemySpawnTimer = 5.0f;
+	
 	//SpawnAIWave();
 }
 
 void AGP4_WaveManager::SpawnAIWave()
 {
-	for (int i = 0; i < enemyToSpawn; i++)
+	if (bIsWaveInProgress)
 	{
-		SpawnAI();	
+		for (int i = 0; i < enemyToSpawn; i++)
+		{
+			SpawnAI();
+		}
 	}
+	
 }
 
 void AGP4_WaveManager::SpawnAI()
@@ -122,15 +133,23 @@ void AGP4_WaveManager::OnAIKilled()
 	enemiesAlive--;
 	totalEnemiesKilled++;
 
-	if (enemiesAlive <= 0)
+	if (enemiesAlive <= 0 && enemySpawned >= enemyToSpawn)
 	{
+		bIsWaveInProgress = false;
 		StartNextWave();
 	}
 }
 
 void AGP4_WaveManager::StartNextWave()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ENEMIES KILLED, STARTING NEXT WAVE"));
-	currentWave++;
-	GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
+	if (!bIsWaveInProgress)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ENEMIES KILLED, STARTING NEXT WAVE"));
+		currentWave++;
+
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Wave: %d"), currentWave));
+
+		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AGP4_WaveManager::StartWave, timeBetweenWaves, false);
+	}
 }
