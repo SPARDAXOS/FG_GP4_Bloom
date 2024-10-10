@@ -47,6 +47,8 @@ protected:
 	void HandleMovement(const FInputActionValue& value);
 	void HandleLook(const FInputActionValue& value);
 	void HandleJump();
+	void HandleDash();
+	void HandleSlide();
 	void HandleShoot(const FInputActionValue& value);
 	void HandlePause();
 	void HandleReload();
@@ -83,6 +85,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Movement", meta = (AllowPrivateAccess = "true"));
 	TObjectPtr<UInputAction> jump = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Movement", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> dash = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Movement", meta = (AllowPrivateAccess = "true"));
+	TObjectPtr<UInputAction> slide = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
 	TObjectPtr<UInputAction> shoot = nullptr;
