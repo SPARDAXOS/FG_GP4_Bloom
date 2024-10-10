@@ -41,13 +41,13 @@ public:
 	UGunComponent* GetCurrentWeapon();
 	TMap<WeaponType, UGunComponent*> GetAcquiredWeapons();
 
-	float GetMaxAmmo();
-	float GetAmmo();
+	int GetMaxAmmo();
+	int GetAmmo();
 
-	bool AddAmmo(PickupType type, float newAmmo);
+	bool AddAmmo(PickupType type, int newAmmo);
 
-	float GetMaxMagazine();
-	float GetLoadedMagazine();
+	int GetMaxMagazine();
+	int GetLoadedMagazine();
 
 private:
 	APrimaryPlayer* primaryPlayerRef;
