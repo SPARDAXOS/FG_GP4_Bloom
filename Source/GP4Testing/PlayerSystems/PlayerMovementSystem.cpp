@@ -25,6 +25,25 @@ void APlayerMovementSystem::Jump() noexcept {
 	primaryPlayerRef->Jump();
 }
 
+void APlayerMovementSystem::Dash() noexcept
+{
+	if (bCanDash && primaryPlayerRef)
+	{
+		FVector DashDir = primaryPlayerRef->GetLastMovementInputVector().GetSafeNormal();
+		FVector DashVel = DashDir * DashStrength;
+		primaryPlayerRef->LaunchCharacter(DashVel, true, true);
+
+		bCanDash = false;
+
+		// Stop dash after duration
+		GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerMovementSystem::StopDash, DashDuration, false);
+
+		// Reset dash after cooldown
+		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &APlayerMovementSystem::ResetDash, DashCooldown, false);
+
+	}
+}
+
 void APlayerMovementSystem::SetupStartingState() noexcept {
 	currentMovementSpeedModifier = defaultMovementSpeedModifier;
 	if (primaryPlayerRef) {
@@ -32,3 +51,20 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 
 	}
 }
+
+void APlayerMovementSystem::StopDash()
+{
+	if (primaryPlayerRef)
+	{
+		primaryPlayerRef->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+	}
+
+}
+
+void APlayerMovementSystem::ResetDash()
+{
+
+	bCanDash = true;
+}
+
+
