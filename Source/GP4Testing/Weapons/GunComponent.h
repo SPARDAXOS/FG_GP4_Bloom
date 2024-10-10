@@ -67,7 +67,7 @@ private:
 	float WeaponDamage = 20;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	float LineTraceDistance = 2000.f;
+	float LineTraceDistance = 20000.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
 	float BulletSpread = 5.f;

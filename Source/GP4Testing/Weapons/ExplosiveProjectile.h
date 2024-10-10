@@ -44,5 +44,8 @@ private:
 	float FuseTime = 2.f;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile Settings")
-	float ExplosionDamage = 60;
+	float EnemyDamage = 100;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile Settings")
+	float PlayerDamage = 50;
 };
