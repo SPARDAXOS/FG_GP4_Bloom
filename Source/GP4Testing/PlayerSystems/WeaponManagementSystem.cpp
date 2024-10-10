@@ -1,5 +1,3 @@
-
-
 #include "WeaponManagementSystem.h"
 
 
@@ -231,9 +229,23 @@ float AWeaponManagementSystem::GetAmmo()
 	return Ammo;
 }
 
-bool AWeaponManagementSystem::SetAmmo(float newAmmo)
+bool AWeaponManagementSystem::AddAmmo(PickupType type, float newAmmo)
 {
-	UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+	UGunComponent* Weapon = nullptr;
+
+	if (type == PickupType::AMMO_MACHINE_GUN)
+	{
+		Weapon = AcquiredWeapons.FindRef(WeaponType::MACHINE_GUN);
+	}
+	if (type == PickupType::AMMO_SHOTGUN)
+	{
+		Weapon = AcquiredWeapons.FindRef(WeaponType::SHOTGUN);
+	}
+	if (type == PickupType::AMMO_GRENADE_LAUNCHER)
+	{
+		Weapon = AcquiredWeapons.FindRef(WeaponType::GRENADE_LAUNCHER);
+	}
+
 	if (Weapon != nullptr)
 	{
 		if (Weapon->Ammo < Weapon->MaxAmmo)
@@ -252,6 +264,7 @@ bool AWeaponManagementSystem::SetAmmo(float newAmmo)
 			}
 		}
 	}
+	
 	return false;
 }
 

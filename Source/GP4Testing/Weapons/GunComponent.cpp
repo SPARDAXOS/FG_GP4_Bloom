@@ -99,6 +99,11 @@ void UGunComponent::Fire()
 			}
 		}
 	}
+	else
+	{
+		// Reload automatically when no ammo left?
+		Reload();
+	}
 }
 
 FVector UGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)

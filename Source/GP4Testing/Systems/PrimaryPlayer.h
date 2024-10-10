@@ -13,6 +13,7 @@ class AWeaponManagementSystem;
 class APickupManagementSystem;
 class APlayerMovementSystem;
 class APlayerHealthSystem;
+class UPrimaryPlayerHUD;
 class UCameraComponent;
 class USpringArmComponent;
 
@@ -44,6 +45,7 @@ public:
 	inline APlayerHealthSystem& GetPlayerHealthSystem() noexcept { return *playerHealthSystemRef; }
 
 	inline UCameraComponent* GetCamera() noexcept { return cameraComponent; }
+	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
 
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;
@@ -67,6 +69,7 @@ private:
 	void InitPlayerSystems() noexcept;
 	void StartPlayerSystems() noexcept;
 	void SetupCamera() noexcept;
+	void SetupPrimaryPlayerHUD() noexcept;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -88,6 +91,10 @@ private: //Player  Systems
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Systems", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlayerHealthSystem> playerHealthSystemAsset = nullptr;
 
+private: //HUD
+	UPROPERTY(EditDefaultsOnly, Category = "Player|HUD", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UPrimaryPlayerHUD> primaryPlayerHUDClass = nullptr;
+
 private: //Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
 	FTransform cameraInitialTransform;
@@ -104,6 +111,7 @@ private:
 	TObjectPtr<APickupManagementSystem> pickupManagementSystemRef = nullptr;
 	TObjectPtr<APlayerMovementSystem> playerMovementSystemRef = nullptr;
 	TObjectPtr<APlayerHealthSystem> playerHealthSystemRef = nullptr;
+	TObjectPtr<UPrimaryPlayerHUD> primaryPlayerHUDRef = nullptr;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;
