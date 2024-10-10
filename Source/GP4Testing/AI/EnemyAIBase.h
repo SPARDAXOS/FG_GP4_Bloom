@@ -65,6 +65,7 @@ public:
 
 	FTimerHandle AttackTimerHandle;
 
+	UPROPERTY(VisibleAnywhere)
 	UHealthComponent* HealthComponent = nullptr;
 
 };

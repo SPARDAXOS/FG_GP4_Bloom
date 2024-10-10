@@ -10,6 +10,8 @@
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/PlayerSystems/PickupManagementSystem.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/GUI/PrimaryPlayerHUD.h"
+#include "Blueprint/UserWidget.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -27,6 +29,7 @@ void APrimaryPlayer::Init() {
 	CreatePlayerSystems();
 	SetupPlayerSystemsDependencies();
 	InitPlayerSystems();
+	SetupPrimaryPlayerHUD();
 
 
 	springArm->TargetArmLength = springArmLength;
@@ -64,7 +67,10 @@ void APrimaryPlayer::SetPlayerState(bool state) noexcept {
 	active = state;
 }
 void APrimaryPlayer::SetPlayerHUDState(bool state) noexcept {
-
+	if (state)
+		primaryPlayerHUDRef->SetVisibilityState(ESlateVisibility::Visible);
+	else
+		primaryPlayerHUDRef->SetVisibilityState(ESlateVisibility::Collapsed);
 }
 
 
@@ -225,6 +231,13 @@ void APrimaryPlayer::SetupCamera() noexcept {
 	cameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("MainCamera"));
 	cameraComponent->SetupAttachment(springArm);
 	GetMesh()->SetupAttachment(cameraComponent);
+}
+void APrimaryPlayer::SetupPrimaryPlayerHUD() noexcept {
+	checkf(primaryPlayerHUDClass, TEXT("primaryPlayerHUDClass ref is null!"));
+	primaryPlayerHUDRef = CreateWidget<UPrimaryPlayerHUD>(GetWorld(), primaryPlayerHUDClass);
+	checkf(primaryPlayerHUDRef, TEXT("Failed to create primaryPlayerHUDRef!"));
 
-
+	primaryPlayerHUDRef->AddToViewport();
+	primaryPlayerHUDRef->SetPrimaryPlayerReference(*this);
+	SetPlayerHUDState(false);
 }
