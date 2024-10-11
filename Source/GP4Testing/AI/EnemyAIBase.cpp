@@ -69,7 +69,7 @@ void AEnemyAIBase::Die()
 	//{
 	//	Wave->OnAIKilled();
 	//}
-	Destroy();
+	SetEnemyState(false);
 }
 
 void AEnemyAIBase::Attack()
@@ -93,6 +93,22 @@ void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 	OutLaunch.Z = OutLaunch.Z * JumpForce;
 	LaunchCharacter(OutLaunch, true, true);
 	bJumped = true;
+}
+
+void AEnemyAIBase::SetEnemyState(bool state)
+{
+	SetActorTickEnabled(state);
+	SetActorEnableCollision(state);
+	SetActorHiddenInGame(!state);
+
+	GetCapsuleComponent()->SetEnableGravity(state);
+	GetCharacterMovement()->SetActive(state);
+	if (state)
+		GetCharacterMovement()->GravityScale =	1.0f;	//defaultGravityScale;
+	else
+		GetCharacterMovement()->GravityScale = 0.0f;
+
+	Active = state;
 }
 
 
