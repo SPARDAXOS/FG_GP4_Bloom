@@ -46,6 +46,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanPlayAttackAnim = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bJumped;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Damage = 30;
 
@@ -65,7 +68,7 @@ public:
 
 	FTimerHandle AttackTimerHandle;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthComponent* HealthComponent = nullptr;
 
 };
