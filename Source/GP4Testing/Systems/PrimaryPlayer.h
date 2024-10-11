@@ -13,6 +13,9 @@ class AWeaponManagementSystem;
 class APickupManagementSystem;
 class APlayerMovementSystem;
 class APlayerHealthSystem;
+class UPrimaryPlayerHUD;
+class UCameraComponent;
+class USpringArmComponent;
 
 
 UCLASS(Abstract)
@@ -41,10 +44,15 @@ public:
 	inline APlayerMovementSystem& GetPlayerMovementSystem() noexcept { return *playerMovementSystemRef; }
 	inline APlayerHealthSystem& GetPlayerHealthSystem() noexcept { return *playerHealthSystemRef; }
 
+	inline UCameraComponent* GetCamera() noexcept { return cameraComponent; }
+	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
+
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;
 	void HandleLookInput(FVector2D axis) noexcept;
 	void HandleJumpInput() noexcept;
+	void HandleDashInput() noexcept;
+	void HandleSlideInput() noexcept;
 	void HandleShootInput(bool& input) noexcept;
 	void HandlePauseInput() noexcept;
 	void HandleReloadInput() noexcept;
@@ -60,6 +68,15 @@ private:
 	void SetupPlayerSystemsDependencies() noexcept;
 	void InitPlayerSystems() noexcept;
 	void StartPlayerSystems() noexcept;
+	void SetupCamera() noexcept;
+	void SetupPrimaryPlayerHUD() noexcept;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> cameraComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> springArm = nullptr;
 
 private: //Player  Systems
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Systems", meta = (AllowPrivateAccess = "true"))
@@ -74,6 +91,17 @@ private: //Player  Systems
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Systems", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlayerHealthSystem> playerHealthSystemAsset = nullptr;
 
+private: //HUD
+	UPROPERTY(EditDefaultsOnly, Category = "Player|HUD", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UPrimaryPlayerHUD> primaryPlayerHUDClass = nullptr;
+
+private: //Camera
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
+	FTransform cameraInitialTransform;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
+	float springArmLength;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player|Debugging", meta = (AllowPrivateAccess = "true"))
 	bool active = false;
@@ -83,6 +111,7 @@ private:
 	TObjectPtr<APickupManagementSystem> pickupManagementSystemRef = nullptr;
 	TObjectPtr<APlayerMovementSystem> playerMovementSystemRef = nullptr;
 	TObjectPtr<APlayerHealthSystem> playerHealthSystemRef = nullptr;
+	TObjectPtr<UPrimaryPlayerHUD> primaryPlayerHUDRef = nullptr;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;

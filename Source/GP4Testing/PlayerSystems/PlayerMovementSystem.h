@@ -17,12 +17,22 @@ public:
 	void UpdateMovement(FVector2D axis) noexcept;
 	void UpdateRotation(FVector2D axis) noexcept;
 	void Jump() noexcept;
+	void Dash() noexcept;
+	void Slide() noexcept;
 
 public:
 	void SetupStartingState() noexcept;
 
 public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
+
+private:
+	void StopSlide();
+	void StopDash();
+	void resetSlide();
+	void resetDash();
+
+	
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
@@ -38,6 +48,40 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAccess = "true"))
 	float currentMovementSpeedModifier = 1.0f;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	float DashStrength = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	float DashDuration = 0.2f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	float DashCooldown = 1.0f;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideSpeed = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideDuration = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCooldown = 2.0f;
+
 private:
+    bool bCanDash = true;
+	bool bCanSlide = true;
+	bool bIsDashing = false;
+	bool bIsSliding = false;
+
+	FTimerHandle DashTimerHandle;
+	FTimerHandle SlideTimerHandle;
+	FTimerHandle DashCooldownTimerHandle;
+	FTimerHandle SlideCooldownTimerHandle;
+	
+	FVector StoredVelocity;
+
+private:
+	
 	APrimaryPlayer* primaryPlayerRef = nullptr;
 };

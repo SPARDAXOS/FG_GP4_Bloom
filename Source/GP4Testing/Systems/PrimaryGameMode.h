@@ -23,6 +23,9 @@ class APrimaryPlayerController;
 class APrimaryHUD;
 
 class ALevelManagement;
+class AEnemyManagementSystem;
+class AWaveManager;
+class ULevelSelectEntrySpec;
 
 
 UCLASS(abstract)
@@ -46,7 +49,7 @@ public:
 	static inline ALevelManagement* GetLevelManagement() noexcept { return levelManagementRef; }
 
 public:
-	bool StartGame() noexcept;
+	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
 	void EndGame() noexcept;
 	void QuitGame() noexcept;
 
@@ -83,6 +86,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
 	TSubclassOf<ALevelManagement> levelManagementClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
+	TSubclassOf<AEnemyManagementSystem> enemyManagementSystemClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
+	TSubclassOf<AWaveManager> waveManagerClass;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|LevelManagement", meta = (AllowPrivateAcces = "true"))
 	TArray<FName> loadedLevelsOnGameStart;
@@ -100,6 +109,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	bool gamePaused = false;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	bool launchInDebugMode = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	FName loadedLevelKey = "None";
+
 private:
 	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
 	TObjectPtr<APrimaryPlayerController> primaryPlayerControllerRef = nullptr;
@@ -107,5 +122,7 @@ private:
 
 private:
 	inline static TObjectPtr<ALevelManagement> levelManagementRef = nullptr;
+	TObjectPtr<AEnemyManagementSystem> enemyManagementSystemRef = nullptr;
+	TObjectPtr<AWaveManager> waveManagerRef = nullptr;
 
 };

@@ -3,6 +3,7 @@
 #include "LevelSelectEntrySpec.generated.h"
 
 class ULevelSelectMenuWidget;
+class UWaveManagerSpec;
 
 UCLASS()
 class ULevelSelectEntrySpec : public UPrimaryDataAsset {
@@ -17,6 +18,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EntryData")
 	UMaterialInterface* splash = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EntryData")
+	UWaveManagerSpec* waveManagerSpec = nullptr;
 
 
 	ULevelSelectMenuWidget* managingMenu = nullptr;

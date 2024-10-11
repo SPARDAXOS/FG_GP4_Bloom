@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "WeaponTypes.h"
 #include <GP4Testing/Weapons/GunComponent.h>
+#include "PickupTypes.h"
 
 
 #include "WeaponManagementSystem.generated.h"
@@ -40,13 +41,13 @@ public:
 	UGunComponent* GetCurrentWeapon();
 	TMap<WeaponType, UGunComponent*> GetAcquiredWeapons();
 
-	float GetMaxAmmo();
-	float GetAmmo();
+	int GetMaxAmmo();
+	int GetAmmo();
 
-	bool SetAmmo(float newAmmo);
+	bool AddAmmo(PickupType type, int newAmmo);
 
-	float GetMaxMagazine();
-	float GetLoadedMagazine();
+	int GetMaxMagazine();
+	int GetLoadedMagazine();
 
 private:
 	APrimaryPlayer* primaryPlayerRef;

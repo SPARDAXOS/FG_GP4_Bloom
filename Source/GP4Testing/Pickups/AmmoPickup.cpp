@@ -14,20 +14,6 @@ AAmmoPickup::AAmmoPickup()
 
 }
 
-// Called when the game starts or when spawned
-void AAmmoPickup::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AAmmoPickup::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults)
 {
@@ -41,11 +27,8 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (!gunRef)
 			return;
 		
-
-		gunRef->SetAmmo(10);
-
-		Destroy();
-		UE_LOG(LogTemp, Warning, TEXT("its AMMO"));
+		if (gunRef->AddAmmo(pickupType, value))
+			Destroy();		
 	}
 }
 

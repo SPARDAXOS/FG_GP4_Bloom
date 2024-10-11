@@ -1,6 +1,8 @@
 
 #include "PrimaryPlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
@@ -8,6 +10,8 @@
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/PlayerSystems/PickupManagementSystem.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/GUI/PrimaryPlayerHUD.h"
+#include "Blueprint/UserWidget.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -15,6 +19,7 @@
 APrimaryPlayer::APrimaryPlayer() {
 	PrimaryActorTick.bCanEverTick = true;
 
+	SetupCamera();
 }
 
 
@@ -24,6 +29,11 @@ void APrimaryPlayer::Init() {
 	CreatePlayerSystems();
 	SetupPlayerSystemsDependencies();
 	InitPlayerSystems();
+	SetupPrimaryPlayerHUD();
+
+
+	springArm->TargetArmLength = springArmLength;
+	springArm->SetRelativeTransform(cameraInitialTransform);
 }
 void APrimaryPlayer::Start() {
 	StartPlayerSystems();
@@ -57,7 +67,10 @@ void APrimaryPlayer::SetPlayerState(bool state) noexcept {
 	active = state;
 }
 void APrimaryPlayer::SetPlayerHUDState(bool state) noexcept {
-
+	if (state)
+		primaryPlayerHUDRef->SetVisibilityState(ESlateVisibility::Visible);
+	else
+		primaryPlayerHUDRef->SetVisibilityState(ESlateVisibility::Collapsed);
 }
 
 
@@ -79,6 +92,18 @@ void APrimaryPlayer::HandleJumpInput() noexcept {
 		return;
 
 	playerMovementSystemRef->Jump();
+}
+void APrimaryPlayer::HandleDashInput() noexcept {
+	if (!playerMovementSystemRef)
+		return;
+
+	playerMovementSystemRef->Dash();
+}
+void APrimaryPlayer::HandleSlideInput() noexcept {
+	if (!playerMovementSystemRef)
+		return;
+
+	//playerMovementSystemRef->Slide();
 }
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
@@ -127,6 +152,7 @@ void APrimaryPlayer::HandleWeaponSlot2Input() noexcept {
 void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
 	if (!weaponManagementSystemRef)
 		return;
+	
 
 	weaponManagementSystemRef->WeaponSlot3();
 }
@@ -196,4 +222,22 @@ void APrimaryPlayer::StartPlayerSystems() noexcept {
 	//
 	//if (pickupManagementSystemRef)
 	//	pickupManagementSystemRef->Start();
+}
+void APrimaryPlayer::SetupCamera() noexcept {
+	springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	springArm->SetupAttachment(GetCapsuleComponent());
+	springArm->bUsePawnControlRotation = true;
+	
+	cameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("MainCamera"));
+	cameraComponent->SetupAttachment(springArm);
+	GetMesh()->SetupAttachment(cameraComponent);
+}
+void APrimaryPlayer::SetupPrimaryPlayerHUD() noexcept {
+	checkf(primaryPlayerHUDClass, TEXT("primaryPlayerHUDClass ref is null!"));
+	primaryPlayerHUDRef = CreateWidget<UPrimaryPlayerHUD>(GetWorld(), primaryPlayerHUDClass);
+	checkf(primaryPlayerHUDRef, TEXT("Failed to create primaryPlayerHUDRef!"));
+
+	primaryPlayerHUDRef->AddToViewport();
+	primaryPlayerHUDRef->SetPrimaryPlayerReference(*this);
+	SetPlayerHUDState(false);
 }

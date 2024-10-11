@@ -8,6 +8,7 @@
 #include "GP4Testing/PlayerSystems/PickupTypes.h"
 #include "Pickup.generated.h"
 
+
 UCLASS()
 class GP4TESTING_API APickup : public AActor
 {
@@ -41,7 +42,10 @@ protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults);
 		
-public:	
 	FName Tag;
+
+public:	
+
+	UPROPERTY(EditDefaultsOnly)
 	PickupType pickupType;
 };
