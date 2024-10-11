@@ -13,6 +13,7 @@ class AWaveManager;
 class AEnemyAIBase;
 class AMeleeAI;
 class ARangedAI;
+class AEnemySpawnPortalVFX;
 
 
 UENUM(BlueprintType)
@@ -59,10 +60,14 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
+	TSubclassOf<AEnemySpawnPortalVFX> enemySpawnPortalVFXClass = nullptr;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
 	TSubclassOf<AEnemyAIBase> meleeEnemyClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
-	TSubclassOf<AEnemyAIBase> RangedEnemyClass = nullptr;
+	TSubclassOf<AEnemyAIBase> rangedEnemyClass = nullptr;
 
 
 private:
