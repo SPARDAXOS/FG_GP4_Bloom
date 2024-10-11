@@ -48,6 +48,11 @@ void AEnemyAIBase::Tick(float DeltaTime)
 	{
 		bCanPlayAttackAnim = false;
 	}
+
+	if(GetCharacterMovement()->IsMovingOnGround())
+	{
+		bJumped = false;
+	}
 }
 
 // Called to bind functionality to input
@@ -64,7 +69,7 @@ void AEnemyAIBase::Die()
 	//{
 	//	Wave->OnAIKilled();
 	//}
-	//Destroy();
+	SetEnemyState(false);
 }
 
 void AEnemyAIBase::Attack()
@@ -83,11 +88,27 @@ void AEnemyAIBase::ResetAttack()
 
 void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 {
-	Debugging::PrintString("Trying to jump");
 	FVector OutLaunch;
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(),  OutLaunch, GetActorLocation(), Destination);
 	OutLaunch.Z = OutLaunch.Z * JumpForce;
 	LaunchCharacter(OutLaunch, true, true);
+	bJumped = true;
+}
+
+void AEnemyAIBase::SetEnemyState(bool state)
+{
+	SetActorTickEnabled(state);
+	SetActorEnableCollision(state);
+	SetActorHiddenInGame(!state);
+
+	GetCapsuleComponent()->SetEnableGravity(state);
+	GetCharacterMovement()->SetActive(state);
+	if (state)
+		GetCharacterMovement()->GravityScale =	1.0f;	//defaultGravityScale;
+	else
+		GetCharacterMovement()->GravityScale = 0.0f;
+
+	Active = state;
 }
 
 

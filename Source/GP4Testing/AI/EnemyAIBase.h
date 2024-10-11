@@ -7,6 +7,8 @@
 #include "GP4Testing/Components/HealthComponent.h"
 #include "EnemyAIBase.generated.h"
 
+class AEnemyManagementSystem;
+
 UCLASS()
 class GP4TESTING_API AEnemyAIBase : public ACharacter
 {
@@ -39,12 +41,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void NavLinkJump(const FVector& Destination);
+	
+	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
+
+	void SetEnemyState(bool state);
+
+	bool Active = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanAttack = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanPlayAttackAnim = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bJumped;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Damage = 30;
@@ -65,7 +76,10 @@ public:
 
 	FTimerHandle AttackTimerHandle;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthComponent* HealthComponent = nullptr;
+
+	UPROPERTY()
+	AEnemyManagementSystem* EnemyManagementSystem = nullptr;
 
 };
