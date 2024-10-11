@@ -4,6 +4,9 @@
 
 #include "GP4Testing/DataAssets/WaveManagerSpec.h"
 #include "GP4Testing/DataAssets/WaveSpec.h"
+#include "GP4Testing/DataAssets/WaveSpecData.h"
+
+#include "GP4Testing/Systems/EnemyManagementSystem.h"
 
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
@@ -22,26 +25,27 @@ void AWaveManager::Start() {
 
 	bIsWaveInProgress = false;
 
-	// why is this necessary?
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController)
-	{
-		PlayerCharacter = Cast<ACharacter>(PlayerController->GetPawn());
-	}
-	if (PlayerCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PLAYER IS NOT NULL"));
-		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AWaveManager::StartWave, timeBetweenWaves, false);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("PLAYER IS NULL"));
-		return;
-	}
+	//// why is this necessary?
+	//APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	//if (PlayerController)
+	//{
+	//	PlayerCharacter = Cast<ACharacter>(PlayerController->GetPawn());
+	//}
+	//if (PlayerCharacter)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("PLAYER IS NOT NULL"));
+	//	GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AWaveManager::StartWave, timeBetweenWaves, false);
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("PLAYER IS NULL"));
+	//	return;
+	//}
 
 }
 void AWaveManager::Update(float deltaTime) {
-
+	if (!active)
+		return;
 
 	if (bIsWaveInProgress)
 	{
@@ -68,6 +72,10 @@ bool AWaveManager::StartWave(const UWaveManagerSpec& spec) {
 
 	//Copy current wave data and use it to keep track of current wave state.
 	activeWaveSpecData = spec.waves[0]->data;
+	
+
+	//activeWaveSpecData.allowedTypes[0].totalSpawns--;
+	//if(activeWaveSpecData.allowedTypes[0].totalSpawns == 0)
 
 	return true;
 }
@@ -119,6 +127,8 @@ void AWaveManager::SpawnAI() {
 		FActorSpawnParameters spawnParam;
 		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(charactersToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
+
+		//enemyManagementSystemRef->SpawnEnemy()
 
 		if (spawnAI)
 		{

@@ -7,6 +7,9 @@
 #include "GP4Testing/Components/HealthComponent.h"
 #include "EnemyAIBase.generated.h"
 
+class AWaveManager;
+class AEnemyManagementSystem;
+
 UCLASS()
 class GP4TESTING_API AEnemyAIBase : public ACharacter
 {
@@ -39,12 +42,23 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void NavLinkJump(const FVector& Destination);
+	
+	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
+	inline bool GetCurrentState() { return Active; }
+	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
+	
+	void SetEnemyState(bool state);
+
+	bool Active = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanAttack = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanPlayAttackAnim = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bJumped;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Damage = 30;
@@ -56,6 +70,9 @@ public:
 	float AttackCooldown = 1;
 
 	UPROPERTY(EditDefaultsOnly)
+	float LandingMovementCooldown = 1;
+
+	UPROPERTY(EditDefaultsOnly)
 	float JumpForce = 2;
 
 	UPROPERTY(VisibleAnywhere)
@@ -64,8 +81,17 @@ public:
 	UBlackboardComponent* Blackboard = nullptr;
 
 	FTimerHandle AttackTimerHandle;
+	FTimerHandle LandingTimerHandle;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthComponent* HealthComponent = nullptr;
 
+	UPROPERTY()
+	AEnemyManagementSystem* EnemyManagementSystem = nullptr;
+
+	AWaveManager* WaveManagerSystem = nullptr;
+
+	virtual void Landed(const FHitResult& Hit) override;
+	void ResetLandingState();
+	bool bHasRecentlyLanded = false;
 };
