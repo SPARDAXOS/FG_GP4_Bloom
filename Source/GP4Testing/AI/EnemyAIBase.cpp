@@ -8,6 +8,7 @@
 #include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/GameplayStatics.h"
 
+
 // Sets default values
 AEnemyAIBase::AEnemyAIBase()
 {
@@ -23,6 +24,7 @@ void AEnemyAIBase::BeginPlay()
 	Player = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	Blackboard = Cast<AAIController>(GetController())->GetBlackboardComponent();
 	Blackboard->SetValueAsObject(TEXT("Player"), Player);
+	Blackboard->SetValueAsBool("Active", true);
 }
 
 FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
@@ -42,7 +44,7 @@ void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Blackboard->SetValueAsBool("bHasRecentlyLanded", bHasRecentlyLanded);
-	Blackboard->SetValueAsBool("Active", Active);
+		
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
@@ -108,6 +110,7 @@ void AEnemyAIBase::SetEnemyState(bool state)
 		GetCharacterMovement()->GravityScale = 0.0f;
 
 	Active = state;
+	Blackboard->SetValueAsBool("Active", Active);
 }
 
 void AEnemyAIBase::Landed(const FHitResult& Hit)
