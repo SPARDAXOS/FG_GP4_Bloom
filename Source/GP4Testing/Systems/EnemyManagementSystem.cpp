@@ -55,16 +55,36 @@ bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
 		if (!newEnemy)
 			continue;
 
-		//newEnemy->SetEnemyActive(false);
-		//newEnemy->SetenemyManagementReference(*this);
+		newEnemy->SetEnemyState(false);
+		newEnemy->SetEnemyManagementRef(*this);
+		//newEnemy->SetWaveManagerRef(waveManagerRef);
 		meleeEnemiesPool.Add(newEnemy);
 	}
+
+	if (meleeEnemiesPool.Num() > 0)
+		return true;
+	else
+		return false;
 }
 bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
 	if (!RangedEnemyClass)
 		return false;
 
+	for (int i = 0; i < count; i++) {
+		ARangedAI* newEnemy = GetWorld()->SpawnActor<ARangedAI>(RangedEnemyClass);
+		if (!newEnemy)
+			continue;
 
+		newEnemy->SetEnemyState(false);
+		newEnemy->SetEnemyManagementRef(*this);
+		//newEnemy->SetWaveManagerRef(waveManagerRef);
+		rangedEnemiesPool.Add(newEnemy);
+	}
+
+	if (rangedEnemiesPool.Num() > 0)
+		return true;
+	else
+		return false;
 }
 
 void AEnemyManagementSystem::ClearPools() noexcept {

@@ -9,6 +9,7 @@
 
 
 class APrimaryGameMode;
+class AWaveManager;
 class AEnemyAIBase;
 class AMeleeAI;
 class ARangedAI;
@@ -38,6 +39,7 @@ public:
 
 public:
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
+	inline void SetWaveManagerReference(AWaveManager& manager) noexcept { waveManagerRef = &manager; }
 
 private:
 	bool CreateMeleeEnemiesPool(uint32 count);
@@ -67,5 +69,5 @@ private:
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;
-
+	AWaveManager* waveManagerRef = nullptr;
 };
