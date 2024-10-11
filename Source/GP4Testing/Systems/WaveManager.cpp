@@ -47,9 +47,109 @@ void AWaveManager::Update(float deltaTime) {
 	if (!active)
 		return;
 
+	//Enemy spawn timer
+	SpawnTimer(deltaTime);
+}
+
+
+bool AWaveManager::StartWave(const UWaveManagerSpec& spec) {
+	//Copy it 
+	activeWaveManagerSpec = &spec;
+
+	//Copy current wave data and use it to keep track of current wave state.
+	activeWaveSpecData = spec.waves[0]->data;
+	
+	enemiesAlive = 0;
+	enemySpawned = 0;
+	totalEnemiesKilled = 0;
+
+	enemyToSpawn = 3 + (currentWave - 1) * SpawnAmount;
+	enemySpawnTimer = 5.0f;
+
+	//Iterate over all allowedTypes
+	for (int32 i = 0; i < activeWaveSpecData.allowedTypes.Num(); ++i)
+	{
+		FEnemyTypeSpawnSpec& spawnSpec = activeWaveSpecData.allowedTypes[i];
+
+		//valid spawn check
+		if (spawnSpec.totalSpawns > 0 && spawnSpec.allowedConcurentSpawns > 0)
+		{
+			enemyToSpawn = FMath::Min(spawnSpec.totalSpawns, spawnSpec.allowedConcurentSpawns);
+
+			//spawn el enemy
+			for (int32 j = 0; j < enemyToSpawn; ++j)
+			{
+				SpawnAI();
+				spawnSpec.totalSpawns--;
+			}
+		}
+	}
+		
+	bIsWaveInProgress = true;
+	return true;
+}
+
+  
+void AWaveManager::StartWave()
+{
+	/*bIsWaveInProgress = true;
+	enemiesAlive = 0;
+	enemySpawned = 0;
+	totalEnemiesKilled = 0;
+
+	enemyToSpawn = 3 + (currentWave - 1) * SpawnAmount;
+	enemySpawnTimer = 5.0f;*/
+
+}
+
+void AWaveManager::SpawnAIWave()
+{
 	if (bIsWaveInProgress)
 	{
-		enemySpawnTimer -= deltaTime;
+		for (int i = 0; i < enemyToSpawn; i++)
+		{
+			SpawnAI();
+		}
+	}	
+}
+
+void AWaveManager::SpawnAI() {
+
+	if (SpawnPoints.Num() > 0 && AIClassToSpawn.Num() > 0)
+	{
+		//randomize the spawn points
+		FVector3f spawnLocation = GetRandomSpawnPoint();
+
+		//randomize the character spawning
+		int randCharacterIndex = FMath::RandRange(0, AIClassToSpawn.Num() - 1);
+		TSubclassOf<ACharacter> charactersToSpawn = AIClassToSpawn[randCharacterIndex];
+
+		EnemyType enemyType = FMath::RandBool() ? EnemyType::MELEE : EnemyType::RANGED;
+
+		if (enemyManagementSystemRef->SpawnEnemy(enemyType, spawnLocation))
+		{
+			enemiesAlive++;
+			UE_LOG(LogTemp, Warning, TEXT("Spawned %s AI of class: %s"),
+				enemyType == EnemyType::MELEE ? TEXT("Melee enemy") : TEXT("Ranged enemy"),
+				*charactersToSpawn->GetName());
+	
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to spawn AI"));
+		}		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("spawnpoints is 0 and AIClassToSpawn is 0"));
+	}
+}
+
+void AWaveManager::SpawnTimer(float deltatime)
+{
+	if (bIsWaveInProgress)
+	{
+		enemySpawnTimer -= deltatime;
 
 		if (enemySpawned < enemyToSpawn)
 		{
@@ -63,87 +163,20 @@ void AWaveManager::Update(float deltaTime) {
 			}
 		}
 	}
+
 }
 
-
-bool AWaveManager::StartWave(const UWaveManagerSpec& spec) {
-	//Copy it 
-	activeWaveManagerSpec = &spec;
-
-	//Copy current wave data and use it to keep track of current wave state.
-	activeWaveSpecData = spec.waves[0]->data;
-	
-
-	//activeWaveSpecData.allowedTypes[0].totalSpawns--;
-	//if(activeWaveSpecData.allowedTypes[0].totalSpawns == 0)
-
-	return true;
-}
-
-  
-void AWaveManager::StartWave()
+FVector3f AWaveManager::GetRandomSpawnPoint()
 {
-	bIsWaveInProgress = true;
-	enemiesAlive = 0;
-	enemySpawned = 0;
-	totalEnemiesKilled = 0;
+	int32 randIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
 
-	enemyToSpawn = 3 + (currentWave - 1) * SpawnAmount;
-	enemySpawnTimer = 5.0f;
-	
-	//SpawnAIWave();
-}
-
-void AWaveManager::SpawnAIWave()
-{
-	if (bIsWaveInProgress)
+	if (!SpawnPoints[randIndex])
 	{
-		for (int i = 0; i < enemyToSpawn; i++)
-		{
-			SpawnAI();
-		}
+		UE_LOG(LogTemp, Error, TEXT("Spawn Point is nullptr!"));
+		return FVector3f::ZeroVector;
 	}
-	
-}
 
-void AWaveManager::SpawnAI() {
-
-	if (SpawnPoints.Num() > 0 && AIClassToSpawn.Num() > 0)
-	{
-		//randomize the spawn points
-		int32 randIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
-		AActor* spawnPoint = SpawnPoints[randIndex];
-
-		if (!spawnPoint)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Spawn Point is nullptr!"));
-			return;
-		}
-
-		//randomize the character spawning
-		int randCharacterIndex = FMath::RandRange(0, AIClassToSpawn.Num() - 1);
-		TSubclassOf<ACharacter> charactersToSpawn = AIClassToSpawn[randCharacterIndex];
-
-		FActorSpawnParameters spawnParam;
-		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(charactersToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
-
-		//enemyManagementSystemRef->SpawnEnemy()
-
-		if (spawnAI)
-		{
-			enemiesAlive++;
-			UE_LOG(LogTemp, Warning, TEXT("Spawn AI: &s"), *spawnAI->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("failed to spawn AI!"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("spawnpoints is 0 and AIClassToSpawn is 0"));
-	}
+	return FVector3f(SpawnPoints[randIndex]->GetActorLocation());
 }
 
 void AWaveManager::OnAIKilled()
@@ -157,6 +190,7 @@ void AWaveManager::OnAIKilled()
 		StartNextWave();
 	}
 }
+
 
 void AWaveManager::StartNextWave()
 {
