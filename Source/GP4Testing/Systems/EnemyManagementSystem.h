@@ -9,6 +9,9 @@
 
 
 class APrimaryGameMode;
+class AEnemyAIBase;
+class AMeleeAI;
+class ARangedAI;
 
 
 UENUM(BlueprintType)
@@ -29,16 +32,38 @@ public:
 
 public:
 	bool SpawnEnemy(EnemyType type, FVector3f location) noexcept;
-
+	bool CreateEnemyPool(EnemyType type, uint32 count);
+	inline void SetActiveState(bool state) noexcept { active = state; }
+	void ClearPools() noexcept;
 
 public:
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
 
-	inline void SetActiveState(bool state) noexcept { active = state; }
+private:
+	bool CreateMeleeEnemiesPool(uint32 count);
+	bool CreateRangedEnemiesPool(uint32 count);
+	void ValidateEnemyTypesClasses() const noexcept;
+	void ClearMeleeEnemiesPool() noexcept;
+	void ClearRangedEnemiesPool() noexcept;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "EnemyTypes")
+	TSubclassOf<AEnemyAIBase*> meleeEnemyClass = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "EnemyTypes")
+	TSubclassOf<AEnemyAIBase*> RangedEnemyClass = nullptr;
+
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	bool active = false;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Pools")
+	TArray<AMeleeAI*> meleeEnemiesPool;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pools")
+	TArray<ARangedAI*> rangedEnemiesPool;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;
