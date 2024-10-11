@@ -43,7 +43,7 @@ FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
 void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+	Blackboard->SetValueAsBool("bHasRecentlyLanded", bHasRecentlyLanded);
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
@@ -110,5 +110,20 @@ void AEnemyAIBase::SetEnemyState(bool state)
 
 	Active = state;
 }
+
+void AEnemyAIBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	bHasRecentlyLanded = true;
+	GetWorld()->GetTimerManager().SetTimer(LandingTimerHandle, this, &AEnemyAIBase::ResetLandingState, LandingMovementCooldown, false);
+}
+
+void AEnemyAIBase::ResetLandingState()
+{
+	bHasRecentlyLanded = false;
+	GetWorld()->GetTimerManager().ClearTimer(LandingTimerHandle);
+}
+
+
 
 
