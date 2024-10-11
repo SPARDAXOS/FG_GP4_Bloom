@@ -12,7 +12,7 @@
 
 UGunComponent::UGunComponent()
 {
-	GL_MuzzleOffset = FVector(100, 0, 10);
+	GL_MuzzleOffset = FVector(0, 60, 10);
 }
 
 void UGunComponent::Fire()
@@ -65,7 +65,7 @@ void UGunComponent::Fire()
 						ECollisionChannel::ECC_GameTraceChannel3
 					);
 
-					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 5.0f, 0, 1.0f);
+					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
 				}
 			}
 
@@ -98,6 +98,11 @@ void UGunComponent::Fire()
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 		}
+	}
+	else
+	{
+		// Reload automatically when no ammo left?
+		Reload();
 	}
 }
 
