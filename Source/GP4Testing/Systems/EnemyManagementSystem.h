@@ -13,7 +13,7 @@ class AWaveManager;
 class AEnemyAIBase;
 class AMeleeAI;
 class ARangedAI;
-class AEnemySpawnPortalVFX;
+class ATriggerVFX;
 
 
 UENUM(BlueprintType)
@@ -52,6 +52,9 @@ public:
 private:
 	bool SpawnMeleeEnemy(const FVector&);
 	bool SpawnRangedEnemy(const FVector&);
+	ATriggerVFX* GetAvailableVFX() const noexcept;
+
+private:
 	bool CreateMeleeEnemiesPool(uint32 count);
 	bool CreateRangedEnemiesPool(uint32 count);
 	void ClearMeleeEnemiesPool() noexcept;
@@ -64,10 +67,13 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
-	TSubclassOf<AEnemySpawnPortalVFX> enemySpawnPortalVFXClass = nullptr;
+	TSubclassOf<ATriggerVFX> enemySpawnPortalVFXClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	int enemySpawnPortalVFXPoolSize = 20;
+
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	float enemySpawnPortalVFXZOffset = 0.0f;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
@@ -83,7 +89,7 @@ private:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Pools|VFX")
-	TArray<AEnemySpawnPortalVFX*> enemySpawnPortalVFXPool;
+	TArray<ATriggerVFX*> enemySpawnPortalVFXPool;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
 	TArray<AMeleeAI*> meleeEnemiesPool;
