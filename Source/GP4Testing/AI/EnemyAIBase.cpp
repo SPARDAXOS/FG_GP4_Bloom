@@ -6,8 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
-//#include "GP4Testing/WaveManager/GP4_WaveManager.h"
-#include "GP4Testing/Weapons/GunComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -44,11 +42,11 @@ void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Blackboard->SetValueAsBool("bHasRecentlyLanded", bHasRecentlyLanded);
+	Blackboard->SetValueAsBool("Active", Active);
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
 	}
-
 	if(GetCharacterMovement()->IsMovingOnGround())
 	{
 		bJumped = false;
@@ -70,6 +68,7 @@ void AEnemyAIBase::Die()
 	//	Wave->OnAIKilled();
 	//}
 	SetEnemyState(false);
+	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
 }
 
 void AEnemyAIBase::Attack()
