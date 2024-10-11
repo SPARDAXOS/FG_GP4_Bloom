@@ -48,6 +48,9 @@ public:
 
 	static inline ALevelManagement* GetLevelManagement() noexcept { return levelManagementRef; }
 
+	inline AEnemyManagementSystem* GetEnemyManagementSystem() noexcept { return enemyManagementSystemRef; }
+	inline AWaveManager* GetWaveManager() noexcept { return waveManagerRef; }
+
 public:
 	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
 	void EndGame() noexcept;
