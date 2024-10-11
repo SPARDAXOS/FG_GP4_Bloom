@@ -126,7 +126,7 @@ void AWaveManager::SpawnAI() {
 
 		EnemyType enemyType = FMath::RandBool() ? EnemyType::MELEE : EnemyType::RANGED;
 
-		if (enemyManagementSystemRef->SpawnEnemy(enemyType, spawnLocation))
+		if (enemyManagementSystemRef->SpawnEnemy(enemyType, FVector(spawnLocation)))
 		{
 			enemiesAlive++;
 			UE_LOG(LogTemp, Warning, TEXT("Spawned %s AI of class: %s"),
