@@ -16,3 +16,9 @@ void AEnemyManagementSystem::Update(float deltaTime) {
 }
 
 
+bool AEnemyManagementSystem::SpawnEnemy(EnemyType type, FVector3f location) noexcept {
+
+
+	return true;
+}
+
