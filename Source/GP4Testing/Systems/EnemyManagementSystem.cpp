@@ -12,7 +12,8 @@
 
 void AEnemyManagementSystem::Start() {
 	ValidateEnemyTypesClasses();
-
+	ValidateVFXClasses();
+	CreateEnemySpawnPortalVFXPool();
 }
 void AEnemyManagementSystem::Update(float deltaTime) {
 	if (!active)
@@ -157,7 +158,25 @@ void AEnemyManagementSystem::ValidateEnemyTypesClasses() const noexcept {
 		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
 
 	if (!rangedEnemyClass)
-		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
+		Debugging::CustomWarning("Ranged enemy class is invalid!\nEnemyManagementSystem wont be able to spawn ranged enemies!");
+}
+void AEnemyManagementSystem::ValidateVFXClasses() const noexcept {
+	if (!enemySpawnPortalVFXClass)
+		Debugging::CustomWarning("enemySpawnPortalVFXClass is invalid!\nEnemyManagementSystem wont be able to enemy spawn portal VFX!");
+}
+
+
+void AEnemyManagementSystem::CreateEnemySpawnPortalVFXPool() {
+	if (!enemySpawnPortalVFXClass)
+		return;
+
+	for (int i = 0; i < enemySpawnPortalVFXPoolSize; i++) {
+		AEnemySpawnPortalVFX* vfx = GetWorld()->SpawnActor<AEnemySpawnPortalVFX>(enemySpawnPortalVFXClass);
+		if (!vfx)
+			continue;
+
+		enemySpawnPortalVFXPool.Add(vfx);
+	}
 }
 
 

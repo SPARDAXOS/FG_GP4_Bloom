@@ -57,10 +57,17 @@ private:
 	void ClearMeleeEnemiesPool() noexcept;
 	void ClearRangedEnemiesPool() noexcept;
 	void ValidateEnemyTypesClasses() const noexcept;
+	void ValidateVFXClasses() const noexcept;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
+	void CreateEnemySpawnPortalVFXPool();
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	TSubclassOf<AEnemySpawnPortalVFX> enemySpawnPortalVFXClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	int enemySpawnPortalVFXPoolSize = 20;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
@@ -75,10 +82,13 @@ private:
 	bool active = false;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Pools")
+	UPROPERTY(VisibleAnywhere, Category = "Pools|VFX")
+	TArray<AEnemySpawnPortalVFX*> enemySpawnPortalVFXPool;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
 	TArray<AMeleeAI*> meleeEnemiesPool;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pools")
+	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
 	TArray<ARangedAI*> rangedEnemiesPool;
 
 private:
