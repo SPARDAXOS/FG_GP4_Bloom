@@ -7,6 +7,7 @@
 #include "GP4Testing/Components/HealthComponent.h"
 #include "EnemyAIBase.generated.h"
 
+class AWaveManager;
 class AEnemyManagementSystem;
 
 UCLASS()
@@ -43,7 +44,8 @@ public:
 	void NavLinkJump(const FVector& Destination);
 	
 	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
-
+	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
+	
 	void SetEnemyState(bool state);
 
 	bool Active = true;
@@ -81,5 +83,5 @@ public:
 
 	UPROPERTY()
 	AEnemyManagementSystem* EnemyManagementSystem = nullptr;
-
+    AWaveManager* WaveManagerSystem = nullptr;
 };
