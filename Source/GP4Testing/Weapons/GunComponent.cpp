@@ -127,6 +127,10 @@ void UGunComponent::Reload()
 	{
 		for (int i = 0; Magazine < MaxMagazine; i++)
 		{
+			if (Ammo == 0)
+			{
+				return;
+			}
 			Magazine++;
 			Ammo--;
 		}
