@@ -42,9 +42,13 @@ private:
 	void SpawnAIWave();
 	void StartNextWave();
 	void SpawnAI();
+	void SpawnTimer(float deltatime);
+
+	FVector3f GetRandomSpawnPoint();
 
 public:	
 	void OnAIKilled();
+	
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
