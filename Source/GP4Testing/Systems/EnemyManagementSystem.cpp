@@ -23,41 +23,56 @@ void AEnemyManagementSystem::Update(float deltaTime) {
 
 bool AEnemyManagementSystem::SpawnEnemy(EnemyType type, FVector3f location) noexcept {
 
+	if (type == EnemyType::MELEE)
+		return SpawnMeleeEnemy(location);
+	else if (type == EnemyType::RANGED)
+		return SpawnRangedEnemy(location);
 
-	return true;
+	return false;
 }
 bool AEnemyManagementSystem::CreateEnemyPool(EnemyType type, uint32 count) {
 	if (type == EnemyType::MELEE) {
 		ClearMeleeEnemiesPool();
-		CreateMeleeEnemiesPool(count);
+		return CreateMeleeEnemiesPool(count);
 	}
 	else if (type == EnemyType::RANGED) {
 		ClearRangedEnemiesPool();
-		CreateRangedEnemiesPool(count);
+		return CreateRangedEnemiesPool(count);
 	}
+
+	return false;
+}
+void AEnemyManagementSystem::ClearPools() noexcept {
+	ClearMeleeEnemiesPool();
+	ClearRangedEnemiesPool();
 }
 
 
+bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector3f& location) {
+	if (meleeEnemiesPool.Num() == 0)
+		return false;
 
-void AEnemyManagementSystem::ValidateEnemyTypesClasses() const noexcept {
-	if (!meleeEnemyClass)
-		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
 
-	if (!RangedEnemyClass)
-		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
+
+
+	return false;
+}
+bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector3f& location) {
+
+	return true;
 }
 bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
 	if (!meleeEnemyClass)
 		return false;
 
-	for (int i = 0; i < count; i++) {
+	for (uint32 i = 0; i < count; i++) {
 		AMeleeAI* newEnemy = GetWorld()->SpawnActor<AMeleeAI>(meleeEnemyClass);
 		if (!newEnemy)
 			continue;
 
 		newEnemy->SetEnemyState(false);
 		newEnemy->SetEnemyManagementRef(*this);
-		//newEnemy->SetWaveManagerRef(waveManagerRef);
+		newEnemy->SetWaveManagerRef(*waveManagerRef);
 		meleeEnemiesPool.Add(newEnemy);
 	}
 
@@ -70,14 +85,14 @@ bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
 	if (!RangedEnemyClass)
 		return false;
 
-	for (int i = 0; i < count; i++) {
+	for (uint32 i = 0; i < count; i++) {
 		ARangedAI* newEnemy = GetWorld()->SpawnActor<ARangedAI>(RangedEnemyClass);
 		if (!newEnemy)
 			continue;
 
 		newEnemy->SetEnemyState(false);
 		newEnemy->SetEnemyManagementRef(*this);
-		//newEnemy->SetWaveManagerRef(waveManagerRef);
+		newEnemy->SetWaveManagerRef(*waveManagerRef);
 		rangedEnemiesPool.Add(newEnemy);
 	}
 
@@ -85,11 +100,6 @@ bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
 		return true;
 	else
 		return false;
-}
-
-void AEnemyManagementSystem::ClearPools() noexcept {
-	ClearMeleeEnemiesPool();
-	ClearRangedEnemiesPool();
 }
 void AEnemyManagementSystem::ClearMeleeEnemiesPool() noexcept {
 	if (meleeEnemiesPool.Num() == 0)
@@ -109,4 +119,13 @@ void AEnemyManagementSystem::ClearRangedEnemiesPool() noexcept {
 
 	rangedEnemiesPool.Empty();
 }
+void AEnemyManagementSystem::ValidateEnemyTypesClasses() const noexcept {
+	if (!meleeEnemyClass)
+		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
+
+	if (!RangedEnemyClass)
+		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
+}
+
+
 

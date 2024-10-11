@@ -34,26 +34,28 @@ public:
 public:
 	bool SpawnEnemy(EnemyType type, FVector3f location) noexcept;
 	bool CreateEnemyPool(EnemyType type, uint32 count);
-	inline void SetActiveState(bool state) noexcept { active = state; }
 	void ClearPools() noexcept;
+	inline void SetActiveState(bool state) noexcept { active = state; }
 
 public:
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
 	inline void SetWaveManagerReference(AWaveManager& manager) noexcept { waveManagerRef = &manager; }
 
 private:
+	bool SpawnMeleeEnemy(const FVector3f&);
+	bool SpawnRangedEnemy(const FVector3f&);
 	bool CreateMeleeEnemiesPool(uint32 count);
 	bool CreateRangedEnemiesPool(uint32 count);
-	void ValidateEnemyTypesClasses() const noexcept;
 	void ClearMeleeEnemiesPool() noexcept;
 	void ClearRangedEnemiesPool() noexcept;
+	void ValidateEnemyTypesClasses() const noexcept;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "EnemyTypes")
-	TSubclassOf<AEnemyAIBase*> meleeEnemyClass = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
+	TSubclassOf<AEnemyAIBase> meleeEnemyClass = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = "EnemyTypes")
-	TSubclassOf<AEnemyAIBase*> RangedEnemyClass = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
+	TSubclassOf<AEnemyAIBase> RangedEnemyClass = nullptr;
 
 
 private:
