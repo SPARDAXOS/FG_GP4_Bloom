@@ -28,7 +28,7 @@ public:
 	virtual void Update(float deltaTime) override;
 
 public:
-	//bool SpawnEnemy(EnemyType, Location);
+	bool SpawnEnemy(EnemyType type, FVector3f location) noexcept;
 
 
 public:

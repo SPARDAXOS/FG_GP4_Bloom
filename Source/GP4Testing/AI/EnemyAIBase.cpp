@@ -43,10 +43,15 @@ FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
 void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+	Blackboard->SetValueAsBool("bHasRecentlyLanded", bHasRecentlyLanded);
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
+	}
+
+	if(GetCharacterMovement()->IsMovingOnGround())
+	{
+		bJumped = false;
 	}
 }
 
@@ -64,7 +69,7 @@ void AEnemyAIBase::Die()
 	//{
 	//	Wave->OnAIKilled();
 	//}
-	//Destroy();
+	SetEnemyState(false);
 }
 
 void AEnemyAIBase::Attack()
@@ -83,11 +88,42 @@ void AEnemyAIBase::ResetAttack()
 
 void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 {
-	Debugging::PrintString("Trying to jump");
 	FVector OutLaunch;
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(),  OutLaunch, GetActorLocation(), Destination);
 	OutLaunch.Z = OutLaunch.Z * JumpForce;
 	LaunchCharacter(OutLaunch, true, true);
+	bJumped = true;
 }
+
+void AEnemyAIBase::SetEnemyState(bool state)
+{
+	SetActorTickEnabled(state);
+	SetActorEnableCollision(state);
+	SetActorHiddenInGame(!state);
+
+	GetCapsuleComponent()->SetEnableGravity(state);
+	GetCharacterMovement()->SetActive(state);
+	if (state)
+		GetCharacterMovement()->GravityScale =	1.0f;	//defaultGravityScale;
+	else
+		GetCharacterMovement()->GravityScale = 0.0f;
+
+	Active = state;
+}
+
+void AEnemyAIBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	bHasRecentlyLanded = true;
+	GetWorld()->GetTimerManager().SetTimer(LandingTimerHandle, this, &AEnemyAIBase::ResetLandingState, LandingMovementCooldown, false);
+}
+
+void AEnemyAIBase::ResetLandingState()
+{
+	bHasRecentlyLanded = false;
+	GetWorld()->GetTimerManager().ClearTimer(LandingTimerHandle);
+}
+
+
 
 
