@@ -44,6 +44,7 @@ public:
 	void NavLinkJump(const FVector& Destination);
 	
 	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
+	inline bool GetCurrentState() { return Active; }
 	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
 	
 	void SetEnemyState(bool state);
@@ -69,6 +70,9 @@ public:
 	float AttackCooldown = 1;
 
 	UPROPERTY(EditDefaultsOnly)
+	float LandingMovementCooldown = 1;
+
+	UPROPERTY(EditDefaultsOnly)
 	float JumpForce = 2;
 
 	UPROPERTY(VisibleAnywhere)
@@ -77,11 +81,17 @@ public:
 	UBlackboardComponent* Blackboard = nullptr;
 
 	FTimerHandle AttackTimerHandle;
+	FTimerHandle LandingTimerHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthComponent* HealthComponent = nullptr;
 
 	UPROPERTY()
 	AEnemyManagementSystem* EnemyManagementSystem = nullptr;
-    AWaveManager* WaveManagerSystem = nullptr;
+
+	AWaveManager* WaveManagerSystem = nullptr;
+
+	virtual void Landed(const FHitResult& Hit) override;
+	void ResetLandingState();
+	bool bHasRecentlyLanded = false;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EnemyAIBase.h"
+#include "Components/SphereComponent.h"
 #include "RangedAI.generated.h"
 
 class ARangedAIBullet;
@@ -29,4 +30,7 @@ class GP4TESTING_API ARangedAI : public AEnemyAIBase
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Muzzle = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* Hitbox = nullptr;
 };

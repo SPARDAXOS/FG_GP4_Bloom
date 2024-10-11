@@ -13,6 +13,8 @@ ARangedAI::ARangedAI()
 {
 	Muzzle = CreateDefaultSubobject<USceneComponent>("Muzzle");
 	Muzzle->SetupAttachment(GetRootComponent());
+	Hitbox = CreateDefaultSubobject<USphereComponent>("Hitbox");
+	Hitbox->SetupAttachment(GetRootComponent());
 }
 
 void ARangedAI::Attack()
@@ -21,6 +23,9 @@ void ARangedAI::Attack()
 	{
 		Super::Attack();
 		FHitResult Hit = GetHitDetectionResult(Muzzle->GetComponentLocation());
+		FVector ActorLoc = FVector(GetActorLocation().X, GetActorLocation().Y, 0);
+		FVector PlayerLoc = FVector(Player->GetActorLocation().X, Player->GetActorLocation().Y, 0);
+		SetActorRotation(UKismetMathLibrary::FindLookAtRotation(ActorLoc, PlayerLoc));
 
 		if (Hit.bBlockingHit)
 		{
@@ -63,7 +68,7 @@ bool ARangedAI::bCanSeePlayer()
 {
 	FCollisionQueryParams TraceParams;
 	FHitResult Hit;
-	GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), Player->GetActorLocation(), ECC_Visibility, TraceParams);
+	GetWorld()->LineTraceSingleByChannel(Hit, Muzzle->GetComponentLocation(), Player->GetActorLocation(), ECC_Visibility, TraceParams);
 
 	if (Hit.GetActor())
 	{

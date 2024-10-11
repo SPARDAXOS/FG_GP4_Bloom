@@ -6,8 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
-//#include "GP4Testing/WaveManager/GP4_WaveManager.h"
-#include "GP4Testing/Weapons/GunComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -43,12 +41,12 @@ FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
 void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+	Blackboard->SetValueAsBool("bHasRecentlyLanded", bHasRecentlyLanded);
+	Blackboard->SetValueAsBool("Active", Active);
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
 	}
-
 	if(GetCharacterMovement()->IsMovingOnGround())
 	{
 		bJumped = false;
@@ -70,6 +68,7 @@ void AEnemyAIBase::Die()
 	//	Wave->OnAIKilled();
 	//}
 	SetEnemyState(false);
+	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
 }
 
 void AEnemyAIBase::Attack()
@@ -110,5 +109,20 @@ void AEnemyAIBase::SetEnemyState(bool state)
 
 	Active = state;
 }
+
+void AEnemyAIBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	bHasRecentlyLanded = true;
+	GetWorld()->GetTimerManager().SetTimer(LandingTimerHandle, this, &AEnemyAIBase::ResetLandingState, LandingMovementCooldown, false);
+}
+
+void AEnemyAIBase::ResetLandingState()
+{
+	bHasRecentlyLanded = false;
+	GetWorld()->GetTimerManager().ClearTimer(LandingTimerHandle);
+}
+
+
 
 
