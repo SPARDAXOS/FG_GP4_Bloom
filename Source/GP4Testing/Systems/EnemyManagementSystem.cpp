@@ -21,14 +21,31 @@ void AEnemyManagementSystem::Update(float deltaTime) {
 }
 
 
-bool AEnemyManagementSystem::SpawnEnemy(EnemyType type, FVector3f location) noexcept {
-
+bool AEnemyManagementSystem::SpawnEnemy(EnemyType type, FVector location) noexcept {
 	if (type == EnemyType::MELEE)
 		return SpawnMeleeEnemy(location);
 	else if (type == EnemyType::RANGED)
 		return SpawnRangedEnemy(location);
 
 	return false;
+}
+void AEnemyManagementSystem::DispawnAllEnemies() const noexcept {
+	DispawnMeleeEnemies();
+	DispawnRangedEnemies();
+}
+void AEnemyManagementSystem::DispawnMeleeEnemies() const noexcept {
+	if (meleeEnemiesPool.Num() == 0)
+		return;
+
+	for (auto& enemy : meleeEnemiesPool)
+		enemy->SetEnemyState(false);
+}
+void AEnemyManagementSystem::DispawnRangedEnemies() const noexcept {
+	if (rangedEnemiesPool.Num() == 0)
+		return;
+
+	for (auto& enemy : rangedEnemiesPool)
+		enemy->SetEnemyState(false);
 }
 bool AEnemyManagementSystem::CreateEnemyPool(EnemyType type, uint32 count) {
 	if (type == EnemyType::MELEE) {
@@ -48,18 +65,33 @@ void AEnemyManagementSystem::ClearPools() noexcept {
 }
 
 
-bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector3f& location) {
+bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 	if (meleeEnemiesPool.Num() == 0)
 		return false;
 
-
-
+	for (auto& enemy : meleeEnemiesPool) {
+		if (!enemy->GetCurrentState()) {
+			enemy->SetActorLocation(location);
+			enemy->SetEnemyState(true);
+			return true;
+		}
+	}
 
 	return false;
 }
-bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector3f& location) {
+bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector& location) {
+	if (rangedEnemiesPool.Num() == 0)
+		return false;
 
-	return true;
+	for (auto& enemy : rangedEnemiesPool) {
+		if (!enemy->GetCurrentState()) {
+			enemy->SetActorLocation(location);
+			enemy->SetEnemyState(true);
+			return true;
+		}
+	}
+
+	return false;
 }
 bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
 	if (!meleeEnemyClass)
