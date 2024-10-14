@@ -7,6 +7,7 @@
 #include "Engine/DamageEvents.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/Utility/Debugging.h"
+#include "GP4Testing/VFXEntities/TriggerVFX.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ARangedAI::ARangedAI()
@@ -15,6 +16,32 @@ ARangedAI::ARangedAI()
 	Muzzle->SetupAttachment(GetRootComponent());
 	Hitbox = CreateDefaultSubobject<USphereComponent>("Hitbox");
 	Hitbox->SetupAttachment(GetRootComponent());
+	DeathVFXSpawnLoc = CreateDefaultSubobject<USceneComponent>("DeathVFXSpawnLoc");
+	DeathVFXSpawnLoc->SetupAttachment(GetRootComponent());
+}
+
+void ARangedAI::EnemyDeath()
+{
+	SetEnemyState(false);
+}
+
+void ARangedAI::Die()
+{
+	Super::Die();
+	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
+	FOnVFXFinishedSignature callback;
+	if (DeathVFX)
+	{
+		callback.BindUFunction(this, FName("EnemyDeath"));
+		DeathVFX->SetupCallback(callback);
+	}
+	DeathVFX->Activate();
+}
+
+
+void ARangedAI::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void ARangedAI::Attack()

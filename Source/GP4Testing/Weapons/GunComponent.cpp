@@ -76,11 +76,13 @@ void AGunComponent::Fire()
 			if (Hit.bBlockingHit)
 			{
 				AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Hit.GetActor());
-
-				if (Enemy->HealthComponent != nullptr)
+				if (Enemy != nullptr)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
-					Enemy->HealthComponent->TakeDamage(WeaponDamage);
+					if (Enemy->HealthComponent != nullptr)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
+						Enemy->HealthComponent->TakeDamage(WeaponDamage);
+					}
 				}
 			}
 		}

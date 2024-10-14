@@ -82,7 +82,7 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
 
 		enemyManagementSystemRef->SetActiveState(true);
-		waveManagerRef->SetActiveState(true);
+
 
 		gameStarted = true;
 	}
@@ -160,7 +160,7 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 
 		//Activate Custom Systems
 		enemyManagementSystemRef->SetActiveState(true);
-		waveManagerRef->SetActiveState(true);
+		waveManagerRef->Activate();
 
 		gameStarted = true;
 	}
@@ -174,8 +174,8 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 
 				//Activate Custom Systems
 				enemyManagementSystemRef->SetActiveState(true);
-				waveManagerRef->SetActiveState(true);
-				waveManagerRef->StartWave(*spec.waveManagerSpec);
+				waveManagerRef->Setup(*spec.waveManagerSpec);
+				waveManagerRef->Activate();
 
 				gameStarted = true;
 				});
@@ -198,7 +198,7 @@ void APrimaryGameMode::EndGame() noexcept {
 	//Disable custom systems
 	enemyManagementSystemRef->SetActiveState(false);
 	enemyManagementSystemRef->ClearPools();
-	waveManagerRef->SetActiveState(false);
+	waveManagerRef->Deactivate();
 
 	levelManagementRef->LoadLevel("MainMenu", [this]() {
 		levelManagementRef->UnloadLevel(loadedLevelKey, [this]() {
