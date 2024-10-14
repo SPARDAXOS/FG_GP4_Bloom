@@ -44,6 +44,7 @@ public:
 	void NavLinkJump(const FVector& Destination);
 	
 	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
+	inline bool GetCurrentState() { return Active; }
 	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
 	
 	void SetEnemyState(bool state);

@@ -197,6 +197,7 @@ void APrimaryGameMode::EndGame() noexcept {
 
 	//Disable custom systems
 	enemyManagementSystemRef->SetActiveState(false);
+	enemyManagementSystemRef->ClearPools();
 	waveManagerRef->SetActiveState(false);
 
 	levelManagementRef->LoadLevel("MainMenu", [this]() {
@@ -280,6 +281,7 @@ void APrimaryGameMode::SetupDependencies() noexcept {
 
 	//CustomSystems
 	enemyManagementSystemRef->SetPrimaryGameModeReference(*this);
+	enemyManagementSystemRef->SetWaveManagerReference(*waveManagerRef);
 	waveManagerRef->SetPrimaryGameModeReference(*this);
 	waveManagerRef->SetPrimaryPlayerControllerReference(*primaryPlayerControllerRef);
 	waveManagerRef->SetEnemySpawningSystemReference(*enemyManagementSystemRef);
