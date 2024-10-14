@@ -3,6 +3,7 @@
 
 #include "PickUp.h"
 #include "Components/BoxComponent.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 APickup::APickup()
@@ -21,8 +22,13 @@ APickup::APickup()
 	PickUpBox->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
 	PickUpBox->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPlayerInteraction);
 
+	vfx = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
+	vfx->SetupAttachment(RootComponent);
+	vfx->bAutoActivate = true;
+
 	RotationRate = FRotator(0.0f, 90.0f, 0.0F);
 
+	Speed = 2.0f;
 }
 
 // Called when the game starts or when spawned
@@ -50,7 +56,7 @@ void APickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	AddActorLocalRotation(RotationRate * DeltaTime);
 
-	float hight = 0.1 * FMath::Sin(GetWorld()->GetTimeSeconds());
+	float hight = 0.2 * FMath::Sin(GetWorld()->GetTimeSeconds());
 	FVector pickupPosition = PickUpRoot->GetRelativeLocation();
 	FVector Movement = FVector(pickupPosition.X, pickupPosition.Y, hight + pickupPosition.Z);
 	PickUpRoot->SetRelativeLocation(Movement);

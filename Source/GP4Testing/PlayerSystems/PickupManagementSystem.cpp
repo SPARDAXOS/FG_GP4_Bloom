@@ -25,11 +25,5 @@ bool APickupManagementSystem::RegisterPickup(APickup& pickup) noexcept
 
 		//return 	healthSystem->AddHealth(targetPickup->value);
 	}
-
-	if (pickup.pickupType == PickupType::AMMO)
-	{
-		
-	}
-
 	return true;
 }
