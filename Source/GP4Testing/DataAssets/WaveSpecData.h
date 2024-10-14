@@ -20,6 +20,9 @@ struct FEnemyTypeSpawnSpec {
 
 	UPROPERTY(EditDefaultsOnly, Category = "Data")
 	int allowedConcurentSpawns = 20;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Data")
+	float spawnRate = 1.0f;
 };
 
 
