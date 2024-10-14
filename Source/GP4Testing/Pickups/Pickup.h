@@ -53,8 +53,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	FRotator RotationRate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
-	float Speed;
 
 	UPROPERTY(EditDefaultsOnly)
 	PickupType pickupType;
