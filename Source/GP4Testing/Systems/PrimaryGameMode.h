@@ -10,9 +10,7 @@
 UENUM(BlueprintType)
 enum class PrimaryGameState : uint8 {
 	NONE = 0,
-	MAIN_MENU,
-	OPTIONS_MENU,
-	LEVEL_SELECT_MENU,
+	MENU,
 	PLAYING,
 	PAUSED
 };
