@@ -2,7 +2,7 @@
 #include "GP4Testing/AI/EnemyAIBase.h"
 #include "GP4Testing/AI/MeleeAI.h"
 #include "GP4Testing/AI/RangedAI.h"
-#include "GP4Testing/VFXEntities/EnemySpawnPortalVFX.h"
+#include "GP4Testing/VFXEntities/TriggerVFX.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -73,8 +73,23 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 
 	for (auto& enemy : meleeEnemiesPool) {
 		if (!enemy->GetCurrentState()) {
-			enemy->SetActorLocation(location);
-			enemy->SetEnemyState(true);
+			ATriggerVFX* vfx = GetAvailableVFX();
+			if (vfx) {
+				FOnVFXFinishedSignature callback;
+				callback.BindLambda([this, &enemy, &location]() {
+					enemy->SetActorLocation(location);
+					enemy->SetEnemyState(true);
+				});
+				vfx->SetupCallback(callback);
+				FVector spawnPosition = location;
+				spawnPosition.Z += enemySpawnPortalVFXZOffset;
+				vfx->SetActorLocation(spawnPosition);
+				vfx->Activate();
+			}
+			else {
+				enemy->SetActorLocation(location);
+				enemy->SetEnemyState(true);
+			}
 			return true;
 		}
 	}
@@ -95,6 +110,19 @@ bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector& location) {
 
 	return false;
 }
+ATriggerVFX* AEnemyManagementSystem::GetAvailableVFX() const noexcept {
+	if (enemySpawnPortalVFXPool.Num() == 0)
+		return nullptr;
+
+	for (auto& vfx : enemySpawnPortalVFXPool) {
+		if (!vfx->GetStatus())
+			return vfx;
+	}
+
+	return nullptr;
+}
+
+
 bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
 	if (!meleeEnemyClass)
 		return false;
@@ -171,7 +199,7 @@ void AEnemyManagementSystem::CreateEnemySpawnPortalVFXPool() {
 		return;
 
 	for (int i = 0; i < enemySpawnPortalVFXPoolSize; i++) {
-		AEnemySpawnPortalVFX* vfx = GetWorld()->SpawnActor<AEnemySpawnPortalVFX>(enemySpawnPortalVFXClass);
+		ATriggerVFX* vfx = GetWorld()->SpawnActor<ATriggerVFX>(enemySpawnPortalVFXClass);
 		if (!vfx)
 			continue;
 
