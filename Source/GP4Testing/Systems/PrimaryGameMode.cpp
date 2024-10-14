@@ -12,6 +12,7 @@
 #include "GP4Testing/Systems/EnemyManagementSystem.h"
 #include "GP4Testing/Systems/WaveManager.h"
 #include "GP4Testing/DataAssets/LevelSelectEntrySpec.h"
+#include "GP4Testing/DataAssets/WaveManagerSpec.h"
 
 
 #include "Kismet/GameplayStatics.h"
@@ -76,24 +77,22 @@ void APrimaryGameMode::BroadcastStart() {
 
 //Start
 void APrimaryGameMode::SetupApplicationStartState() noexcept {
-	if (launchInDebugMode) {
-		SetupPrePlayingState();
-		SetupPlayingState();
-		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-
-		enemyManagementSystemRef->SetActiveState(true);
-
-		currentPrimaryGameState = PrimaryGameState::PLAYING;
-		gameStarted = true;
-	}
-	else {
-		//Main Menu Music
-		levelManagementRef->LoadLevel("MainMenu", [this]() {
+	if (!launchInDebugMode) {
+		
+		auto lambda = [this]() {
+			//Main Menu Music
 			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 			primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
 			currentPrimaryGameState = PrimaryGameState::MENU;
-			});
+			};
+
+		if (levelManagementRef->LoadLevel("MainMenu", lambda))
+			return;
+
+		launchInDebugMode = true;
 	}
+
+	SetupDebugModeState();
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
 	primaryPlayerRef->SetupStartingState();
@@ -106,6 +105,21 @@ void APrimaryGameMode::SetupPrePlayingState() noexcept {
 void APrimaryGameMode::SetupPlayingState() noexcept {
 	//Player position, rotation adjustments
 	//Cutscene?
+}
+void APrimaryGameMode::SetupDebugModeState() {
+	SetupPrePlayingState();
+	SetupPlayingState();
+	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+	primaryHUDRef->ClearViewport();
+
+	enemyManagementSystemRef->SetActiveState(true);
+	if (debugModeWaveManagerSpec) {
+		waveManagerRef->Setup(*debugModeWaveManagerSpec);
+		waveManagerRef->Activate();
+	}
+
+	currentPrimaryGameState = PrimaryGameState::PLAYING;
+	gameStarted = true;
 }
 
 
@@ -146,19 +160,8 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 
 	loadedLevelKey = spec.key;
 
-	if (launchInDebugMode) {
-		SetupPrePlayingState();
-		SetupPlayingState();
-
-		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-		primaryHUDRef->ClearViewport(); //No transition for now
-
-		//Activate Custom Systems
-		enemyManagementSystemRef->SetActiveState(true);
-		waveManagerRef->Activate();
-
-		gameStarted = true;
-	}
+	if (launchInDebugMode)
+		SetupDebugModeState();
 	else {
 		levelManagementRef->LoadLevel(spec.key, [this, &spec]() {
 			levelManagementRef->UnloadLevel("MainMenu", [this, &spec]() {

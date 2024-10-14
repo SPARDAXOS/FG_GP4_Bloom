@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GP4Testing/Utility/Timer.h"
 
 #include "TriggerVFX.generated.h"
 
@@ -16,13 +17,18 @@ public:
 	ATriggerVFX();
 
 public:
+	virtual void Tick(float deltaTime) override;
+
+public:
 	void Activate();
-	void SetupCallback(FOnVFXFinishedSignature callback);
+	void SetupOnFinishedCallback(FOnVFXFinishedSignature callback);
+	void SetupTimer(FOnVFXFinishedSignature callback, float duration);
 	inline bool GetStatus() const noexcept { return status; }
 
 private:
 	UFUNCTION()
 	void OnVFXFinished(UNiagaraComponent* bPSystem);
+	void OnTimerFinished();
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -33,5 +39,7 @@ private:
 	bool status = false;
 
 private:
-	FOnVFXFinishedSignature registeredCallback;
+	Timer timer;
+	FOnVFXFinishedSignature onFinishedCallback;
+	FOnVFXFinishedSignature onTimerFinishedCallback;
 };
