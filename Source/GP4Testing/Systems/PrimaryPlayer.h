@@ -113,6 +113,20 @@ private: //Melee
 	bool bCanMelee = true;
 	FTimerHandle TimerHandle;
 	void ResetMelee();
+
+public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.com/documentation/en-us/unreal-engine/camera-shakes-in-unreal-engine
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShakeBase> HitShake = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShakeBase> LandShake = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShakeBase> ShootingShake = nullptr; //SHOULD CREATE SEVERAL OF THESE
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShakeBase> RunningShake = nullptr;
+	
+	void ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase);
+	UFUNCTION()
+	void HandleHitShake();
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player|Debugging", meta = (AllowPrivateAccess = "true"))
 	bool active = false;

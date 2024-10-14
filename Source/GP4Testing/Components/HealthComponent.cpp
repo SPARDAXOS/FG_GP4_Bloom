@@ -12,6 +12,8 @@ void UHealthComponent::BeginPlay()
 void UHealthComponent::TakeDamage(float Damage)
 {
 	CurrentHealth -= Damage;
+	if(OnDamage.IsBound())
+		OnDamage.Broadcast();
 	if(CurrentHealth <= 0.f)
 	{
 		CurrentHealth = 0.f;
@@ -25,5 +27,7 @@ void UHealthComponent::AddHealth(float Amount)
 	if(CurrentHealth != MaxHealth)
 	{
 		CurrentHealth += Amount;
+		if (OnHeal.IsBound())
+			OnHeal.Broadcast();
 	}
 }

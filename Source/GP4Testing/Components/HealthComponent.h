@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHealthCompSignature);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GP4TESTING_API UHealthComponent : public UActorComponent
@@ -25,5 +25,9 @@ public:
 	float CurrentHealth;
 
 	UPROPERTY(BlueprintAssignable)
-	FDeathSignature OnDeath;
+	FHealthCompSignature OnDeath;
+	UPROPERTY(BlueprintAssignable)
+	FHealthCompSignature OnDamage;
+	UPROPERTY(BlueprintAssignable)
+	FHealthCompSignature OnHeal;
 };

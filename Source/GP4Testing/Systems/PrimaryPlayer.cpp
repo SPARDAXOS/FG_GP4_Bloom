@@ -15,6 +15,7 @@
 #include "GP4Testing/AI/EnemyAIBase.h"
 
 #include "GP4Testing/Utility/Debugging.h"
+#include "Kismet/GameplayStatics.h"
 
 
 APrimaryPlayer::APrimaryPlayer() {
@@ -31,6 +32,7 @@ void APrimaryPlayer::Init() {
 	SetupPlayerSystemsDependencies();
 	InitPlayerSystems();
 	SetupPrimaryPlayerHUD();
+	GetPlayerHealthSystem().HealthComponent->OnDamage.AddUniqueDynamic(this, &APrimaryPlayer::HandleHitShake);
 
 
 	springArm->TargetArmLength = springArmLength;
@@ -181,7 +183,16 @@ void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
 
 	weaponManagementSystemRef->WeaponSlot3();
 }
+void APrimaryPlayer::ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase)
+{
+	UGameplayStatics::PlayWorldCameraShake(this, CameraShakeBase, GetActorLocation(), 0, 500, 1, false);
+	Debugging::PrintString("Has tried to shake");
+}
 
+void APrimaryPlayer::HandleHitShake()
+{
+	ShakeCamera(HitShake);
+}
 
 
 void APrimaryPlayer::CreatePlayerSystems() {
