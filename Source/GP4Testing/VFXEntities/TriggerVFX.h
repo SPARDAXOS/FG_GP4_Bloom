@@ -8,7 +8,7 @@ class UNiagaraComponent;
 
 DECLARE_DELEGATE(FOnVFXFinishedSignature)
 
-UCLASS()
+UCLASS(Abstract)
 class ATriggerVFX : public AActor {
 	GENERATED_BODY()
 
@@ -21,6 +21,7 @@ public:
 	inline bool GetStatus() const noexcept { return status; }
 
 private:
+	UFUNCTION()
 	void OnVFXFinished(UNiagaraComponent* bPSystem);
 
 private:
