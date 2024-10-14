@@ -2,6 +2,7 @@
 #include "GP4Testing/AI/EnemyAIBase.h"
 #include "GP4Testing/AI/MeleeAI.h"
 #include "GP4Testing/AI/RangedAI.h"
+#include "GP4Testing/VFXEntities/EnemySpawnPortalVFX.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -11,7 +12,8 @@
 
 void AEnemyManagementSystem::Start() {
 	ValidateEnemyTypesClasses();
-
+	ValidateVFXClasses();
+	CreateEnemySpawnPortalVFXPool();
 }
 void AEnemyManagementSystem::Update(float deltaTime) {
 	if (!active)
@@ -114,11 +116,11 @@ bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
 		return false;
 }
 bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
-	if (!RangedEnemyClass)
+	if (!rangedEnemyClass)
 		return false;
 
 	for (uint32 i = 0; i < count; i++) {
-		ARangedAI* newEnemy = GetWorld()->SpawnActor<ARangedAI>(RangedEnemyClass);
+		ARangedAI* newEnemy = GetWorld()->SpawnActor<ARangedAI>(rangedEnemyClass);
 		if (!newEnemy)
 			continue;
 
@@ -155,8 +157,26 @@ void AEnemyManagementSystem::ValidateEnemyTypesClasses() const noexcept {
 	if (!meleeEnemyClass)
 		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
 
-	if (!RangedEnemyClass)
-		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
+	if (!rangedEnemyClass)
+		Debugging::CustomWarning("Ranged enemy class is invalid!\nEnemyManagementSystem wont be able to spawn ranged enemies!");
+}
+void AEnemyManagementSystem::ValidateVFXClasses() const noexcept {
+	if (!enemySpawnPortalVFXClass)
+		Debugging::CustomWarning("enemySpawnPortalVFXClass is invalid!\nEnemyManagementSystem wont be able to enemy spawn portal VFX!");
+}
+
+
+void AEnemyManagementSystem::CreateEnemySpawnPortalVFXPool() {
+	if (!enemySpawnPortalVFXClass)
+		return;
+
+	for (int i = 0; i < enemySpawnPortalVFXPoolSize; i++) {
+		AEnemySpawnPortalVFX* vfx = GetWorld()->SpawnActor<AEnemySpawnPortalVFX>(enemySpawnPortalVFXClass);
+		if (!vfx)
+			continue;
+
+		enemySpawnPortalVFXPool.Add(vfx);
+	}
 }
 
 
