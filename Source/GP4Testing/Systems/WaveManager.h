@@ -16,6 +16,7 @@ class APrimaryPlayerController;
 class APrimaryGameMode;
 class AEnemyManagementSystem;
 class UWaveManagerSpec;
+struct FEnemyTypeSpawnSpec;
 class UWaveSpec;
 
 enum class EnemyType : uint8;
@@ -40,8 +41,6 @@ public:
 public:
 	inline void SetEnemySpawningSystemReference(AEnemyManagementSystem& system) noexcept { enemyManagementSystemRef = &system; }
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
-	inline void SetPrimaryPlayerControllerReference(APrimaryPlayerController& playerController) noexcept { primaryPlayerControllerRef = &playerController; }
-
 
 private:
 	void Clear() noexcept;
@@ -51,9 +50,11 @@ private:
 	void Completed() noexcept;
 
 private:
-	bool SpawnEnemy(const EnemyType& type, FVector& location) noexcept;
+	bool SpawnEnemy(const EnemyType& type, FVector location) noexcept;
+	bool CreateEnemyPools();
 	FVector GetRandomSpawnPoint() noexcept;
 	bool ValidateAllowedEnemyTypes() noexcept;
+	FEnemyTypeSpawnSpec* FindSpawnSpec(const EnemyType& type);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
@@ -67,13 +68,20 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	FWaveSpecData activeWaveSpecData;
-	
 
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentTotalSpawnedEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentSpawnedMeleeEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentSpawnedRangedEnemies = 0;
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Spawning")
-	TArray<AActor*> SpawnPoints;
-
+	UPROPERTY(EditAnywhere, Category = "Spawns")
+	TArray<AActor*> spawnPoints;
 
 private:
 	TArray<Timer> spawnTimers;
