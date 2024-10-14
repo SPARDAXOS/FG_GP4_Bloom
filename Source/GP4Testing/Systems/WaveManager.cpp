@@ -137,8 +137,8 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 			currentTotalSpawnedEnemies++;
 			Debugging::CustomLog("Spawned enemy of type 'Melee'");
 		}
-
-		Debugging::CustomError("Failed to spawn enemy with type Melee! - SpawnEnemy Failed!");
+		else
+			Debugging::CustomError("Failed to spawn enemy with type Melee! - SpawnEnemy Failed!");
 	}
 	else if (type == EnemyType::RANGED) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::RANGED);
@@ -158,8 +158,8 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 			currentTotalSpawnedEnemies++;
 			Debugging::CustomLog("Spawned enemy of type 'Ranged'");
 		}
-
-		Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");
+		else
+			Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");
 	}
 }
 bool AWaveManager::SetupTimers() noexcept {
