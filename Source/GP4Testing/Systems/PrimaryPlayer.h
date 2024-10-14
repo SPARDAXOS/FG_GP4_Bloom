@@ -103,6 +103,16 @@ private: //Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
 	float springArmLength;
 
+private: //Melee
+	UPROPERTY(EditDefaultsOnly)
+	float MeleeRange = 250;
+
+	UPROPERTY(EditDefaultsOnly)
+	float MeleeCooldown = 1.f;
+
+	bool bCanMelee = true;
+	FTimerHandle TimerHandle;
+	void ResetMelee();
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player|Debugging", meta = (AllowPrivateAccess = "true"))
 	bool active = false;
