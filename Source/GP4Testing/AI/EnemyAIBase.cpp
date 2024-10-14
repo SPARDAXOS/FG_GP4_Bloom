@@ -63,9 +63,7 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AEnemyAIBase::Die()
 {
-	SetActorTickEnabled(false);
-	SetActorEnableCollision(false);
-	SetActorHiddenInGame(!false);
+	SetEnemyState(false);
 }
 
 void AEnemyAIBase::Attack()

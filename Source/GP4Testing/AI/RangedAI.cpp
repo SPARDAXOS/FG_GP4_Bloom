@@ -16,6 +16,8 @@ ARangedAI::ARangedAI()
 	Muzzle->SetupAttachment(GetRootComponent());
 	Hitbox = CreateDefaultSubobject<USphereComponent>("Hitbox");
 	Hitbox->SetupAttachment(GetRootComponent());
+	DeathVFXSpawnLoc = CreateDefaultSubobject<USceneComponent>("DeathVFXSpawnLoc");
+	DeathVFXSpawnLoc->SetupAttachment(GetRootComponent());
 }
 
 void ARangedAI::EnemyDeath()
@@ -26,7 +28,7 @@ void ARangedAI::EnemyDeath()
 void ARangedAI::Die()
 {
 	Super::Die();
-	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, GetMesh()->GetComponentLocation(), GetActorRotation());
+	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
 	FOnVFXFinishedSignature callback;
 	if (DeathVFX)
 	{

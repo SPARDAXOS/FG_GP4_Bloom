@@ -42,6 +42,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Hitbox = nullptr;
 
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* DeathVFXSpawnLoc = nullptr;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATriggerVFX> TriggerVfx;
 };
