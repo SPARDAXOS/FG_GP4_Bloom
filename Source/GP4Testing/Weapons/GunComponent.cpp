@@ -10,12 +10,15 @@
 #include "../AI/EnemyAIBase.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 
-UGunComponent::UGunComponent()
+AGunComponent::AGunComponent()
 {
 	GL_MuzzleOffset = FVector(0, 60, 10);
+
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	RootComponent = WeaponMesh;
 }
 
-void UGunComponent::Fire()
+void AGunComponent::Fire()
 {
 	bFiredWeapon = true;
 
@@ -106,7 +109,7 @@ void UGunComponent::Fire()
 	}
 }
 
-FVector UGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
+FVector AGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
 {
 	FVector Target = ViewOrigin + ViewForward * LineTraceDistance;
 
@@ -121,7 +124,7 @@ FVector UGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
 	return Direction;
 }
 
-void UGunComponent::Reload()
+void AGunComponent::Reload()
 {
 	if (Magazine < MaxMagazine && Ammo > 0)
 	{
@@ -140,31 +143,31 @@ void UGunComponent::Reload()
 	}
 }
 
-void UGunComponent::StartFire()
+void AGunComponent::StartFire()
 {
 	if (TypeOfWeapon == WeaponType::MACHINE_GUN)
 	{
 		Fire();
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::Fire, AutoFireRate, true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AGunComponent::Fire, AutoFireRate, true);
 	}
 	if (TypeOfWeapon == WeaponType::SHOTGUN || TypeOfWeapon == WeaponType::GRENADE_LAUNCHER)
 	{
 		if (!bFiredWeapon)
 		{
 			Fire();
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGunComponent::StopFire, NonAutoFireRate, false);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AGunComponent::StopFire, NonAutoFireRate, false);
 		}
 	}
 }
 
-void UGunComponent::StopFire()
+void AGunComponent::StopFire()
 {
 	bFiredWeapon = false;
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
 // Attach weapon the the player
-void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
+void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 {
 	Character = TargetCharacter;
 
@@ -179,7 +182,7 @@ void UGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		return;
 	}
 
-	TMap<WeaponType, UGunComponent*> AcquiredWeapons = Character->GetWeaponManagementSystem().GetAcquiredWeapons();
+	TMap<WeaponType, AGunComponent*> AcquiredWeapons = Character->GetWeaponManagementSystem().GetAcquiredWeapons();
 	bool HasWeapon = false;
 	for (auto Weapon : AcquiredWeapons)
 	{
