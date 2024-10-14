@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
+#include "GP4Testing/VFXEntities/TriggerVFX.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -25,6 +26,12 @@ void AEnemyAIBase::BeginPlay()
 	Blackboard = Cast<AAIController>(GetController())->GetBlackboardComponent();
 	Blackboard->SetValueAsObject(TEXT("Player"), Player);
 	Blackboard->SetValueAsBool("Active", true);
+	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx);
+	
+	FOnVFXFinishedSignature callback;
+	
+	callback.BindUFunction(this, "EnemyDeath");
+	DeathVFX->SetupCallback(callback);
 }
 
 FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
@@ -69,7 +76,8 @@ void AEnemyAIBase::Die()
 	//{
 	//	Wave->OnAIKilled();
 	//}
-	SetEnemyState(false);
+	DeathVFX->Activate();
+	//SetEnemyState(false);
 	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
 }
 
@@ -94,6 +102,11 @@ void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 	OutLaunch.Z = OutLaunch.Z * JumpForce;
 	LaunchCharacter(OutLaunch, true, true);
 	bJumped = true;
+}
+
+void AEnemyAIBase::EnemyDeath()
+{
+	SetEnemyState(false);
 }
 
 void AEnemyAIBase::SetEnemyState(bool state)
