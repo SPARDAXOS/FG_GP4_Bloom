@@ -27,8 +27,6 @@ APickup::APickup()
 	vfx->bAutoActivate = true;
 
 	RotationRate = FRotator(0.0f, 90.0f, 0.0F);
-
-	Speed = 2.0f;
 }
 
 // Called when the game starts or when spawned
