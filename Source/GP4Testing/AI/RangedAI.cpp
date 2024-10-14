@@ -33,7 +33,7 @@ void ARangedAI::Die()
 	if (DeathVFX)
 	{
 		callback.BindUFunction(this, FName("EnemyDeath"));
-		DeathVFX->SetupCallback(callback);
+		DeathVFX->SetupOnFinishedCallback(callback);
 	}
 	DeathVFX->Activate();
 }
