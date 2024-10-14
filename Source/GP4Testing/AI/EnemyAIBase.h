@@ -9,6 +9,7 @@
 
 class AWaveManager;
 class AEnemyManagementSystem;
+class ATriggerVFX;
 
 UCLASS()
 class GP4TESTING_API AEnemyAIBase : public ACharacter
@@ -23,7 +24,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	FHitResult GetHitDetectionResult(FVector Location) const;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,7 +33,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
-	void Die();
+	virtual void Die();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack();
