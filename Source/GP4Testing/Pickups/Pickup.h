@@ -45,6 +45,8 @@ protected:
 	FName Tag;
 
 public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	FRotator RotationRate;
 
 	UPROPERTY(EditDefaultsOnly)
 	PickupType pickupType;
