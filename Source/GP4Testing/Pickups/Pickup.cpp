@@ -20,6 +20,9 @@ APickup::APickup()
 	PickUpBox->SetupAttachment(RootComponent);
 	PickUpBox->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
 	PickUpBox->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPlayerInteraction);
+
+	RotationRate = FRotator(0.0f, 90.0f, 0.0F);
+
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +48,12 @@ void APickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
 void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AddActorLocalRotation(RotationRate * DeltaTime);
+
+	float hight = 0.1 * FMath::Sin(GetWorld()->GetTimeSeconds());
+	FVector pickupPosition = PickUpRoot->GetRelativeLocation();
+	FVector Movement = FVector(pickupPosition.X, pickupPosition.Y, hight + pickupPosition.Z);
+	PickUpRoot->SetRelativeLocation(Movement);
 
 }
 
