@@ -113,6 +113,10 @@ void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 
 	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
+void APrimaryPlayer::HandleMeleeInput() noexcept {
+	//HERE!
+
+}
 void APrimaryPlayer::HandlePauseInput() noexcept {
 	if (!primaryGameModeRef->GetGamePaused())
 		primaryGameModeRef->PauseGame();

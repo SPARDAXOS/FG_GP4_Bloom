@@ -54,6 +54,7 @@ public: //Add Callbacks For Input Here!
 	void HandleDashInput() noexcept;
 	void HandleSlideInput() noexcept;
 	void HandleShootInput(bool& input) noexcept;
+	void HandleMeleeInput() noexcept;
 	void HandlePauseInput() noexcept;
 	void HandleReloadInput() noexcept;
 	void HandleSwitchNextWeaponInput() noexcept;
