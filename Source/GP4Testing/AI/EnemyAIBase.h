@@ -24,9 +24,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	FHitResult GetHitDetectionResult(FVector Location) const;
-private:
-	UPROPERTY()
-	ATriggerVFX* DeathVFX;
 	
 public:	
 	// Called every frame
@@ -36,7 +33,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
-	void Die();
+	virtual void Die();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack();
@@ -50,9 +47,6 @@ public:
 	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
 	inline bool GetCurrentState() { return Active; }
 	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
-
-
-	void EnemyDeath();
 	
 	void SetEnemyState(bool state);
 
@@ -101,7 +95,4 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 	void ResetLandingState();
 	bool bHasRecentlyLanded = false;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ATriggerVFX> TriggerVfx;
 };
