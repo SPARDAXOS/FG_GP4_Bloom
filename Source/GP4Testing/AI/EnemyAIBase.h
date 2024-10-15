@@ -48,7 +48,8 @@ public:
 	inline bool GetCurrentState() { return Active; }
 	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
 	
-	void SetEnemyState(bool state);
+	UFUNCTION()
+	virtual void SetEnemyState(bool state);
 
 	bool Active = true;
 
