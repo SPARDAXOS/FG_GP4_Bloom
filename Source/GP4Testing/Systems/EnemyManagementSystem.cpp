@@ -70,7 +70,7 @@ void AEnemyManagementSystem::ClearPools() noexcept {
 bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 	if (meleeEnemiesPool.Num() == 0)
 		return false;
-
+	Debugging::CustomLog("Spawn!");
 	for (auto& enemy : meleeEnemiesPool) {
 		if (!enemy->GetCurrentState()) {
 			ATriggerVFX* vfx = GetAvailableVFX();

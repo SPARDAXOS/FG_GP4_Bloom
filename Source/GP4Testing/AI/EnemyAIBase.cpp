@@ -104,6 +104,8 @@ void AEnemyAIBase::SetEnemyState(bool state)
 
 	Active = state;
 	Blackboard->SetValueAsBool("Active", Active);
+	if (Active)
+		MarkedForSpawn = false;
 }
 
 void AEnemyAIBase::Landed(const FHitResult& Hit)
