@@ -4,160 +4,248 @@
 
 #include "GP4Testing/DataAssets/WaveManagerSpec.h"
 #include "GP4Testing/DataAssets/WaveSpec.h"
+#include "GP4Testing/DataAssets/WaveSpecData.h"
+#include "GP4Testing/Systems/EnemyManagementSystem.h"
+#include "GP4Testing/Systems/WaveManagerSpawnPoint.h"
 
-#include "Engine/World.h"
-#include "GameFramework/Character.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "GP4Testing/Utility/Debugging.h"
 #include "GP4Testing/AI/EnemyAIBase.h"
-#include "EngineGlobals.h"
-#include "AIController.h"
 
 
-#include <Kismet/GameplayStatics.h>
 
 
 
 
 void AWaveManager::Start() {
 
+}
+void AWaveManager::Update(float deltaTime) {
+	if (!active)
+		return;
 
-	bIsWaveInProgress = false;
+	for (auto& timer : spawnTimers)
+		timer.Update(deltaTime);
+}
 
-	// why is this necessary?
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController)
-	{
-		PlayerCharacter = Cast<ACharacter>(PlayerController->GetPawn());
+
+bool AWaveManager::Setup(const UWaveManagerSpec& spec) {
+	if (active) {
+		Debugging::CustomWarning("Attempted to setup WaveManager while it is already active! - Setup");
+		return false;
 	}
-	if (PlayerCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PLAYER IS NOT NULL"));
-		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AWaveManager::StartWave, timeBetweenWaves, false);
+	if (spec.waves.Num() == 0) {
+		Debugging::CustomWarning("Spec didnt contain any wave data - Setup");
+		return false;
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("PLAYER IS NULL"));
+
+	Clear();
+	activeWaveManagerSpec = &spec;
+	if (!ValidateAllowedEnemyTypes())
+		return false; 
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWaveManagerSpawnPoint::StaticClass(), spawnPoints);
+	Debugging::CustomLog(FString("WaveManager located spawn points: " + spawnPoints.Num()));
+	return true;
+}
+bool AWaveManager::Activate() noexcept {
+	if (active) {
+		Debugging::CustomWarning("Attempted to activate WaveManager while it is already active! - Activate");
+		return false;
+	}
+	if (!activeWaveManagerSpec) {
+		Debugging::CustomError("Failed to activate WaveManager! - Activate");
+		return false;
+	}
+
+	active = StartNextWave();
+	return active;
+}
+void AWaveManager::Deactivate() noexcept {
+	if (!active) {
+		Debugging::CustomWarning("Attempted to deactivate WaveManager while it is already deactivated! - Deactivate");
 		return;
 	}
 
+	Clear();
 }
-void AWaveManager::Update(float deltaTime) {
 
 
-	if (bIsWaveInProgress)
-	{
-		enemySpawnTimer -= deltaTime;
+void AWaveManager::NotifyEnemyDeath() {
 
-		if (enemySpawned < enemyToSpawn)
-		{
-			if (enemySpawnTimer <= 0.0f)
-			{
-				enemySpawnTimer = 5.0f;
+}
 
-				SpawnAI();
 
-				enemySpawned++;
-			}
-		}
+
+void AWaveManager::Clear() noexcept {
+	active = false;
+	activeWaveManagerSpec = nullptr;
+	activeWaveSpecData = FWaveSpecData();
+	currentWaveCursor = -1;
+	spawnTimers.Empty();
+
+	currentTotalSpawnedEnemies = 0;
+	currentSpawnedMeleeEnemies = 0;
+	currentSpawnedRangedEnemies = 0;
+
+	enemyManagementSystemRef->ClearPools();
+}
+bool AWaveManager::StartNextWave() noexcept {
+	if (!activeWaveManagerSpec)
+		return false;
+
+	currentWaveCursor++;
+	if (currentWaveCursor >= activeWaveManagerSpec->waves.Num()) {
+		Completed();
+		return false;
 	}
-}
+
+	activeWaveSpecData = activeWaveManagerSpec->waves[currentWaveCursor]->data;
+	if (!SetupTimers()) {
+		Debugging::CustomError("Failed to setup timers for the spawns! - Setup");
+		Clear();
+		return false;
+	}
 
 
-bool AWaveManager::StartWave(const UWaveManagerSpec& spec) {
-	//Copy it 
-	activeWaveManagerSpec = &spec;
-
-	//Copy current wave data and use it to keep track of current wave state.
-	activeWaveSpecData = spec.waves[0]->data;
+	if (!CreateEnemyPools()) {
+		Debugging::CustomError("Failed to setup timers for the spawns! - Setup");
+		Clear();
+		return false;
+	}
 
 	return true;
 }
+void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 
-  
-void AWaveManager::StartWave()
-{
-	bIsWaveInProgress = true;
-	enemiesAlive = 0;
-	enemySpawned = 0;
-	totalEnemiesKilled = 0;
-
-	enemyToSpawn = 3 + (currentWave - 1) * SpawnAmount;
-	enemySpawnTimer = 5.0f;
-	
-	//SpawnAIWave();
-}
-
-void AWaveManager::SpawnAIWave()
-{
-	if (bIsWaveInProgress)
-	{
-		for (int i = 0; i < enemyToSpawn; i++)
-		{
-			SpawnAI();
-		}
-	}
-	
-}
-
-void AWaveManager::SpawnAI() {
-
-	if (SpawnPoints.Num() > 0 && AIClassToSpawn.Num() > 0)
-	{
-		//randomize the spawn points
-		int32 randIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
-		AActor* spawnPoint = SpawnPoints[randIndex];
-
-		if (!spawnPoint)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Spawn Point is nullptr!"));
+	if (type == EnemyType::MELEE) {
+		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::MELEE);
+		if (!spec) {
+			Debugging::CustomError("Failed to spawn enemy with type Melee! - FindSpawnSpec() returned nullptr!");
 			return;
 		}
 
-		//randomize the character spawning
-		int randCharacterIndex = FMath::RandRange(0, AIClassToSpawn.Num() - 1);
-		TSubclassOf<ACharacter> charactersToSpawn = AIClassToSpawn[randCharacterIndex];
+		if (currentSpawnedMeleeEnemies >= spec->allowedConcurentSpawns)
+			return;
+		
+		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
+			return;
 
-		FActorSpawnParameters spawnParam;
-		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-		ACharacter* spawnAI = GetWorld()->SpawnActor<ACharacter>(charactersToSpawn, spawnPoint->GetActorLocation(), FRotator::ZeroRotator, spawnParam);
-
-		if (spawnAI)
-		{
-			enemiesAlive++;
-			UE_LOG(LogTemp, Warning, TEXT("Spawn AI: &s"), *spawnAI->GetName());
+		if (SpawnEnemy(EnemyType::MELEE, GetRandomSpawnPoint())) {
+			currentSpawnedMeleeEnemies++;
+			currentTotalSpawnedEnemies++;
+			Debugging::CustomLog("Spawned enemy of type 'Melee'");
 		}
 		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("failed to spawn AI!"));
+			Debugging::CustomError("Failed to spawn enemy with type Melee! - SpawnEnemy Failed!");
+	}
+	else if (type == EnemyType::RANGED) {
+		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::RANGED);
+		if (!spec) {
+			Debugging::CustomError("Failed to spawn enemy with type Ranged! - FindSpawnSpec() returned nullptr!");
+			return;
+		}
+
+		if (currentSpawnedRangedEnemies >= spec->allowedConcurentSpawns)
+			return;
+
+		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
+			return;
+
+		if (SpawnEnemy(EnemyType::RANGED, GetRandomSpawnPoint())) {
+			currentSpawnedRangedEnemies++;
+			currentTotalSpawnedEnemies++;
+			Debugging::CustomLog("Spawned enemy of type 'Ranged'");
+		}
+		else
+			Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");
+	}
+}
+bool AWaveManager::SetupTimers() noexcept {
+	if (!activeWaveManagerSpec)
+		return false;
+	if (activeWaveManagerSpec->waves.Num() <= 0)
+		return false;
+	if (activeWaveSpecData.allowedTypes.Num() <= 0) {
+		Debugging::CustomError("Wave doesnt contain any allowedTypes data!\nWaveManager has been stopped!");
+		return false;
+	}
+
+	spawnTimers.Empty();
+	for (auto& enemyType : activeWaveSpecData.allowedTypes) {
+		Timer timer;
+		timer.SetOnCompletedCallback([this, &enemyType]() {UpdateSpawns(enemyType.type); });
+		timer.SetLengthRef(&enemyType.spawnRate);
+		spawnTimers.Emplace(timer);
+	}
+
+	return true;
+}
+void AWaveManager::Completed() noexcept {
+	//Signal Gamemode that game is over and player has won!
+	Clear();
+}
+bool AWaveManager::ValidateAllowedEnemyTypes() noexcept {
+	if (!activeWaveManagerSpec)
+		return false;
+
+	if (activeWaveManagerSpec->waves.Num() <= 0)
+		return false;
+
+	for (int i = 0; i < activeWaveManagerSpec->waves.Num(); i++) {
+		UWaveSpec* currentWave = activeWaveManagerSpec->waves[i];
+		TArray<EnemyType> enemyTypes;
+		for (auto& typeSpawnSpec : currentWave->data.allowedTypes) {
+			if (!enemyTypes.Contains(typeSpawnSpec.type))
+				enemyTypes.Add(typeSpawnSpec.type);
+			else{
+				Debugging::CustomWarning("Failed to validate allowedEnemyTypes in the provided spec!\nTarget Wave: " + i);
+				return false;
+			}
 		}
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("spawnpoints is 0 and AIClassToSpawn is 0"));
+
+	return true;
+}
+FEnemyTypeSpawnSpec* AWaveManager::FindSpawnSpec(const EnemyType& type) {
+	if (activeWaveSpecData.allowedTypes.Num() == 0)
+		return nullptr;
+
+	for (auto& entry : activeWaveSpecData.allowedTypes) {
+		if (entry.type == type)
+			return &entry;
 	}
+
+	return nullptr;
 }
 
-void AWaveManager::OnAIKilled()
-{
-	enemiesAlive--;
-	totalEnemiesKilled++;
 
-	if (enemiesAlive <= 0 && enemySpawned >= enemyToSpawn)
-	{
-		bIsWaveInProgress = false;
-		StartNextWave();
+bool AWaveManager::SpawnEnemy(const EnemyType& type, FVector location) noexcept {
+	if (!enemyManagementSystemRef)
+		return false;
+
+	return enemyManagementSystemRef->SpawnEnemy(type, location);
+}
+bool AWaveManager::CreateEnemyPools() {
+	if (!enemyManagementSystemRef)
+		return false;
+
+	enemyManagementSystemRef->ClearPools();
+	for (auto& enemyType : activeWaveSpecData.allowedTypes) {
+		if (!enemyManagementSystemRef->CreateEnemyPool(enemyType.type, enemyType.allowedConcurentSpawns))
+			return false;
 	}
+
+	return true;
+}
+FVector AWaveManager::GetRandomSpawnPoint() noexcept {
+	if (spawnPoints.Num() <= 0)
+		return FVector::Zero();
+
+	int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
+	return spawnPoints[random]->GetActorLocation();
 }
 
-void AWaveManager::StartNextWave()
-{
-	if (!bIsWaveInProgress)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ENEMIES KILLED, STARTING NEXT WAVE"));
-		currentWave++;
+  
 
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Wave: %d"), currentWave));
-
-		GetWorld()->GetTimerManager().SetTimer(waveDelayTimer, this, &AWaveManager::StartWave, timeBetweenWaves, false);
-	}
-}

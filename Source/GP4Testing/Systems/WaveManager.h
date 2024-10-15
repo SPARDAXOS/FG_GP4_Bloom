@@ -7,6 +7,7 @@
 #include "GP4Testing/DataAssets/WaveSpecData.h"
 
 #include "GP4Testing/Systems/Entity.h"
+#include "GP4Testing/Utility/Timer.h"
 #include "WaveManager.generated.h"
 
 
@@ -15,7 +16,10 @@ class APrimaryPlayerController;
 class APrimaryGameMode;
 class AEnemyManagementSystem;
 class UWaveManagerSpec;
+struct FEnemyTypeSpawnSpec;
 class UWaveSpec;
+
+enum class EnemyType : uint8;
 
 
 UCLASS(Abstract)
@@ -27,70 +31,60 @@ public:
 	virtual void Update(float deltaTime) override;
 
 public:
-	bool StartWave(const UWaveManagerSpec& spec);
+	bool Setup(const UWaveManagerSpec& spec);
+	bool Activate() noexcept;
+	void Deactivate() noexcept;
 
+public:
+	void NotifyEnemyDeath();
 
 public:
 	inline void SetEnemySpawningSystemReference(AEnemyManagementSystem& system) noexcept { enemyManagementSystemRef = &system; }
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
-	inline void SetPrimaryPlayerControllerReference(APrimaryPlayerController& playerController) noexcept { primaryPlayerControllerRef = &playerController; }
-
-	inline void SetActiveState(bool state) noexcept { active = state; }
 
 private:
-	void StartWave();
-	void SpawnAIWave();
-	void StartNextWave();
-	void SpawnAI();
+	void Clear() noexcept;
+	bool StartNextWave() noexcept;
+	bool SetupTimers() noexcept;
+	void UpdateSpawns(EnemyType type) noexcept;
+	void Completed() noexcept;
 
-public:	
-	void OnAIKilled();
+private:
+	bool SpawnEnemy(const EnemyType& type, FVector location) noexcept;
+	bool CreateEnemyPools();
+	FVector GetRandomSpawnPoint() noexcept;
+	bool ValidateAllowedEnemyTypes() noexcept;
+	FEnemyTypeSpawnSpec* FindSpawnSpec(const EnemyType& type);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	bool active = false;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
+	int currentWaveCursor = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	const UWaveManagerSpec* activeWaveManagerSpec = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	FWaveSpecData activeWaveSpecData;
-	
 
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentTotalSpawnedEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentSpawnedMeleeEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentSpawnedRangedEnemies = 0;
 
 public:
-	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
-	ACharacter* PlayerCharacter;
+	UPROPERTY(EditAnywhere, Category = "Spawns")
+	TArray<AActor*> spawnPoints;
 
-	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
-	TArray<TSubclassOf<ACharacter>> AIClassToSpawn;
-	
-	UPROPERTY(EditAnywhere, Category = "AI SPAWNING")
-	TArray<AActor*> SpawnPoints;
-
-	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
-	int SpawnAmount;
-
-	UPROPERTY(EditAnywhere, Category = "AI WAVE INFO")
-	float timeBetweenWaves;
-
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	int currentWave = 1;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	int enemyToSpawn;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	int enemySpawned;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	int enemiesAlive;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	int totalEnemiesKilled;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	float enemySpawnTimer;
-	UPROPERTY(VisibleAnywhere, Category = "AI WAVE INFO")
-	bool bIsWaveInProgress;
-	
-
-	FTimerHandle waveDelayTimer;
+private:
+	TArray<Timer> spawnTimers;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;

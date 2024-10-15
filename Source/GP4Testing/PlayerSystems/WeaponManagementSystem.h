@@ -29,7 +29,7 @@ public:
 	bool WeaponSlot3() noexcept;
 
 public:
-	bool AcquireWeapon(WeaponType type, UGunComponent* weapon) noexcept;
+	bool AcquireWeapon(WeaponType type, AGunComponent* weapon) noexcept;
 
 public:
 	void SetupStartingState() noexcept;
@@ -38,8 +38,8 @@ public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
 
 public:
-	UGunComponent* GetCurrentWeapon();
-	TMap<WeaponType, UGunComponent*> GetAcquiredWeapons();
+	AGunComponent* GetCurrentWeapon();
+	TMap<WeaponType, AGunComponent*> GetAcquiredWeapons();
 
 	int GetMaxAmmo();
 	int GetAmmo();
@@ -52,6 +52,6 @@ public:
 private:
 	APrimaryPlayer* primaryPlayerRef;
 
-	TMap<WeaponType, UGunComponent*> AcquiredWeapons;
+	TMap<WeaponType, AGunComponent*> AcquiredWeapons;
 	WeaponType EquippedWeapon;
 };
