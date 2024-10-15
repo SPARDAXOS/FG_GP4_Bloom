@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/DamageEvents.h"
+#include "NiagaraComponent.h"
 #include "../Systems/PrimaryPlayerController.h"
 #include "../Systems/PrimaryPlayer.h"
 #include <GP4Testing/Components/HealthComponent.h>
@@ -16,10 +17,16 @@ AGunComponent::AGunComponent()
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	RootComponent = WeaponMesh;
+
+	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
+	VFX->SetupAttachment(WeaponMesh);
+	
 }
 
 void AGunComponent::Fire()
 {
+
+	VFX->Activate(true);
 	bFiredWeapon = true;
 
 	UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
@@ -109,6 +116,11 @@ void AGunComponent::Fire()
 		// Reload automatically when no ammo left?
 		Reload();
 	}
+
+	if (Ammo || Magazine == 0)
+	{
+		VFX->Activate(false);
+	}
 }
 
 FVector AGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
@@ -147,6 +159,7 @@ void AGunComponent::Reload()
 
 void AGunComponent::StartFire()
 {
+
 	if (TypeOfWeapon == WeaponType::MACHINE_GUN)
 	{
 		Fire();
