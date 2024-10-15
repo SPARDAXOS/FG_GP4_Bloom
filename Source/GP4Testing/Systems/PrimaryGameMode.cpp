@@ -83,7 +83,7 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 
 		enemyManagementSystemRef->SetActiveState(true);
 
-
+		currentPrimaryGameState = PrimaryGameState::PLAYING;
 		gameStarted = true;
 	}
 	else {
@@ -91,6 +91,7 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 		levelManagementRef->LoadLevel("MainMenu", [this]() {
 			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 			primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+			currentPrimaryGameState = PrimaryGameState::MENU;
 			});
 	}
 }
@@ -115,13 +116,7 @@ void APrimaryGameMode::UpdateGame(float deltaTime) noexcept {
 
 	UpdateStatelessSystems(deltaTime);
 	switch (currentPrimaryGameState) {
-	case PrimaryGameState::MAIN_MENU:
-		primaryHUDRef->Update(deltaTime);
-		break;
-	case PrimaryGameState::OPTIONS_MENU:
-		primaryHUDRef->Update(deltaTime);
-		break;
-	case PrimaryGameState::LEVEL_SELECT_MENU:
+	case PrimaryGameState::MENU:
 		primaryHUDRef->Update(deltaTime);
 		break;
 	case PrimaryGameState::PAUSED:
@@ -176,7 +171,7 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 				enemyManagementSystemRef->SetActiveState(true);
 				waveManagerRef->Setup(*spec.waveManagerSpec);
 				waveManagerRef->Activate();
-
+				currentPrimaryGameState = PrimaryGameState::PLAYING;
 				gameStarted = true;
 				});
 		});
@@ -205,6 +200,7 @@ void APrimaryGameMode::EndGame() noexcept {
 				//Main Menu Music
 				primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 				primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+				currentPrimaryGameState = PrimaryGameState::MENU;
 				gameStarted = false;
 			});
 		});
@@ -222,6 +218,7 @@ void APrimaryGameMode::PauseGame() noexcept {
 		primaryPlayerRef->SetPlayerHUDState(false);
 		primaryHUDRef->SetMenuState(MenuState::PAUSE_MENU);
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::PAUSED);
+		currentPrimaryGameState = PrimaryGameState::PAUSED;
 	}
 }
 void APrimaryGameMode::UnpauseGame() noexcept {
@@ -233,6 +230,7 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 		primaryPlayerRef->SetPlayerHUDState(true);
 		primaryHUDRef->ClearViewport();
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+		currentPrimaryGameState = PrimaryGameState::PLAYING;
 	}
 }
 
@@ -283,7 +281,6 @@ void APrimaryGameMode::SetupDependencies() noexcept {
 	enemyManagementSystemRef->SetPrimaryGameModeReference(*this);
 	enemyManagementSystemRef->SetWaveManagerReference(*waveManagerRef);
 	waveManagerRef->SetPrimaryGameModeReference(*this);
-	waveManagerRef->SetPrimaryPlayerControllerReference(*primaryPlayerControllerRef);
 	waveManagerRef->SetEnemySpawningSystemReference(*enemyManagementSystemRef);
 }
 void APrimaryGameMode::CacheMainSystemsReferences() noexcept {
