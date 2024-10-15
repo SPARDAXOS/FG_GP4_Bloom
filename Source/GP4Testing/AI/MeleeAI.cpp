@@ -109,7 +109,7 @@ void AMeleeAI::DissolveTimer()
 
 void AMeleeAI::ResetDissolve()
 {
-	DissolveValue = 0;
+	DissolveValue = 0.4f;
 	UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(DissolveMat, this);
 	if (DynMaterial != nullptr)
 	{
