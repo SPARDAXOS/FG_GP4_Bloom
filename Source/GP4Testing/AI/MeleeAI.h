@@ -31,8 +31,9 @@ public:
 
 private:
 	void DissolveTimer();
-	void ResetDissolve();
 
+	UMaterialInstanceDynamic* DynMaterial;
 	FTimerHandle TimerHandle;
 	float DissolveValue = 0;
+	bool bIsDead = false;
 };
