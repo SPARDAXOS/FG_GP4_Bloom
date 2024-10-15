@@ -32,8 +32,9 @@ void APrimaryPlayer::Init() {
 	SetupPlayerSystemsDependencies();
 	InitPlayerSystems();
 	SetupPrimaryPlayerHUD();
+	//Delegates to handle camera shake
 	GetPlayerHealthSystem().HealthComponent->OnDamage.AddUniqueDynamic(this, &APrimaryPlayer::HandleHitShake);
-
+	CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 
 	springArm->TargetArmLength = springArmLength;
 	springArm->SetRelativeTransform(cameraInitialTransform);
@@ -183,17 +184,34 @@ void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
 
 	weaponManagementSystemRef->WeaponSlot3();
 }
-void APrimaryPlayer::ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase)
+void APrimaryPlayer::ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase, float Scale)
 {
-	UGameplayStatics::PlayWorldCameraShake(this, CameraShakeBase, GetActorLocation(), 0, 500, 1, false);
+	if (CameraManager)
+	{
+		CameraManager->StartCameraShake(CameraShakeBase, Scale);
+	}
 	Debugging::PrintString("Has tried to shake");
 }
-
 void APrimaryPlayer::HandleHitShake()
 {
-	ShakeCamera(HitShake);
+	ShakeCamera(HitShake, 1);
 }
-
+void APrimaryPlayer::OnJumped_Implementation()
+{
+	StartJumpDistance = GetCharacterMovement()->GetActorLocation().Z;
+	Debugging::PrintString("Jumped");
+}
+void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall length check
+{
+	Super::Landed(Hit);
+	DistanceFallen = StartJumpDistance - GetCharacterMovement()->GetActorLocation().Z;
+	Debugging::PrintString(FString::SanitizeFloat(DistanceFallen));
+	if (DistanceFallen >= 150)
+	{
+		float Strength = DistanceFallen / MaxFallHeight;
+		ShakeCamera(LandShake, Strength);
+	}
+}
 
 void APrimaryPlayer::CreatePlayerSystems() {
 	checkf(playerMovementSystemAsset, TEXT("PlayerMovementSystemAsset ref is null!"));

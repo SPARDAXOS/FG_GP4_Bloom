@@ -115,6 +115,7 @@ private: //Melee
 	void ResetMelee();
 
 public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.com/documentation/en-us/unreal-engine/camera-shakes-in-unreal-engine
+	APlayerCameraManager* CameraManager = nullptr;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShakeBase> HitShake = nullptr;
 	UPROPERTY(EditDefaultsOnly)
@@ -124,9 +125,19 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShakeBase> RunningShake = nullptr;
 	
-	void ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase);
+	void ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase, float Scale);
+
 	UFUNCTION()
 	void HandleHitShake();
+
+	float StartJumpDistance;
+	float DistanceFallen;
+	void OnJumped_Implementation() override;
+	void Landed(const FHitResult& Hit) override;
+	UPROPERTY(EditDefaultsOnly)
+	float MaxFallHeight = 1400.f;
+
+	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Player|Debugging", meta = (AllowPrivateAccess = "true"))
 	bool active = false;
