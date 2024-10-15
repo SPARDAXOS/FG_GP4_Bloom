@@ -46,12 +46,15 @@ public:
 	
 	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
 	inline bool GetCurrentState() { return Active; }
+	inline bool IsMarkedForSpawn() { return MarkedForSpawn; }
+	inline void MarkForSpawn() { MarkedForSpawn = true; }
 	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
 	
 	UFUNCTION()
 	virtual void SetEnemyState(bool state);
 
 	bool Active = true;
+	bool MarkedForSpawn = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanAttack = true;
