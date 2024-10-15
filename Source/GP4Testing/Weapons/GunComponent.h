@@ -7,6 +7,7 @@
 #include "GunComponent.generated.h"
 
 class APrimaryPlayer;
+class UNiagaraComponent;
 
 UCLASS()
 class GP4TESTING_API AGunComponent : public AActor
@@ -62,6 +63,11 @@ public:
 	int Magazine;
 
 	int Ammo;
+
+public:
+
+	UPROPERTY(Editanywhere)
+	UNiagaraComponent* VFX;
 
 private:
 	APrimaryPlayer* Character;
