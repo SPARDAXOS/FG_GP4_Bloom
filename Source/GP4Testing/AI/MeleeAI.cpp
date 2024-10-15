@@ -21,7 +21,7 @@ void AMeleeAI::SetEnemyState(bool state)
 {
 	SetActorTickEnabled(state);
 	SetActorEnableCollision(state);
-	ResetDissolve();
+	SetActorHiddenInGame(!state);
 
 	GetCapsuleComponent()->SetEnableGravity(state);
 	GetCharacterMovement()->SetActive(state);
@@ -32,6 +32,8 @@ void AMeleeAI::SetEnemyState(bool state)
 
 	Active = state;
 	Blackboard->SetValueAsBool("Active", Active);
+	if (Active)
+		MarkedForSpawn = false;
 }
 
 void AMeleeAI::Attack()
