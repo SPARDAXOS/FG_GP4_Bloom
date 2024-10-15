@@ -118,7 +118,6 @@ void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
 void APrimaryPlayer::HandleMeleeInput() noexcept {
-	//HERE!
 	if (bCanMelee)
 	{
 		FHitResult Hit;
