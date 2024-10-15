@@ -25,8 +25,6 @@ AGunComponent::AGunComponent()
 
 void AGunComponent::Fire()
 {
-
-	VFX->Activate(true);
 	bFiredWeapon = true;
 
 	UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
@@ -39,6 +37,8 @@ void AGunComponent::Fire()
 
 	if (Magazine > 0)
 	{
+		VFX->Activate(true);
+
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
 		{
@@ -110,16 +110,6 @@ void AGunComponent::Fire()
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 		}
-	}
-	else
-	{
-		// Reload automatically when no ammo left?
-		Reload();
-	}
-
-	if (Ammo || Magazine == 0)
-	{
-		VFX->Activate(false);
 	}
 }
 
