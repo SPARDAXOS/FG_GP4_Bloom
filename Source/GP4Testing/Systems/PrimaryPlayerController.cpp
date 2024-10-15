@@ -140,88 +140,88 @@ void APrimaryPlayerController::SetGameInputMode(GameInputMode mode) noexcept {
 }
 
 void APrimaryPlayerController::HandleMovement(const FInputActionValue& value) {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	FVector2D axis = value.Get<FVector2D>();
 	primaryPlayerRef->HandleMovementInput(axis);
 }
 void APrimaryPlayerController::HandleLook(const FInputActionValue& value) {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	FVector2D axis = value.Get<FVector2D>();
 	primaryPlayerRef->HandleLookInput(axis);
 }
 void APrimaryPlayerController::HandleJump() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleJumpInput();
 }
 void APrimaryPlayerController::HandleDash() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleDashInput();
 }
 void APrimaryPlayerController::HandleSlide() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleSlideInput();
 }
 void APrimaryPlayerController::HandleShoot(const FInputActionValue& value) {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	bool input = value.Get<bool>();
 	primaryPlayerRef->HandleShootInput(input);
 }
 void APrimaryPlayerController::HandleMelee() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleMeleeInput();
 }
 void APrimaryPlayerController::HandlePause() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandlePauseInput();
 }
 void APrimaryPlayerController::HandleReload() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleReloadInput();
 }
 void APrimaryPlayerController::HandleSwitchNextWeapon() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 	
 	primaryPlayerRef->HandleSwitchNextWeaponInput();
 }
 void APrimaryPlayerController::HandleSwitchPreviousWeapon() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleSwitchPreviousWeaponInput();
 }
 void APrimaryPlayerController::HandleWeaponSlot1() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleWeaponSlot1Input();
 }
 void APrimaryPlayerController::HandleWeaponSlot2() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleWeaponSlot2Input();
 }
 void APrimaryPlayerController::HandleWeaponSlot3() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED)
+	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
 	primaryPlayerRef->HandleWeaponSlot3Input();

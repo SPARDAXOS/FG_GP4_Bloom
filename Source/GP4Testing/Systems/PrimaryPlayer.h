@@ -36,6 +36,8 @@ public:
 	void SetPlayerHUDState(bool state) noexcept;
 	void SetupStartingState() noexcept;
 
+	inline bool GetActiveState() const noexcept { return active; }
+
 public:
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
 
