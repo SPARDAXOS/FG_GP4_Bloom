@@ -21,7 +21,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float MaxHealth = 100.f;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	float CurrentHealth;
 
 	UPROPERTY(BlueprintAssignable)
