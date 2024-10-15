@@ -28,6 +28,7 @@ void ARangedAI::EnemyDeath()
 void ARangedAI::Die()
 {
 	Super::Die();
+	SetEnemyState(false);
 	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
 	FOnVFXFinishedSignature callback;
 	if (DeathVFX)
