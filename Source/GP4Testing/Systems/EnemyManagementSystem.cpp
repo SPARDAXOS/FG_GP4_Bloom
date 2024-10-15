@@ -80,7 +80,7 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 					enemy->SetActorLocation(location);
 					enemy->SetEnemyState(true);
 				});
-				vfx->SetupCallback(callback);
+				vfx->SetupTimer(callback, 5.0f);
 				FVector spawnPosition = location;
 				spawnPosition.Z += enemySpawnPortalVFXZOffset;
 				vfx->SetActorLocation(spawnPosition);
