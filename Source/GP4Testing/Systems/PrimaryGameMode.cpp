@@ -95,16 +95,24 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 	SetupDebugModeState();
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
+	//Player position, rotation adjustments
 	primaryPlayerRef->SetupStartingState();
+	AActor* spawnPoint = FindPlayerStart(primaryPlayerControllerRef, defaultPlayerSpawnPoint.ToString());
+	if (spawnPoint) {
+		primaryPlayerRef->SetActorLocation(spawnPoint->GetActorLocation());
+		primaryPlayerControllerRef->SetControlRotation(spawnPoint->GetActorRotation());
+	}
+	
+	//Cutscene?
+
+
+
+}
+void APrimaryGameMode::SetupPlayingState() noexcept {
 	primaryPlayerRef->SetPlayerState(true);
 	primaryPlayerRef->SetPlayerHUDState(true);
 
 	//SetupStartingState() all custom systems
-
-}
-void APrimaryGameMode::SetupPlayingState() noexcept {
-	//Player position, rotation adjustments
-	//Cutscene?
 }
 void APrimaryGameMode::SetupDebugModeState() {
 	SetupPrePlayingState();
@@ -164,8 +172,8 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 		SetupDebugModeState();
 	else {
 		levelManagementRef->LoadLevel(spec.key, [this, &spec]() {
+			SetupPrePlayingState();
 			levelManagementRef->UnloadLevel("MainMenu", [this, &spec]() {
-				SetupPrePlayingState();
 				SetupPlayingState();
 				primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
 				primaryHUDRef->ClearViewport(); //No transition for now

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "PrimaryGameMode.generated.h"
 
@@ -111,14 +112,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	bool gamePaused = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
-	bool launchInDebugMode = false;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
-	UWaveManagerSpec* debugModeWaveManagerSpec = nullptr;
-
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	FName loadedLevelKey = "None";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings", meta = (AllowPrivateAcces = "true"))
+	bool launchInDebugMode = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings", meta = (AllowPrivateAcces = "true"))
+	UWaveManagerSpec* debugModeWaveManagerSpec = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Settings", meta = (AllowPrivateAcces = "true"))
+	FName defaultPlayerSpawnPoint = "PlayerStart";
 
 private:
 	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;

@@ -70,9 +70,9 @@ void AEnemyManagementSystem::ClearPools() noexcept {
 bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 	if (meleeEnemiesPool.Num() == 0)
 		return false;
-	Debugging::CustomLog("Spawn!");
+
 	for (auto& enemy : meleeEnemiesPool) {
-		if (!enemy->GetCurrentState()) {
+		if (!enemy->GetCurrentState() && !enemy->IsMarkedForSpawn()) {
 			ATriggerVFX* vfx = GetAvailableVFX();
 			if (vfx) {
 				FOnVFXFinishedSignature callback;
@@ -80,11 +80,12 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 					enemy->SetActorLocation(location);
 					enemy->SetEnemyState(true);
 				});
-				vfx->SetupTimer(callback, 5.0f);
+				vfx->SetupTimer(callback, enemySpawnVFXDelay);
 				FVector spawnPosition = location;
 				spawnPosition.Z += enemySpawnPortalVFXZOffset;
 				vfx->SetActorLocation(spawnPosition);
 				vfx->Activate();
+				enemy->MarkForSpawn();
 			}
 			else {
 				enemy->SetActorLocation(location);
@@ -101,9 +102,25 @@ bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector& location) {
 		return false;
 
 	for (auto& enemy : rangedEnemiesPool) {
-		if (!enemy->GetCurrentState()) {
-			enemy->SetActorLocation(location);
-			enemy->SetEnemyState(true);
+		if (!enemy->GetCurrentState() && !enemy->IsMarkedForSpawn()) {
+			ATriggerVFX* vfx = GetAvailableVFX();
+			if (vfx) {
+				FOnVFXFinishedSignature callback;
+				callback.BindLambda([this, &enemy, &location]() {
+					enemy->SetActorLocation(location);
+					enemy->SetEnemyState(true);
+					});
+				vfx->SetupTimer(callback, enemySpawnVFXDelay);
+				FVector spawnPosition = location;
+				spawnPosition.Z += enemySpawnPortalVFXZOffset;
+				vfx->SetActorLocation(spawnPosition);
+				vfx->Activate();
+				enemy->MarkForSpawn();
+			}
+			else {
+				enemy->SetActorLocation(location);
+				enemy->SetEnemyState(true);
+			}
 			return true;
 		}
 	}
