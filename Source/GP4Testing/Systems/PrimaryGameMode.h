@@ -10,9 +10,7 @@
 UENUM(BlueprintType)
 enum class PrimaryGameState : uint8 {
 	NONE = 0,
-	MAIN_MENU,
-	OPTIONS_MENU,
-	LEVEL_SELECT_MENU,
+	MENU,
 	PLAYING,
 	PAUSED
 };
@@ -26,9 +24,9 @@ class ALevelManagement;
 class AEnemyManagementSystem;
 class AWaveManager;
 class ULevelSelectEntrySpec;
+class UWaveManagerSpec;
 
-
-UCLASS(abstract)
+UCLASS(Abstract)
 class GP4TESTING_API APrimaryGameMode : public AGameModeBase {
 	GENERATED_BODY()
 
@@ -76,6 +74,7 @@ private:
 	void SetupApplicationStartState() noexcept;
 	void SetupPrePlayingState() noexcept;
 	void SetupPlayingState() noexcept;
+	void SetupDebugModeState();
 
 private:
 	void InitMainSystems();
@@ -114,6 +113,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	bool launchInDebugMode = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	UWaveManagerSpec* debugModeWaveManagerSpec = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	FName loadedLevelKey = "None";

@@ -7,14 +7,18 @@
 #include "GunComponent.generated.h"
 
 class APrimaryPlayer;
+class UNiagaraComponent;
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class GP4TESTING_API UGunComponent : public USkeletalMeshComponent
+UCLASS()
+class GP4TESTING_API AGunComponent : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	UGunComponent();
+	AGunComponent();
+
+	UPROPERTY(EditAnywhere)
+	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	USoundBase* FireSound;
@@ -59,6 +63,11 @@ public:
 	int Magazine;
 
 	int Ammo;
+
+public:
+
+	UPROPERTY(Editanywhere)
+	UNiagaraComponent* VFX;
 
 private:
 	APrimaryPlayer* Character;

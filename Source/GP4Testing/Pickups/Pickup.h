@@ -9,6 +9,8 @@
 #include "Pickup.generated.h"
 
 
+class UNiagaraComponent;
+
 UCLASS()
 class GP4TESTING_API APickup : public AActor
 {
@@ -33,6 +35,9 @@ public:
 	UPROPERTY(Editanywhere)
 	UStaticMeshComponent* PickUpMesh;
 
+	UPROPERTY(Editanywhere)
+	UNiagaraComponent* vfx;
+
 
 	UFUNCTION()
 	void OnPlayerInteraction(UPrimitiveComponent * OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
@@ -45,6 +50,9 @@ protected:
 	FName Tag;
 
 public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	FRotator RotationRate;
+
 
 	UPROPERTY(EditDefaultsOnly)
 	PickupType pickupType;
