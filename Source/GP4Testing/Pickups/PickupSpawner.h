@@ -2,12 +2,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GP4Testing/Utility/Timer.h"
 #include "PickupSpawner.generated.h"
 
 class APickup;
 
 
-UCLASS()
+UCLASS(Abstract)
 class APickupSpawner : public AActor
 {
     GENERATED_BODY()
@@ -17,6 +18,7 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void Tick(float deltaTime) override;
 
 private:
     void Respawn();
@@ -40,6 +42,6 @@ private:
 
 private:
     TObjectPtr<APickup> pickupRef;
-
+    Timer respawnTimer;
 
 };
