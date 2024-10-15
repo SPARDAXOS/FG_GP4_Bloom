@@ -9,12 +9,15 @@ class APickup;
 
 
 UCLASS(Abstract)
-class APickupSpawner : public AActor
-{
+class APickupSpawner : public AActor {
+
     GENERATED_BODY()
 
 public:
     APickupSpawner();
+
+public:
+    void NotifyPickup(APickup& outer);
 
 protected:
     virtual void BeginPlay() override;
@@ -28,7 +31,10 @@ private:
     TSubclassOf<APickup> pickupClass; 
 
     UPROPERTY(EditDefaultsOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
-    float respawnDuration;
+    float respawnDuration = 1.0f;
+
+    UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAccess = "true"))
+    bool pickupSpawned = false;
 
 private:
     UPROPERTY(VisibleAnywhere)

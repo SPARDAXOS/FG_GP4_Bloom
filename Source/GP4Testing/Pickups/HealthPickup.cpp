@@ -2,10 +2,10 @@
 
 #include "GP4Testing/Pickups/HealthPickup.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/Pickups/PickupSpawner.h"
 
 AHealthPickup::AHealthPickup()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	pickupType = PickupType::HEALTH;
 
@@ -26,6 +26,10 @@ void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 			return;
 
 		playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
+
+		if (registeredSpawner)
+			registeredSpawner->NotifyPickup(*this);
+
 		Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("its health"));
 	}

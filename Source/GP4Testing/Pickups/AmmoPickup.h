@@ -10,9 +10,8 @@
 #include "AmmoPickup.generated.h"
 
 
-UCLASS()
-class GP4TESTING_API AAmmoPickup : public APickup
-{
+UCLASS(Abstract)
+class GP4TESTING_API AAmmoPickup : public APickup {
 	GENERATED_BODY()
 	
 public:	

@@ -10,15 +10,17 @@
 
 
 class UNiagaraComponent;
+class APickupSpawner;
 
-UCLASS()
-class GP4TESTING_API APickup : public AActor
-{
+UCLASS(Abstract)
+class GP4TESTING_API APickup : public AActor {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	APickup();
+
+public:
+	inline void RegisterPickupSpawner(APickupSpawner& spawner) noexcept { registeredSpawner = &spawner; }
 	
 protected:
 	virtual void Tick(float DeltaTime) override;
@@ -47,13 +49,14 @@ protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults);
 		
-	FName Tag;
-
 public:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	FRotator RotationRate;
 
-
 	UPROPERTY(EditDefaultsOnly)
 	PickupType pickupType;
+
+protected:
+	FName Tag;
+	APickupSpawner* registeredSpawner = nullptr;
 };
