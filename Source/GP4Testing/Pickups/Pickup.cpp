@@ -1,14 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 
 #include "PickUp.h"
 #include "Components/BoxComponent.h"
 #include "NiagaraComponent.h"
+#include "GP4Testing/Pickups/PickupSpawner.h"
 
-// Sets default values
+
+
 APickup::APickup()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	PickUpRoot = CreateDefaultSubobject<USceneComponent>(TEXT("PickUpRoot"));
@@ -28,8 +29,6 @@ APickup::APickup()
 
 	RotationRate = FRotator(0.0f, 90.0f, 0.0F);
 }
-
-// Called when the game starts or when spawned
 void APickup::BeginPlay()
 {
 	Super::BeginPlay();
@@ -45,10 +44,11 @@ void APickup::OnPlayerInteraction(UPrimitiveComponent* OverlappedComp, AActor* O
 void APickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults) 
 {
-
+	if (registeredSpawner)
+		registeredSpawner->NotifyPickup(*this);
 }
 
-// Called every frame
+
 void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

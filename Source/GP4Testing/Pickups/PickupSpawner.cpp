@@ -3,6 +3,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GP4Testing/Pickups/Pickup.h"
+#include "GP4Testing/Utility/Debugging.h"
 
 #include <functional>
 
@@ -21,30 +22,42 @@ APickupSpawner::APickupSpawner()
     mesh->SetupAttachment(root);
 }
 
+
 void APickupSpawner::BeginPlay()
 {
     Super::BeginPlay();
+
     respawnTimer.SetLengthRef(&respawnDuration);
     respawnTimer.SetOnCompletedCallback(std::bind(&APickupSpawner::Respawn, this));
-    Respawn();
-}
 
+    //Respawn();
+}
 void APickupSpawner::Tick(float deltaTime)
 {
     Super::Tick(deltaTime);
-    if (pickupClass && !pickupRef)
+    if (pickupClass && !pickupSpawned)
         respawnTimer.Update(deltaTime);
-
 }
 
+
+void APickupSpawner::NotifyPickup(APickup& outer) {
+    if (!pickupSpawned || !pickupRef)
+        return;
+
+    if (outer.GetUniqueID() == pickupRef->GetUniqueID()) {
+        pickupRef = nullptr;
+        pickupSpawned = false;
+    }
+}
 void APickupSpawner::Respawn()
 {
-    if (!pickupClass || pickupRef)
+    if (!pickupClass || pickupSpawned)
         return;
 
     pickupRef = GetWorld()->SpawnActor<APickup>(pickupClass);
+    pickupRef->RegisterPickupSpawner(*this);
     pickupRef->SetActorLocation(spawnPoint->GetComponentLocation());
-
+    pickupSpawned = true;
 }
 
 

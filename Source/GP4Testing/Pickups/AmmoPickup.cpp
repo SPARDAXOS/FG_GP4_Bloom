@@ -4,8 +4,9 @@
 #include "GP4Testing/Pickups/AmmoPickup.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/Pickups/PickupSpawner.h"
 
-// Sets default values
+
 AAmmoPickup::AAmmoPickup()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -27,8 +28,12 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (!gunRef)
 			return;
 		
-		if (gunRef->AddAmmo(pickupType, value))
+		if (gunRef->AddAmmo(pickupType, value)) {
+			if (registeredSpawner)
+				registeredSpawner->NotifyPickup(*this);
+
 			Destroy();		
+		}
 	}
 }
 
