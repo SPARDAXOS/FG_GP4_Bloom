@@ -48,9 +48,7 @@ void ATriggerVFX::OnVFXFinished(UNiagaraComponent* bPSystem) {
 	onFinishedCallback.ExecuteIfBound();
 	status = false;
 	timer.Unlock();
-	Debugging::CustomError("VFX FINISHED triggered!");
 }
 void ATriggerVFX::OnTimerFinished() {
 	onTimerFinishedCallback.ExecuteIfBound();
-	Debugging::CustomError("Timer triggered!");
 }

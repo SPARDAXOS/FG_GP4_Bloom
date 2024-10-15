@@ -118,7 +118,6 @@ bool AWaveManager::StartNextWave() noexcept {
 	return true;
 }
 void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
-
 	if (type == EnemyType::MELEE) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::MELEE);
 		if (!spec) {
@@ -135,7 +134,6 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		if (SpawnEnemy(EnemyType::MELEE, GetRandomSpawnPoint())) {
 			currentSpawnedMeleeEnemies++;
 			currentTotalSpawnedEnemies++;
-			Debugging::CustomLog("Spawned enemy of type 'Melee'");
 		}
 		else
 			Debugging::CustomError("Failed to spawn enemy with type Melee! - SpawnEnemy Failed!");
@@ -156,7 +154,6 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		if (SpawnEnemy(EnemyType::RANGED, GetRandomSpawnPoint())) {
 			currentSpawnedRangedEnemies++;
 			currentTotalSpawnedEnemies++;
-			Debugging::CustomLog("Spawned enemy of type 'Ranged'");
 		}
 		else
 			Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");

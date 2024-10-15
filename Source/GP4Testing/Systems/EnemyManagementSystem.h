@@ -75,6 +75,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	float enemySpawnPortalVFXZOffset = 0.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	float enemySpawnVFXDelay = 5.0f;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
 	TSubclassOf<AEnemyAIBase> meleeEnemyClass = nullptr;

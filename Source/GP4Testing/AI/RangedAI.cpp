@@ -28,6 +28,7 @@ void ARangedAI::EnemyDeath()
 void ARangedAI::Die()
 {
 	Super::Die();
+	SetEnemyState(false);
 	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
 	FOnVFXFinishedSignature callback;
 	if (DeathVFX)
@@ -69,8 +70,6 @@ void ARangedAI::Attack()
 				ShootRotator.Yaw = ShootYaw;
 				
 				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, Muzzle->GetComponentLocation(), FRotator(-ShootRotation.Pitch, ShootRotator.Yaw, 0.f));
-                //FString stri = SpawnedBullet->GetActorLocation().ToString();
-				//Debugging::PrintString(stri);
 				if(SpawnedBullet)
 				{
 					SpawnedBullet->SetDamage(Damage);
