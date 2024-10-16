@@ -72,9 +72,15 @@ void APlayerMovementSystem::Slide() noexcept
 void APlayerMovementSystem::SetupStartingState() noexcept {
 	currentMovementSpeedModifier = defaultMovementSpeedModifier;
 	if (primaryPlayerRef) {
+		primaryPlayerRef->GetCharacterMovement()->StopActiveMovement();
 		primaryPlayerRef->GetCharacterMovement()->MaxWalkSpeed = movementSpeed;
 
 	}
+
+	bCanSlide = true;
+	bCanDash = true;
+	bIsSliding = false;
+	bIsDashing = false;
 }
 
 void APlayerMovementSystem::StopSlide()
