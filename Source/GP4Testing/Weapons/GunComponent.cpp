@@ -96,11 +96,11 @@ void AGunComponent::Fire()
 			// Camera shake when shooting
 			if (TypeOfWeapon == WeaponType::MACHINE_GUN)
 			{
-				
+				Character->HandleShootShakeRifle();
 			}
 			if (TypeOfWeapon == WeaponType::SHOTGUN)
 			{
-
+				Character->HandleShootShakeShotgun();
 			}
 		}
 

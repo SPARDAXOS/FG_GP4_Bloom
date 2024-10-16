@@ -215,11 +215,11 @@ void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall 
 }
 void APrimaryPlayer::HandleShootShakeRifle()
 {
-	
+	ShakeCamera(ShootingShakeRifle, 1.f);
 }
 void APrimaryPlayer::HandleShootShakeShotgun()
 {
-	
+	ShakeCamera(ShootingShakeShotgun, 1.f);
 }
 void APrimaryPlayer::HandleRunningShake()
 {
