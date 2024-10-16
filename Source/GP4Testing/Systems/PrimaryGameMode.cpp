@@ -111,7 +111,7 @@ void APrimaryGameMode::SetupPrePlayingState() noexcept {
 void APrimaryGameMode::SetupPlayingState() noexcept {
 	primaryPlayerRef->SetPlayerState(true);
 	primaryPlayerRef->SetPlayerHUDState(true);
-
+	primaryPlayerRef->SetupStartingState();
 	//SetupStartingState() all custom systems
 }
 void APrimaryGameMode::SetupDebugModeState() {
@@ -190,32 +190,53 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 
 	return true;
 }
-void APrimaryGameMode::GameCompleted(GameResults results) noexcept {
+void APrimaryGameMode::CompleteGame(GameResults results) noexcept {
 	if (results == GameResults::NONE)
 		return;
 
-	if (!gameStarted)
+	if (!gameStarted || launchInDebugMode)
 		return;
 
 	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 	primaryPlayerRef->SetPlayerHUDState(false);
 
 	currentPrimaryGameState = PrimaryGameState::MENU;
-	if (results == GameResults::WIN) {
+	if (results == GameResults::WIN)
 		primaryHUDRef->SetMenuState(MenuState::WIN_MENU);
-
-	}
-	else if (results == GameResults::LOSE) {
+	else if (results == GameResults::LOSE)
 		primaryHUDRef->SetMenuState(MenuState::LOSE_MENU);
-	}
 }
 void APrimaryGameMode::RestartGame() noexcept {
 	if (!gameStarted)
 		return;
+
 	//Do i even need to restart it? maybe restart f
 	waveManagerRef->Restart(); //Maybe only after an option has been selected by the menu
-	//Rest
 
+	SetupPrePlayingState();
+	SetupPlayingState();
+	primaryHUDRef->ClearViewport();
+	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+}
+void APrimaryGameMode::ProgressGame() noexcept {
+	if (!gameStarted)
+		return;
+
+	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::NONE);
+	primaryPlayerRef->SetPlayerState(false);
+	primaryPlayerRef->SetPlayerHUDState(false);
+	enemyManagementSystemRef->SetActiveState(false);
+	waveManagerRef->Deactivate();
+
+	levelManagementRef->LoadLevel("MainMenu", [this]() {
+		levelManagementRef->UnloadLevel(loadedLevelKey, [this]() {
+			//Main Menu Music
+			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
+			primaryHUDRef->SetMenuState(MenuState::LEVEL_SELECT_MENU);
+			currentPrimaryGameState = PrimaryGameState::MENU;
+			gameStarted = false;
+			});
+		});
 }
 void APrimaryGameMode::EndGame() noexcept {
 	if (!gameStarted)

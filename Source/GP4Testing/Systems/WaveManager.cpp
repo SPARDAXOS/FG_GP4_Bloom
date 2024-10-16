@@ -73,10 +73,15 @@ void AWaveManager::Deactivate() noexcept {
 	enemyManagementSystemRef->ClearAllPools();
 }
 void AWaveManager::Restart() noexcept {
-	// Dispawn all
-	// Reset cursor
-	// ResetActiveSpecData
-	//activeWaveSpecData = 
+	if (!active)
+		return;
+
+	enemyManagementSystemRef->DispawnAllEnemies();
+	currentWaveCursor = -1;
+	currentSpawnedMeleeEnemies = 0;
+	currentSpawnedRangedEnemies = 0;
+	currentTotalSpawnedEnemies = 0;
+	StartNextWave();
 }
 
 void AWaveManager::NotifyEnemyDeath(EnemyType type) {
@@ -142,6 +147,9 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 			return;
 		}
 
+		if (spec->totalSpawns <= 0)
+			return;
+
 		if (currentSpawnedMeleeEnemies >= spec->allowedConcurentSpawns)
 			return;
 		
@@ -167,6 +175,9 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 			Debugging::CustomError("Failed to spawn enemy with type Ranged! - FindSpawnSpec() returned nullptr!");
 			return;
 		}
+
+		if (spec->totalSpawns <= 0)
+			return;
 
 		if (currentSpawnedRangedEnemies >= spec->allowedConcurentSpawns)
 			return;
@@ -209,7 +220,7 @@ bool AWaveManager::SetupTimers() noexcept {
 	return true;
 }
 void AWaveManager::Completed() noexcept {
-	primaryGameModeRef->GameCompleted(GameResults::WIN);
+	primaryGameModeRef->CompleteGame(GameResults::WIN);
 }
 bool AWaveManager::ValidateAllowedEnemyTypes() const noexcept {
 	if (!activeWaveManagerSpec)

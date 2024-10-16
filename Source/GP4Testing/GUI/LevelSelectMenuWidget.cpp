@@ -31,8 +31,9 @@ void ULevelSelectMenuWidget::SetVisibilityState(ESlateVisibility state) noexcept
 		else
 			startButton->SetIsEnabled(false);
 	}
-	else if (state == ESlateVisibility::Collapsed)
+	else if (state == ESlateVisibility::Collapsed) {
 		selectedLevelEntrySpec = nullptr;
+	}
 }
 
 

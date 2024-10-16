@@ -16,8 +16,8 @@ void ULoseMenuWidget::NativeOnInitialized() {
 
 
 void ULoseMenuWidget::RestartButtonClicked() {
-	primaryHUDRef->SetMenuState(MenuState::LEVEL_SELECT_MENU);
+	primaryGameModeRef->RestartGame();
 }
 void ULoseMenuWidget::QuitButtonClicked() {
-	primaryHUDRef->SetMenuState(MenuState::OPTIONS_MENU);
+	primaryGameModeRef->EndGame();
 }
