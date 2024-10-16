@@ -1,6 +1,7 @@
 
 
 #include "GP4Testing/Systems/WaveManager.h"
+#include "GP4Testing/Systems/PrimaryGameMode.h"
 
 #include "GP4Testing/DataAssets/WaveManagerSpec.h"
 #include "GP4Testing/DataAssets/WaveSpec.h"
@@ -72,7 +73,10 @@ void AWaveManager::Deactivate() noexcept {
 	enemyManagementSystemRef->ClearAllPools();
 }
 void AWaveManager::Restart() noexcept {
-
+	// Dispawn all
+	// Reset cursor
+	// ResetActiveSpecData
+	//activeWaveSpecData = 
 }
 
 void AWaveManager::NotifyEnemyDeath(EnemyType type) {
@@ -193,8 +197,7 @@ bool AWaveManager::SetupTimers() noexcept {
 	return true;
 }
 void AWaveManager::Completed() noexcept {
-	//Signal Gamemode that game is over and player has won!
-	Clear();
+	primaryGameModeRef->GameCompleted(GameResults::WIN);
 }
 bool AWaveManager::ValidateAllowedEnemyTypes() noexcept {
 	if (!activeWaveManagerSpec)

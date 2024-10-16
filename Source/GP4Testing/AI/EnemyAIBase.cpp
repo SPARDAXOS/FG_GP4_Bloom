@@ -70,7 +70,9 @@ void AEnemyAIBase::SetupStartingState() {
 
 void AEnemyAIBase::Die()
 {
-	WaveManagerSystem->NotifyEnemyDeath(Type);
+	Debugging::CustomError("Die!");
+	if (WaveManagerSystem)
+		WaveManagerSystem->NotifyEnemyDeath(Type);
 }
 
 void AEnemyAIBase::Attack()

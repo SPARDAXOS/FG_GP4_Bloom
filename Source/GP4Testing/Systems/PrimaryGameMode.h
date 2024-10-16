@@ -59,6 +59,7 @@ public:
 public:
 	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
 	void GameCompleted(GameResults results) noexcept;
+	void RestartGame() noexcept;
 	void EndGame() noexcept;
 	void QuitGame() noexcept;
 

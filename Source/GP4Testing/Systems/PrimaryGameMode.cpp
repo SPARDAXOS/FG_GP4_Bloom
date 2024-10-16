@@ -194,6 +194,8 @@ void APrimaryGameMode::GameCompleted(GameResults results) noexcept {
 	if (results == GameResults::NONE)
 		return;
 
+	if (!gameStarted)
+		return;
 
 	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 	primaryPlayerRef->SetPlayerHUDState(false);
@@ -206,6 +208,14 @@ void APrimaryGameMode::GameCompleted(GameResults results) noexcept {
 	else if (results == GameResults::LOSE) {
 		primaryHUDRef->SetMenuState(MenuState::LOSE_MENU);
 	}
+}
+void APrimaryGameMode::RestartGame() noexcept {
+	if (!gameStarted)
+		return;
+	//Do i even need to restart it? maybe restart f
+	waveManagerRef->Restart(); //Maybe only after an option has been selected by the menu
+	//Rest
+
 }
 void APrimaryGameMode::EndGame() noexcept {
 	if (!gameStarted)
