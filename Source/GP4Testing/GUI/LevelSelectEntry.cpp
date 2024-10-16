@@ -40,10 +40,9 @@ void ULevelSelectEntry::NativeOnListItemObjectSet(UObject* ListItemObject) {
 void ULevelSelectEntry::NativeOnItemSelectionChanged(bool selected) {
 	IUserObjectListEntry::NativeOnItemSelectionChanged(selected);
 
+	Debugging::CustomLog("Selected!");
 	if (selected && levelSelectMenuWidgetRef && targetSpec)
 		levelSelectMenuWidgetRef->SetSelectedLevelEntrySpec(targetSpec);
-	else
-		Debugging::CustomError("Failed to set level selection!");
 }
 
 
