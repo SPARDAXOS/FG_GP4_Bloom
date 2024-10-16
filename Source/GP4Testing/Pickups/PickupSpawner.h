@@ -5,6 +5,7 @@
 #include "GP4Testing/Utility/Timer.h"
 #include "PickupSpawner.generated.h"
 
+
 class APickup;
 
 
@@ -52,5 +53,4 @@ private:
 private:
     TObjectPtr<APickup> pickupRef;
     Timer respawnTimer;
-
 };

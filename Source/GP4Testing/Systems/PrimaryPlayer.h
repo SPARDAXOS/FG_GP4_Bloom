@@ -50,6 +50,7 @@ public:
 	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
 	inline APrimaryGameMode* GetPrimaryGameMode() noexcept { return primaryGameModeRef; }
 
+
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;
 	void HandleLookInput(FVector2D axis) noexcept;

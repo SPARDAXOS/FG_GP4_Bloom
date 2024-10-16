@@ -37,7 +37,7 @@ public:
 	void Deactivate() noexcept;
 
 public:
-	void NotifyEnemyDeath();
+	void NotifyEnemyDeath(EnemyType type);
 
 public:
 	inline void SetEnemySpawningSystemReference(AEnemyManagementSystem& system) noexcept { enemyManagementSystemRef = &system; }
@@ -64,6 +64,7 @@ private:
 	bool CreateEnemyPools();
 	FVector GetRandomSpawnPoint() noexcept;
 	bool ValidateAllowedEnemyTypes() noexcept;
+	bool IsWaveCompleted() const noexcept;
 	FEnemyTypeSpawnSpec* FindSpawnSpec(const EnemyType& type);
 
 private:

@@ -203,7 +203,6 @@ void APrimaryGameMode::EndGame() noexcept {
 
 	//Disable custom systems
 	enemyManagementSystemRef->SetActiveState(false);
-	enemyManagementSystemRef->ClearPools();
 	waveManagerRef->Deactivate();
 
 	levelManagementRef->LoadLevel("MainMenu", [this]() {

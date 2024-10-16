@@ -55,10 +55,13 @@ void AEnemyAIBase::Tick(float DeltaTime)
 	}
 }
 
-// Called to bind functionality to input
-void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+
+void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+void AEnemyAIBase::SetupStartingState() {
+	//Reset everything to its default state.
+	//Behavior flags, data such as health and any cooldowns.
 }
 
 void AEnemyAIBase::Die()

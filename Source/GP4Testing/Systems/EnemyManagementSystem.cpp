@@ -61,9 +61,68 @@ bool AEnemyManagementSystem::CreateEnemyPool(EnemyType type, uint32 count) {
 
 	return false;
 }
-void AEnemyManagementSystem::ClearPools() noexcept {
+void AEnemyManagementSystem::ClearAllPools() noexcept {
 	ClearMeleeEnemiesPool();
 	ClearRangedEnemiesPool();
+}
+
+
+template<>
+TArray<AEnemyAIBase*> AEnemyManagementSystem::GetAllEnemies<AEnemyAIBase>(AEnemyAIBase* self, bool excludeSelf) {
+	TArray<AEnemyAIBase*> list;
+	list.Reserve(meleeEnemiesPool.Num() + rangedEnemiesPool.Num());
+
+	for (auto& entry : meleeEnemiesPool) {
+		if (excludeSelf) {
+			if (self == entry)
+				continue;
+		}
+
+		list.Add(entry);
+	}
+
+	for (auto& entry : rangedEnemiesPool) {
+		if (excludeSelf) {
+			if (self == entry)
+				continue;
+		}
+
+		list.Add(entry);
+	}
+
+	return list;
+}
+template<>
+TArray<AMeleeAI*> AEnemyManagementSystem::GetAllEnemies<AMeleeAI>(AEnemyAIBase* self, bool excludeSelf) {
+	TArray<AMeleeAI*> list;
+	list.Reserve(meleeEnemiesPool.Num());
+
+	for (auto& entry : meleeEnemiesPool) {
+		if (excludeSelf) {
+			if (self == entry)
+				continue;
+		}
+
+		list.Add((AMeleeAI*)entry);
+	}
+
+	return list;
+}
+template<>
+TArray<ARangedAI*> AEnemyManagementSystem::GetAllEnemies<ARangedAI>(AEnemyAIBase* self, bool excludeSelf) {
+	TArray<ARangedAI*> list;
+	list.Reserve(rangedEnemiesPool.Num());
+
+	for (auto& entry : rangedEnemiesPool) {
+		if (excludeSelf) {
+			if (self == entry)
+				continue;
+		}
+
+		list.Add((ARangedAI*)entry);
+	}
+
+	return list;
 }
 
 
@@ -71,43 +130,31 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(FVector location) {
 	if (meleeEnemiesPool.Num() == 0)
 		return false;
 
-	for (auto& enemy : meleeEnemiesPool) {
-		if (!enemy->GetCurrentState() && !enemy->IsMarkedForSpawn()) {
-			ATriggerVFX* vfx = GetAvailableVFX();
-			if (vfx) {
-				FOnVFXFinishedSignature callback;
-				callback.BindLambda([this, &enemy, location]() {
-					enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
-					enemy->SetEnemyState(true);
-				});
-				vfx->SetupTimer(callback, enemySpawnVFXDelay);
-				FVector spawnPosition = location;
-				spawnPosition.Z += enemySpawnPortalVFXZOffset;
-				vfx->SetActorLocation(spawnPosition);
-				vfx->Activate();
-				enemy->MarkForSpawn();
-			}
-			else {
-				enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
-				enemy->SetEnemyState(true);
-			}
-			return true;
-		}
-	}
-
-	return false;
+	return SpawnEnemy_Internal(meleeEnemiesPool, location);
 }
 bool AEnemyManagementSystem::SpawnRangedEnemy(FVector location) {
 	if (rangedEnemiesPool.Num() == 0)
 		return false;
 
-	for (auto& enemy : rangedEnemiesPool) {
+	return SpawnEnemy_Internal(rangedEnemiesPool, location);
+}
+bool AEnemyManagementSystem::SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FVector location) {
+	if (pool.Num() == 0)
+		return false;
+
+	for (auto& enemy : pool) {
+		if (!enemy) {
+			Debugging::CustomError("Invalid enemy was found in pool!");
+			continue;
+		}
+
 		if (!enemy->GetCurrentState() && !enemy->IsMarkedForSpawn()) {
 			ATriggerVFX* vfx = GetAvailableVFX();
 			if (vfx) {
 				FOnVFXFinishedSignature callback;
 				callback.BindLambda([this, &enemy, location]() {
 					enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
+					enemy->SetupStartingState();
 					enemy->SetEnemyState(true);
 					});
 				vfx->SetupTimer(callback, enemySpawnVFXDelay);
@@ -152,6 +199,7 @@ bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
 		newEnemy->SetEnemyState(false);
 		newEnemy->SetEnemyManagementRef(*this);
 		newEnemy->SetWaveManagerRef(*waveManagerRef);
+		newEnemy->SetEnemyType(EnemyType::MELEE);
 		meleeEnemiesPool.Add(newEnemy);
 	}
 
@@ -172,6 +220,7 @@ bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
 		newEnemy->SetEnemyState(false);
 		newEnemy->SetEnemyManagementRef(*this);
 		newEnemy->SetWaveManagerRef(*waveManagerRef);
+		newEnemy->SetEnemyType(EnemyType::RANGED);
 		rangedEnemiesPool.Add(newEnemy);
 	}
 
