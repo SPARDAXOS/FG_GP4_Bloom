@@ -43,7 +43,10 @@ void APrimaryPlayer::Start() {
 	StartPlayerSystems();
 }
 void APrimaryPlayer::Update(float deltaTime) {
-
+	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
+	{
+		HandleRunningShake();
+	}
 }
 void APrimaryPlayer::SetupStartingState() noexcept {
 	//Reset all player data to default.
@@ -189,7 +192,6 @@ void APrimaryPlayer::ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase, 
 	{
 		CameraManager->StartCameraShake(CameraShakeBase, Scale);
 	}
-	Debugging::PrintString("Has tried to shake");
 }
 void APrimaryPlayer::HandleHitShake()
 {
@@ -211,7 +213,19 @@ void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall 
 		ShakeCamera(LandShake, Strength);
 	}
 }
-
+void APrimaryPlayer::HandleShootShakeRifle()
+{
+	
+}
+void APrimaryPlayer::HandleShootShakeShotgun()
+{
+	
+}
+void APrimaryPlayer::HandleRunningShake()
+{
+	float Strength = GetCharacterMovement()->GetLastUpdateVelocity().Length() / MaxRunSpeed;
+	ShakeCamera(RunningShake, Strength);
+}
 void APrimaryPlayer::CreatePlayerSystems() {
 	checkf(playerMovementSystemAsset, TEXT("PlayerMovementSystemAsset ref is null!"));
 	playerMovementSystemRef = GetWorld()->SpawnActor<APlayerMovementSystem>(playerMovementSystemAsset);
