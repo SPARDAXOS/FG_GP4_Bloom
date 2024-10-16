@@ -48,6 +48,7 @@ public:
 
 	inline UCameraComponent* GetCamera() noexcept { return cameraComponent; }
 	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
+	inline APrimaryGameMode* GetPrimaryGameMode() noexcept { return primaryGameModeRef; }
 
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;

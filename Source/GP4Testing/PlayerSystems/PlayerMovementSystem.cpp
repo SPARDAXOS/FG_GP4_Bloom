@@ -53,8 +53,9 @@ void APlayerMovementSystem::Slide() noexcept
 		StoredVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
 
 		FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
+		SlideDir.Z = 0.0f;
 		FVector SlideVel = SlideDir * SlideSpeed;
-		primaryPlayerRef->LaunchCharacter(SlideVel, true, true);
+		primaryPlayerRef->LaunchCharacter(SlideVel, true, false);
 
 		bCanSlide = false;
 		bIsSliding = true;
@@ -78,14 +79,14 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 
 void APlayerMovementSystem::StopSlide()
 {
-	primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	//primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
 	
 	bIsSliding = false;
 }
 
 void APlayerMovementSystem::StopDash()
 {
-	primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	// primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
 	
 	bIsDashing = false;
 }
