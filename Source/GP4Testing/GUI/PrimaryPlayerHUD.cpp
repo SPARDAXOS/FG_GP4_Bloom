@@ -5,9 +5,13 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "CustomButton.h"
+#include "GP4Testing/DataAssets/WaveManagerSpec.h"
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/Systems/WaveManager.h"
+#include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -32,6 +36,7 @@ void UPrimaryPlayerHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	HandleHealthBar();
 	HandleAmmoText();
+	HandleWaveCounter();
 }
 
 void UPrimaryPlayerHUD::HandleHealthBar()
@@ -56,6 +61,18 @@ void UPrimaryPlayerHUD::HandleAmmoText()
 }
 void UPrimaryPlayerHUD::HandleWaveCounter()
 {
+	Debugging::PrintString(FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount()));
+	if (primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount() > 0)
+	{
+		FString CurrentWave = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetCurrentWaveIndex() + 1);
+		FString MaxWaves = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount());
+		WaveCounter->SetText(FText::FromString(CurrentWave+"/"+MaxWaves));
+	}
+	else
+	{
+		Debugging::PrintString("Tried to null wavetext");
+		WaveCounter->SetText(FText::FromString(""));
+	}
 }
 
 
