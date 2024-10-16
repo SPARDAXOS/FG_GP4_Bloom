@@ -2,10 +2,16 @@
 
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "CustomButton.h"
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/Systems/WaveManager.h"
+#include "GP4Testing/Utility/Debugging.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 void UPrimaryPlayerHUD::NativeOnInitialized() {
@@ -27,14 +33,22 @@ void UPrimaryPlayerHUD::SetWidgetOpacity(float value) noexcept {
 void UPrimaryPlayerHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	//Healthbar
+	HandleHealthBar();
+	HandleAmmoText();
+	HandleWaveCounter();
+}
+
+void UPrimaryPlayerHUD::HandleHealthBar()
+{
 	float PercentToShow = (primaryPlayerRef->GetPlayerHealthSystem().HealthComponent->CurrentHealth / primaryPlayerRef->GetPlayerHealthSystem().HealthComponent->MaxHealth);
 	HealthBar->SetPercent(PercentToShow);
-	//Ammo counter
+}
+void UPrimaryPlayerHUD::HandleAmmoText()
+{
 	if (primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon())
 	{
-		FString CurrentAmmoString = FString::SanitizeFloat(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Magazine);
-		FString TotalAmmoString = FString::SanitizeFloat(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Ammo);
+		FString CurrentAmmoString = FString::FromInt(UKismetMathLibrary::Round(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Magazine));
+		FString TotalAmmoString = FString::FromInt(UKismetMathLibrary::Round(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Ammo));
 		FText TextToDisplay = FText::FromString(CurrentAmmoString+"/"+TotalAmmoString);
 		AmmoText->SetText(TextToDisplay);
 	}
@@ -42,6 +56,19 @@ void UPrimaryPlayerHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	{
 		FText Text = FText::FromString("");
 		AmmoText->SetText(Text);
+	}
+}
+void UPrimaryPlayerHUD::HandleWaveCounter()
+{
+	if (primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount() > 0)
+	{
+		FString CurrentWave = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetCurrentWaveIndex() + 1);
+		FString MaxWaves = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount());
+		WaveCounter->SetText(FText::FromString(CurrentWave+"/"+MaxWaves));
+	}
+	else
+	{
+		WaveCounter->SetText(FText::FromString(""));
 	}
 }
 

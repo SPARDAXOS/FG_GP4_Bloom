@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
+#include "GP4Testing/DataAssets/WaveManagerSpec.h"
 
 #include "GP4Testing/DataAssets/WaveSpecData.h"
 
@@ -34,13 +35,23 @@ public:
 	bool Setup(const UWaveManagerSpec& spec);
 	bool Activate() noexcept;
 	void Deactivate() noexcept;
+	void Restart() noexcept;
 
 public:
-	void NotifyEnemyDeath();
+	void NotifyEnemyDeath(EnemyType type);
 
 public:
 	inline void SetEnemySpawningSystemReference(AEnemyManagementSystem& system) noexcept { enemyManagementSystemRef = &system; }
 	inline void SetPrimaryGameModeReference(APrimaryGameMode& gameMode) noexcept { primaryGameModeRef = &gameMode; }
+
+	inline int GetCurrentWaveIndex() const noexcept { return currentWaveCursor; }
+	inline int GetMaxWaveCount() const noexcept {
+		if (!activeWaveManagerSpec)
+			return 0;
+
+		return activeWaveManagerSpec->waves.Num();
+	}
+	
 
 private:
 	void Clear() noexcept;
@@ -54,6 +65,7 @@ private:
 	bool CreateEnemyPools();
 	FVector GetRandomSpawnPoint() noexcept;
 	bool ValidateAllowedEnemyTypes() noexcept;
+	bool IsWaveCompleted() const noexcept;
 	FEnemyTypeSpawnSpec* FindSpawnSpec(const EnemyType& type);
 
 private:
@@ -68,7 +80,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	FWaveSpecData activeWaveSpecData;
-
+	
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
 	int currentTotalSpawnedEnemies = 0;

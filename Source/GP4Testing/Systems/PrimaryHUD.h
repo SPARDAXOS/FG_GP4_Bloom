@@ -18,6 +18,8 @@ class UMainMenuWidget;
 class UOptionsMenuWidget;
 class ULevelSelectMenuWidget;
 class UPauseMenuWidget;
+class UWinMenuWidget;
+class ULoseMenuWidget;
 
 
 
@@ -27,7 +29,9 @@ enum class MenuState : uint8 {
 	MAIN_MENU,
 	OPTIONS_MENU,
 	LEVEL_SELECT_MENU,
-	PAUSE_MENU
+	PAUSE_MENU,
+	WIN_MENU,
+	LOSE_MENU
 };
 
 
@@ -74,6 +78,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PrimaryHUD|Assets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UPauseMenuWidget> pauseMenuWidgetClass = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PrimaryHUD|Assets", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UWinMenuWidget> winMenuWidgetClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PrimaryHUD|Assets", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ULoseMenuWidget> loseMenuWidgetClass = nullptr;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "PrimaryHUD|Debugging", meta = (AllowPrivateAccess = "true"))
 	MenuState currentMenuState = MenuState::NONE;
@@ -83,6 +93,8 @@ private:
 	TObjectPtr<UOptionsMenuWidget> optionsMenuRef = nullptr;
 	TObjectPtr<ULevelSelectMenuWidget> levelSelectMenuRef = nullptr;
 	TObjectPtr<UPauseMenuWidget> pauseMenuRef = nullptr;
+	TObjectPtr<UWinMenuWidget> winMenuRef = nullptr;
+	TObjectPtr<ULoseMenuWidget> loseMenuRef = nullptr;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;
