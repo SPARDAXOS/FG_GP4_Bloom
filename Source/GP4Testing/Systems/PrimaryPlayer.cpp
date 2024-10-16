@@ -110,7 +110,7 @@ void APrimaryPlayer::HandleSlideInput() noexcept {
 	if (!playerMovementSystemRef)
 		return;
 
-	//playerMovementSystemRef->Slide();
+	playerMovementSystemRef->Slide();
 }
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
@@ -215,11 +215,11 @@ void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall 
 }
 void APrimaryPlayer::HandleShootShakeRifle()
 {
-	
+	ShakeCamera(ShootingShakeRifle, 1.f);
 }
 void APrimaryPlayer::HandleShootShakeShotgun()
 {
-	
+	ShakeCamera(ShootingShakeShotgun, 1.f);
 }
 void APrimaryPlayer::HandleRunningShake()
 {
