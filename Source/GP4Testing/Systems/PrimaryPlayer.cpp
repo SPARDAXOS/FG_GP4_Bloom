@@ -15,6 +15,7 @@
 #include "GP4Testing/AI/EnemyAIBase.h"
 
 #include "GP4Testing/Utility/Debugging.h"
+#include "Kismet/GameplayStatics.h"
 
 
 APrimaryPlayer::APrimaryPlayer() {
@@ -31,7 +32,9 @@ void APrimaryPlayer::Init() {
 	SetupPlayerSystemsDependencies();
 	InitPlayerSystems();
 	SetupPrimaryPlayerHUD();
-
+	//Delegates to handle camera shake
+	GetPlayerHealthSystem().HealthComponent->OnDamage.AddUniqueDynamic(this, &APrimaryPlayer::HandleHitShake);
+	CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 
 	springArm->TargetArmLength = springArmLength;
 	springArm->SetRelativeTransform(cameraInitialTransform);
@@ -115,7 +118,6 @@ void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
 void APrimaryPlayer::HandleMeleeInput() noexcept {
-	//HERE!
 	if (bCanMelee)
 	{
 		FHitResult Hit;
@@ -181,8 +183,34 @@ void APrimaryPlayer::HandleWeaponSlot3Input() noexcept {
 
 	weaponManagementSystemRef->WeaponSlot3();
 }
-
-
+void APrimaryPlayer::ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase, float Scale)
+{
+	if (CameraManager)
+	{
+		CameraManager->StartCameraShake(CameraShakeBase, Scale);
+	}
+	Debugging::PrintString("Has tried to shake");
+}
+void APrimaryPlayer::HandleHitShake()
+{
+	ShakeCamera(HitShake, 1);
+}
+void APrimaryPlayer::OnJumped_Implementation()
+{
+	StartJumpDistance = GetCharacterMovement()->GetActorLocation().Z;
+	Debugging::PrintString("Jumped");
+}
+void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall length check
+{
+	Super::Landed(Hit);
+	DistanceFallen = StartJumpDistance - GetCharacterMovement()->GetActorLocation().Z;
+	Debugging::PrintString(FString::SanitizeFloat(DistanceFallen));
+	if (DistanceFallen >= 150)
+	{
+		float Strength = DistanceFallen / MaxFallHeight;
+		ShakeCamera(LandShake, Strength);
+	}
+}
 
 void APrimaryPlayer::CreatePlayerSystems() {
 	checkf(playerMovementSystemAsset, TEXT("PlayerMovementSystemAsset ref is null!"));

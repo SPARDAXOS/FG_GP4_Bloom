@@ -70,8 +70,6 @@ void ARangedAI::Attack()
 				ShootRotator.Yaw = ShootYaw;
 				
 				ARangedAIBullet* SpawnedBullet = GetWorld()->SpawnActor<ARangedAIBullet>(Bullet, Muzzle->GetComponentLocation(), FRotator(-ShootRotation.Pitch, ShootRotator.Yaw, 0.f));
-                //FString stri = SpawnedBullet->GetActorLocation().ToString();
-				//Debugging::PrintString(stri);
 				if(SpawnedBullet)
 				{
 					SpawnedBullet->SetDamage(Damage);

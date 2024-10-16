@@ -67,7 +67,7 @@ void AEnemyManagementSystem::ClearPools() noexcept {
 }
 
 
-bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
+bool AEnemyManagementSystem::SpawnMeleeEnemy(FVector location) {
 	if (meleeEnemiesPool.Num() == 0)
 		return false;
 
@@ -76,8 +76,8 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 			ATriggerVFX* vfx = GetAvailableVFX();
 			if (vfx) {
 				FOnVFXFinishedSignature callback;
-				callback.BindLambda([this, &enemy, &location]() {
-					enemy->SetActorLocation(location);
+				callback.BindLambda([this, &enemy, location]() {
+					enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
 					enemy->SetEnemyState(true);
 				});
 				vfx->SetupTimer(callback, enemySpawnVFXDelay);
@@ -88,7 +88,7 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 				enemy->MarkForSpawn();
 			}
 			else {
-				enemy->SetActorLocation(location);
+				enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
 				enemy->SetEnemyState(true);
 			}
 			return true;
@@ -97,7 +97,7 @@ bool AEnemyManagementSystem::SpawnMeleeEnemy(const FVector& location) {
 
 	return false;
 }
-bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector& location) {
+bool AEnemyManagementSystem::SpawnRangedEnemy(FVector location) {
 	if (rangedEnemiesPool.Num() == 0)
 		return false;
 
@@ -106,8 +106,8 @@ bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector& location) {
 			ATriggerVFX* vfx = GetAvailableVFX();
 			if (vfx) {
 				FOnVFXFinishedSignature callback;
-				callback.BindLambda([this, &enemy, &location]() {
-					enemy->SetActorLocation(location);
+				callback.BindLambda([this, &enemy, location]() {
+					enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
 					enemy->SetEnemyState(true);
 					});
 				vfx->SetupTimer(callback, enemySpawnVFXDelay);
@@ -118,7 +118,7 @@ bool AEnemyManagementSystem::SpawnRangedEnemy(const FVector& location) {
 				enemy->MarkForSpawn();
 			}
 			else {
-				enemy->SetActorLocation(location);
+				enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
 				enemy->SetEnemyState(true);
 			}
 			return true;
