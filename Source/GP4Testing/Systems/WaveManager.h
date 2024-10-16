@@ -35,6 +35,7 @@ public:
 	bool Setup(const UWaveManagerSpec& spec);
 	bool Activate() noexcept;
 	void Deactivate() noexcept;
+	void Restart() noexcept;
 
 public:
 	void NotifyEnemyDeath(EnemyType type);

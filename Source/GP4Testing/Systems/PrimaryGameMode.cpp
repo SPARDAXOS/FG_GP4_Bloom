@@ -190,6 +190,23 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 
 	return true;
 }
+void APrimaryGameMode::GameCompleted(GameResults results) noexcept {
+	if (results == GameResults::NONE)
+		return;
+
+
+	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
+	primaryPlayerRef->SetPlayerHUDState(false);
+
+	currentPrimaryGameState = PrimaryGameState::MENU;
+	if (results == GameResults::WIN) {
+		primaryHUDRef->SetMenuState(MenuState::WIN_MENU);
+
+	}
+	else if (results == GameResults::LOSE) {
+		primaryHUDRef->SetMenuState(MenuState::LOSE_MENU);
+	}
+}
 void APrimaryGameMode::EndGame() noexcept {
 	if (!gameStarted)
 		return;

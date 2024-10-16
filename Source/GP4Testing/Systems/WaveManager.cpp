@@ -71,7 +71,9 @@ void AWaveManager::Deactivate() noexcept {
 	Clear();
 	enemyManagementSystemRef->ClearAllPools();
 }
+void AWaveManager::Restart() noexcept {
 
+}
 
 void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 	if (type == EnemyType::MELEE) {
