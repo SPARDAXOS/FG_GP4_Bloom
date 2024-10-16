@@ -5,6 +5,7 @@
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GP4Testing/Systems/WaveManager.h"
 #include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -62,11 +63,14 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AEnemyAIBase::SetupStartingState() {
 	//Reset everything to its default state.
 	//Behavior flags, data such as health and any cooldowns.
+	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
+	bCanPlayAttackAnim = false;
+	bCanAttack = true;
 }
 
 void AEnemyAIBase::Die()
 {
-	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
+	WaveManagerSystem->NotifyEnemyDeath(Type);
 }
 
 void AEnemyAIBase::Attack()
