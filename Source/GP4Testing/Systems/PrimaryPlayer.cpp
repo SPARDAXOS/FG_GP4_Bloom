@@ -110,7 +110,7 @@ void APrimaryPlayer::HandleSlideInput() noexcept {
 	if (!playerMovementSystemRef)
 		return;
 
-	//playerMovementSystemRef->Slide();
+	playerMovementSystemRef->Slide();
 }
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
