@@ -47,8 +47,10 @@ void ULevelSelectMenuWidget::SetSelectedLevelEntrySpec(ULevelSelectEntrySpec* en
 
 
 void ULevelSelectMenuWidget::StartButtonClicked() {
-	if (selectedLevelEntrySpec)
+	if (selectedLevelEntrySpec) {
 		primaryGameModeRef->StartGame(*selectedLevelEntrySpec);
+		tileView->ClearSelection();
+	}
 	else
 		Debugging::CustomError("Attempted to start the game with no level selected!");
 }

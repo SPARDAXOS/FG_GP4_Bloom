@@ -48,6 +48,16 @@ void ATriggerVFX::Activate() {
 	vfx->ActivateSystem();
 	status = true;
 }
+void ATriggerVFX::Deactivate() {
+	if (!status)
+		return;
+
+	vfx->DeactivateImmediate();
+	status = false;
+	timer.ResetTime();
+	onFinishedCallback.Unbind();
+	onTimerFinishedCallback.Unbind();
+}
 void ATriggerVFX::OnVFXFinished(UNiagaraComponent* bPSystem) {
 	onFinishedCallback.ExecuteIfBound();
 	status = false;

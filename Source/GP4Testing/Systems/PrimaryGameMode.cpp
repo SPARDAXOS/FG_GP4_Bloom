@@ -96,7 +96,6 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
 	//Player position, rotation adjustments
-	primaryPlayerRef->SetupStartingState();
 	AActor* spawnPoint = FindPlayerStart(primaryPlayerControllerRef, defaultPlayerSpawnPoint.ToString());
 	if (spawnPoint) {
 		primaryPlayerRef->SetActorLocation(spawnPoint->GetActorLocation(), false, nullptr, ETeleportType::ResetPhysics);
@@ -217,6 +216,7 @@ void APrimaryGameMode::RestartGame() noexcept {
 	SetupPlayingState();
 	primaryHUDRef->ClearViewport();
 	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+	currentPrimaryGameState = PrimaryGameState::PLAYING;
 }
 void APrimaryGameMode::ProgressGame() noexcept {
 	if (!gameStarted)

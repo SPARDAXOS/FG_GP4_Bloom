@@ -77,10 +77,12 @@ void AWaveManager::Restart() noexcept {
 		return;
 
 	enemyManagementSystemRef->DispawnAllEnemies();
+	enemyManagementSystemRef->DispawnAllVFX();
 	currentWaveCursor = -1;
 	currentSpawnedMeleeEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
 	currentTotalSpawnedEnemies = 0;
+	
 	StartNextWave();
 }
 
@@ -140,6 +142,7 @@ bool AWaveManager::StartNextWave() noexcept {
 	return true;
 }
 void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
+	Debugging::CustomLog("Update!");
 	if (type == EnemyType::MELEE) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::MELEE);
 		if (!spec) {

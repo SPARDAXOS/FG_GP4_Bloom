@@ -18,6 +18,8 @@ public:
 	void TakeDamage(float Damage);
 	void AddHealth(float Amount);
 
+	void SetupStartingState() noexcept;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float MaxHealth = 100.f;
 

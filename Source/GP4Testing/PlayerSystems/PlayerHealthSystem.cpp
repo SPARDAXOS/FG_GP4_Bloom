@@ -12,7 +12,7 @@ APlayerHealthSystem::APlayerHealthSystem()
 }
 
 void APlayerHealthSystem::SetupStartingState() noexcept {
-
+	HealthComponent->SetupStartingState();
 }
 
 void APlayerHealthSystem::KillPlayer()
