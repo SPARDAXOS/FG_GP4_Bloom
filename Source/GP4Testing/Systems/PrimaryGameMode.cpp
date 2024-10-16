@@ -99,7 +99,7 @@ void APrimaryGameMode::SetupPrePlayingState() noexcept {
 	primaryPlayerRef->SetupStartingState();
 	AActor* spawnPoint = FindPlayerStart(primaryPlayerControllerRef, defaultPlayerSpawnPoint.ToString());
 	if (spawnPoint) {
-		primaryPlayerRef->SetActorLocation(spawnPoint->GetActorLocation());
+		primaryPlayerRef->SetActorLocation(spawnPoint->GetActorLocation(), false, nullptr, ETeleportType::ResetPhysics);
 		primaryPlayerControllerRef->SetControlRotation(spawnPoint->GetActorRotation());
 	}
 	

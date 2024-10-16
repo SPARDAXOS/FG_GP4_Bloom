@@ -8,8 +8,7 @@
 #include <functional>
 
 
-APickupSpawner::APickupSpawner()
-{
+APickupSpawner::APickupSpawner() {
     PrimaryActorTick.bCanEverTick = true;
 
     root = CreateDefaultSubobject<USceneComponent>("Root");
@@ -23,17 +22,15 @@ APickupSpawner::APickupSpawner()
 }
 
 
-void APickupSpawner::BeginPlay()
-{
+void APickupSpawner::BeginPlay() {
     Super::BeginPlay();
 
     respawnTimer.SetLengthRef(&respawnDuration);
     respawnTimer.SetOnCompletedCallback(std::bind(&APickupSpawner::Respawn, this));
-
-    //Respawn();
+    if (spawnAtStart || (!spawnAtStart && respawnDuration <= 0.0f))
+        Respawn();
 }
-void APickupSpawner::Tick(float deltaTime)
-{
+void APickupSpawner::Tick(float deltaTime) {
     Super::Tick(deltaTime);
     if (pickupClass && !pickupSpawned)
         respawnTimer.Update(deltaTime);
@@ -47,10 +44,11 @@ void APickupSpawner::NotifyPickup(APickup& outer) {
     if (outer.GetUniqueID() == pickupRef->GetUniqueID()) {
         pickupRef = nullptr;
         pickupSpawned = false;
+        if (respawnDuration <= 0.0f)
+            Respawn();
     }
 }
-void APickupSpawner::Respawn()
-{
+void APickupSpawner::Respawn() {
     if (!pickupClass || pickupSpawned)
         return;
 

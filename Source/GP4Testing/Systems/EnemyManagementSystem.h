@@ -50,8 +50,8 @@ public:
 	inline void SetWaveManagerReference(AWaveManager& manager) noexcept { waveManagerRef = &manager; }
 
 private:
-	bool SpawnMeleeEnemy(const FVector&);
-	bool SpawnRangedEnemy(const FVector&);
+	bool SpawnMeleeEnemy(FVector location);
+	bool SpawnRangedEnemy(FVector location);
 	ATriggerVFX* GetAvailableVFX() const noexcept;
 
 private:
