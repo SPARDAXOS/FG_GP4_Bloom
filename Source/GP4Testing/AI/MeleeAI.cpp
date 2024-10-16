@@ -15,6 +15,8 @@ void AMeleeAI::Die()
 {
 	Super::Die();
 	bIsDead = true;
+	SetActorEnableCollision(false);
+	GetCharacterMovement()->GravityScale = 0.0f;
 	DynMaterial = UMaterialInstanceDynamic::Create(DissolveMat, this);
 	DissolveTimer();
 }

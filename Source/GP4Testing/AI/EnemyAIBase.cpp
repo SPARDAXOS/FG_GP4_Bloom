@@ -66,6 +66,8 @@ void AEnemyAIBase::SetupStartingState() {
 	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
 	bCanPlayAttackAnim = false;
 	bCanAttack = true;
+	SetActorEnableCollision(true);
+	GetCharacterMovement()->GravityScale = 1.0f;
 }
 
 void AEnemyAIBase::Die()
