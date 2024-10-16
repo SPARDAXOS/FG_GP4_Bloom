@@ -63,7 +63,7 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AEnemyAIBase::Die()
 {
-	SetEnemyState(false);
+	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
 }
 
 void AEnemyAIBase::Attack()

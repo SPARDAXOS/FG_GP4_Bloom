@@ -29,10 +29,13 @@ public:
 	void Dissolve();
 	bool bCanAttackPlayer();
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsDead = false;
+
 private:
 	void DissolveTimer();
-	void ResetDissolve();
 
+	UMaterialInstanceDynamic* DynMaterial;
 	FTimerHandle TimerHandle;
 	float DissolveValue = 0;
 };

@@ -11,9 +11,9 @@
 #include "HealthPickup.generated.h"
 
 
-UCLASS()
-class GP4TESTING_API AHealthPickup : public APickup
-{
+UCLASS(Abstract)
+class GP4TESTING_API AHealthPickup : public APickup {
+
 	GENERATED_BODY()
 
 public:
