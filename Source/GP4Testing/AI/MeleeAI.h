@@ -32,6 +32,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsDead = false;
 
+	UPROPERTY(EditAnywhere, Category="Audio")
+	USoundBase* DeathSound;
+
 private:
 	void DissolveTimer();
 
