@@ -148,7 +148,13 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
 			return;
 
-		if (SpawnEnemy(EnemyType::MELEE, GetRandomSpawnPoint())) {
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::MELEE, spawnLocation)) {
 			currentSpawnedMeleeEnemies++;
 			currentTotalSpawnedEnemies++;
 		}
@@ -168,7 +174,13 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
 			return;
 
-		if (SpawnEnemy(EnemyType::RANGED, GetRandomSpawnPoint())) {
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::RANGED, spawnLocation)) {
 			currentSpawnedRangedEnemies++;
 			currentTotalSpawnedEnemies++;
 		}
@@ -199,7 +211,7 @@ bool AWaveManager::SetupTimers() noexcept {
 void AWaveManager::Completed() noexcept {
 	primaryGameModeRef->GameCompleted(GameResults::WIN);
 }
-bool AWaveManager::ValidateAllowedEnemyTypes() noexcept {
+bool AWaveManager::ValidateAllowedEnemyTypes() const noexcept {
 	if (!activeWaveManagerSpec)
 		return false;
 
@@ -221,6 +233,7 @@ bool AWaveManager::ValidateAllowedEnemyTypes() noexcept {
 
 	return true;
 }
+
 bool AWaveManager::IsWaveCompleted() const noexcept {
 	if (!active)
 		return false;
@@ -278,12 +291,29 @@ bool AWaveManager::CreateEnemyPools() {
 
 	return true;
 }
-FVector AWaveManager::GetRandomSpawnPoint() noexcept {
+bool AWaveManager::GetRandomSpawnPoint(bool isOccupied, FVector& outLocation) noexcept {
 	if (spawnPoints.Num() <= 0)
-		return FVector::Zero();
+		return false;
 
-	int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
-	return spawnPoints[random]->GetActorLocation();
+	if (isOccupied) {
+		int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
+		outLocation = spawnPoints[random]->GetActorLocation();
+		return true;
+	}
+	else {
+		int spawnReattempts = 0;
+		while(spawnReattempts < spawnPointFetchReattempts) {
+			int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
+			if (!enemyManagementSystemRef->IsSpawnPointOccupied(spawnPoints[random]->GetActorLocation())) {
+				outLocation = spawnPoints[random]->GetActorLocation();
+				return true;
+			}
+
+			spawnReattempts++;
+		}
+
+		return false;
+	}
 }
 
   
