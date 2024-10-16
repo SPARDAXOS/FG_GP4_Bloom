@@ -5,7 +5,6 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "CustomButton.h"
-#include "GP4Testing/DataAssets/WaveManagerSpec.h"
 #include "GP4Testing/PlayerSystems/PlayerHealthSystem.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 #include "GP4Testing/Systems/PrimaryGameMode.h"
@@ -61,7 +60,6 @@ void UPrimaryPlayerHUD::HandleAmmoText()
 }
 void UPrimaryPlayerHUD::HandleWaveCounter()
 {
-	Debugging::PrintString(FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount()));
 	if (primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount() > 0)
 	{
 		FString CurrentWave = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetCurrentWaveIndex() + 1);
@@ -70,7 +68,6 @@ void UPrimaryPlayerHUD::HandleWaveCounter()
 	}
 	else
 	{
-		Debugging::PrintString("Tried to null wavetext");
 		WaveCounter->SetText(FText::FromString(""));
 	}
 }
