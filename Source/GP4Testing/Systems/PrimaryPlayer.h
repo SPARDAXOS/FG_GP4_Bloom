@@ -123,7 +123,9 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShakeBase> LandShake = nullptr;
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UCameraShakeBase> ShootingShake = nullptr; //SHOULD CREATE SEVERAL OF THESE
+	TSubclassOf<UCameraShakeBase> ShootingShakeRifle = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShakeBase> ShootingShakeShotgun = nullptr;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShakeBase> RunningShake = nullptr;
 	
@@ -138,6 +140,14 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	void Landed(const FHitResult& Hit) override;
 	UPROPERTY(EditDefaultsOnly)
 	float MaxFallHeight = 1400.f;
+
+	void HandleShootShakeRifle();
+	void HandleShootShakeShotgun();
+
+	
+	void HandleRunningShake();
+	UPROPERTY(EditDefaultsOnly)
+	float MaxRunSpeed = 400.f;
 
 	
 protected:
