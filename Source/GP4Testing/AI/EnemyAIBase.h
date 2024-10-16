@@ -7,6 +7,10 @@
 #include "GP4Testing/Components/HealthComponent.h"
 #include "EnemyAIBase.generated.h"
 
+class AWaveManager;
+class AEnemyManagementSystem;
+class ATriggerVFX;
+
 UCLASS()
 class GP4TESTING_API AEnemyAIBase : public ACharacter
 {
@@ -20,7 +24,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	FHitResult GetHitDetectionResult(FVector Location) const;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -29,7 +33,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
-	void Die();
+	virtual void Die();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack();
@@ -39,12 +43,27 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void NavLinkJump(const FVector& Destination);
+	
+	inline void SetEnemyManagementRef(AEnemyManagementSystem& reference) { EnemyManagementSystem = &reference; }
+	inline bool GetCurrentState() { return Active; }
+	inline bool IsMarkedForSpawn() { return MarkedForSpawn; }
+	inline void MarkForSpawn() { MarkedForSpawn = true; }
+	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
+	
+	UFUNCTION()
+	virtual void SetEnemyState(bool state);
+
+	bool Active = true;
+	bool MarkedForSpawn = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanAttack = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanPlayAttackAnim = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bJumped;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Damage = 30;
@@ -56,6 +75,9 @@ public:
 	float AttackCooldown = 1;
 
 	UPROPERTY(EditDefaultsOnly)
+	float LandingMovementCooldown = 1;
+
+	UPROPERTY(EditDefaultsOnly)
 	float JumpForce = 2;
 
 	UPROPERTY(VisibleAnywhere)
@@ -64,8 +86,17 @@ public:
 	UBlackboardComponent* Blackboard = nullptr;
 
 	FTimerHandle AttackTimerHandle;
+	FTimerHandle LandingTimerHandle;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthComponent* HealthComponent = nullptr;
 
+	UPROPERTY()
+	AEnemyManagementSystem* EnemyManagementSystem = nullptr;
+
+	AWaveManager* WaveManagerSystem = nullptr;
+
+	virtual void Landed(const FHitResult& Hit) override;
+	void ResetLandingState();
+	bool bHasRecentlyLanded = false;
 };

@@ -8,8 +8,11 @@
 #include "PrimaryPlayerController.h"
 #include "PrimaryHUD.h"
 
-#include "LevelManagement.h"
-#include "GP4TestinG/DataAssets/LevelSelectEntrySpec.h"
+#include "GP4Testing/Systems/LevelManagement.h"
+#include "GP4Testing/Systems/EnemyManagementSystem.h"
+#include "GP4Testing/Systems/WaveManager.h"
+#include "GP4Testing/DataAssets/LevelSelectEntrySpec.h"
+#include "GP4Testing/DataAssets/WaveManagerSpec.h"
 
 
 #include "Kismet/GameplayStatics.h"
@@ -55,6 +58,7 @@ void APrimaryGameMode::Tick(float deltaTime) {
 void APrimaryGameMode::InitMainSystems() {
 	primaryPlayerRef->Init();
 	primaryHUDRef->Init();
+	
 }
 void APrimaryGameMode::BroadcastInit() {
 	//Call Init on all custom game systems
@@ -65,37 +69,65 @@ void APrimaryGameMode::BroadcastStart() {
 
 	primaryPlayerRef->Start();
 	primaryHUDRef->Start();
+
+	waveManagerRef->Start();
+	enemyManagementSystemRef->Start();
 }
 
 
 //Start
 void APrimaryGameMode::SetupApplicationStartState() noexcept {
-
-	if (launchInDebugMode) {
-		SetupPrePlayingState();
-		SetupPlayingState();
-		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-
-	}
-	else {
-		//Main Menu Music
-		levelManagementRef->LoadLevel("MainMenu", [this]() {
+	if (!launchInDebugMode) {
+		
+		auto lambda = [this]() {
+			//Main Menu Music
 			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 			primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
-			});
+			currentPrimaryGameState = PrimaryGameState::MENU;
+			};
+
+		if (levelManagementRef->LoadLevel("MainMenu", lambda))
+			return;
+
+		launchInDebugMode = true;
 	}
+
+	SetupDebugModeState();
 }
 void APrimaryGameMode::SetupPrePlayingState() noexcept {
+	//Player position, rotation adjustments
 	primaryPlayerRef->SetupStartingState();
+	AActor* spawnPoint = FindPlayerStart(primaryPlayerControllerRef, defaultPlayerSpawnPoint.ToString());
+	if (spawnPoint) {
+		primaryPlayerRef->SetActorLocation(spawnPoint->GetActorLocation());
+		primaryPlayerControllerRef->SetControlRotation(spawnPoint->GetActorRotation());
+	}
+	
+	//Cutscene?
+
+
+
+}
+void APrimaryGameMode::SetupPlayingState() noexcept {
 	primaryPlayerRef->SetPlayerState(true);
 	primaryPlayerRef->SetPlayerHUDState(true);
 
 	//SetupStartingState() all custom systems
-
 }
-void APrimaryGameMode::SetupPlayingState() noexcept {
-	//Player position, rotation adjustments
-	//Cutscene?
+void APrimaryGameMode::SetupDebugModeState() {
+	SetupPrePlayingState();
+	SetupPlayingState();
+	primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+	primaryHUDRef->ClearViewport();
+
+	enemyManagementSystemRef->SetActiveState(true);
+	if (debugModeWaveManagerSpec) {
+		waveManagerRef->Setup(*debugModeWaveManagerSpec);
+		waveManagerRef->Activate();
+	}
+
+	currentPrimaryGameState = PrimaryGameState::PLAYING;
+	gameStarted = true;
 }
 
 
@@ -106,13 +138,7 @@ void APrimaryGameMode::UpdateGame(float deltaTime) noexcept {
 
 	UpdateStatelessSystems(deltaTime);
 	switch (currentPrimaryGameState) {
-	case PrimaryGameState::MAIN_MENU:
-		primaryHUDRef->Update(deltaTime);
-		break;
-	case PrimaryGameState::OPTIONS_MENU:
-		primaryHUDRef->Update(deltaTime);
-		break;
-	case PrimaryGameState::LEVEL_SELECT_MENU:
+	case PrimaryGameState::MENU:
 		primaryHUDRef->Update(deltaTime);
 		break;
 	case PrimaryGameState::PAUSED:
@@ -129,6 +155,8 @@ void APrimaryGameMode::UpdateStatelessSystems(float deltaTime) {
 }
 void APrimaryGameMode::UpdatePlayingStateSystems(float deltaTime) {
 	primaryPlayerRef->Update(deltaTime);
+	waveManagerRef->Update(deltaTime);
+	enemyManagementSystemRef->Update(deltaTime);
 	//Update custom game systems
 }
 
@@ -138,21 +166,23 @@ bool APrimaryGameMode::StartGame(const ULevelSelectEntrySpec& spec) noexcept {
 	if (gameStarted)
 		return false;
 
-	if (launchInDebugMode) {
-		SetupPrePlayingState();
-		SetupPlayingState();
+	loadedLevelKey = spec.key;
 
-		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
-		primaryHUDRef->ClearViewport(); //No transition for now
-	}
+	if (launchInDebugMode)
+		SetupDebugModeState();
 	else {
-		//This is so janky.
-		levelManagementRef->LoadLevel(spec.key, [this]() {
-			levelManagementRef->UnloadLevel("MainMenu", [this]() {
-				SetupPrePlayingState();
+		levelManagementRef->LoadLevel(spec.key, [this, &spec]() {
+			SetupPrePlayingState();
+			levelManagementRef->UnloadLevel("MainMenu", [this, &spec]() {
 				SetupPlayingState();
 				primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
 				primaryHUDRef->ClearViewport(); //No transition for now
+
+				//Activate Custom Systems
+				enemyManagementSystemRef->SetActiveState(true);
+				waveManagerRef->Setup(*spec.waveManagerSpec);
+				waveManagerRef->Activate();
+				currentPrimaryGameState = PrimaryGameState::PLAYING;
 				gameStarted = true;
 				});
 		});
@@ -172,9 +202,19 @@ void APrimaryGameMode::EndGame() noexcept {
 	primaryPlayerRef->SetPlayerHUDState(false);
 
 	//Disable custom systems
+	enemyManagementSystemRef->SetActiveState(false);
+	enemyManagementSystemRef->ClearPools();
+	waveManagerRef->Deactivate();
 
-	SetupApplicationStartState();
-	gameStarted = false;
+	levelManagementRef->LoadLevel("MainMenu", [this]() {
+		levelManagementRef->UnloadLevel(loadedLevelKey, [this]() {
+				//Main Menu Music
+				primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
+				primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
+				currentPrimaryGameState = PrimaryGameState::MENU;
+				gameStarted = false;
+			});
+		});
 }
 void APrimaryGameMode::QuitGame() noexcept {
 	UKismetSystemLibrary::QuitGame(GetWorld(), primaryPlayerControllerRef, EQuitPreference::Quit, false);
@@ -189,6 +229,7 @@ void APrimaryGameMode::PauseGame() noexcept {
 		primaryPlayerRef->SetPlayerHUDState(false);
 		primaryHUDRef->SetMenuState(MenuState::PAUSE_MENU);
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::PAUSED);
+		currentPrimaryGameState = PrimaryGameState::PAUSED;
 	}
 }
 void APrimaryGameMode::UnpauseGame() noexcept {
@@ -200,6 +241,7 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 		primaryPlayerRef->SetPlayerHUDState(true);
 		primaryHUDRef->ClearViewport();
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
+		currentPrimaryGameState = PrimaryGameState::PLAYING;
 	}
 }
 
@@ -217,12 +259,40 @@ void APrimaryGameMode::CreateSystems() noexcept {
 	}
 	else
 		Debugging::CustomWarning("LevelManagementClass is invalid! - LevelManagement will not created!");
+
+
+	if (enemyManagementSystemClass) {
+		enemyManagementSystemRef = GetWorld()->SpawnActor<AEnemyManagementSystem>(enemyManagementSystemClass);
+		if (!enemyManagementSystemRef)
+			Debugging::CustomError("Failed to spawn EnemyManagementSystem actor!");
+		else
+			Debugging::CustomLog("EnemyManagementSystem was created successfully!");
+	}
+	else
+		Debugging::CustomWarning("EnemyManagementSystemClass is invalid! - EnemyManagementSystem will not created!");
+
+
+	if (waveManagerClass) {
+		waveManagerRef = GetWorld()->SpawnActor<AWaveManager>(waveManagerClass);
+		if (!waveManagerRef)
+			Debugging::CustomError("Failed to spawn WaveManager actor!");
+		else
+			Debugging::CustomLog("WaveManager was created successfully!");
+	}
+	else
+		Debugging::CustomWarning("WaveManagerClass is invalid! - WaveManager will not created!");
 }
 void APrimaryGameMode::SetupDependencies() noexcept {
 	//Inject any dependencies required by any system.
 
 	primaryPlayerRef->SetPrimaryGameModeReference(*this);
 	primaryHUDRef->SetupDependencies(*this, *primaryPlayerRef, *primaryPlayerControllerRef);
+
+	//CustomSystems
+	enemyManagementSystemRef->SetPrimaryGameModeReference(*this);
+	enemyManagementSystemRef->SetWaveManagerReference(*waveManagerRef);
+	waveManagerRef->SetPrimaryGameModeReference(*this);
+	waveManagerRef->SetEnemySpawningSystemReference(*enemyManagementSystemRef);
 }
 void APrimaryGameMode::CacheMainSystemsReferences() noexcept {
 	primaryPlayerRef = Cast<APrimaryPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));

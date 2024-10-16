@@ -6,9 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
-#include "GP4Testing/WaveManager/GP4_WaveManager.h"
-#include "GP4Testing/Weapons/GunComponent.h"
 #include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 AEnemyAIBase::AEnemyAIBase()
@@ -25,6 +24,7 @@ void AEnemyAIBase::BeginPlay()
 	Player = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	Blackboard = Cast<AAIController>(GetController())->GetBlackboardComponent();
 	Blackboard->SetValueAsObject(TEXT("Player"), Player);
+	Blackboard->SetValueAsBool("Active", true);
 }
 
 FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
@@ -43,10 +43,15 @@ FHitResult AEnemyAIBase::GetHitDetectionResult(FVector Location) const
 void AEnemyAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+	Blackboard->SetValueAsBool("bHasRecentlyLanded", bHasRecentlyLanded);
+		
 	if (GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
 	{
 		bCanPlayAttackAnim = false;
+	}
+	if(GetCharacterMovement()->IsMovingOnGround())
+	{
+		bJumped = false;
 	}
 }
 
@@ -58,13 +63,7 @@ void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AEnemyAIBase::Die()
 {
-	AGP4_WaveManager* Wave;
-	Wave = Cast<AGP4_WaveManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGP4_WaveManager::StaticClass()));
-	if (Wave)
-	{
-		Wave->OnAIKilled();
-	}
-	Destroy();
+	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
 }
 
 void AEnemyAIBase::Attack()
@@ -83,11 +82,45 @@ void AEnemyAIBase::ResetAttack()
 
 void AEnemyAIBase::NavLinkJump(const FVector& Destination)
 {
-	Debugging::PrintString("Trying to jump");
 	FVector OutLaunch;
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(),  OutLaunch, GetActorLocation(), Destination);
 	OutLaunch.Z = OutLaunch.Z * JumpForce;
 	LaunchCharacter(OutLaunch, true, true);
+	bJumped = true;
 }
+
+void AEnemyAIBase::SetEnemyState(bool state)
+{
+	SetActorTickEnabled(state);
+	SetActorEnableCollision(state);
+	SetActorHiddenInGame(!state);
+
+	GetCapsuleComponent()->SetEnableGravity(state);
+	GetCharacterMovement()->SetActive(state);
+	if (state)
+		GetCharacterMovement()->GravityScale =	1.0f;	//defaultGravityScale;
+	else
+		GetCharacterMovement()->GravityScale = 0.0f;
+
+	Active = state;
+	Blackboard->SetValueAsBool("Active", Active);
+	if (Active)
+		MarkedForSpawn = false;
+}
+
+void AEnemyAIBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	bHasRecentlyLanded = true;
+	GetWorld()->GetTimerManager().SetTimer(LandingTimerHandle, this, &AEnemyAIBase::ResetLandingState, LandingMovementCooldown, false);
+}
+
+void AEnemyAIBase::ResetLandingState()
+{
+	bHasRecentlyLanded = false;
+	GetWorld()->GetTimerManager().ClearTimer(LandingTimerHandle);
+}
+
+
 
 

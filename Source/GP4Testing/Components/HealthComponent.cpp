@@ -14,7 +14,7 @@ void UHealthComponent::TakeDamage(float Damage)
 	CurrentHealth -= Damage;
 	if(CurrentHealth <= 0.f)
 	{
-		CurrentHealth = 0.f;
+		CurrentHealth = 0;
 		if (OnDeath.IsBound())
 			OnDeath.Broadcast();
 	}

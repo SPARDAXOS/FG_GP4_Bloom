@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "PrimaryGameMode.generated.h"
 
@@ -10,9 +11,7 @@
 UENUM(BlueprintType)
 enum class PrimaryGameState : uint8 {
 	NONE = 0,
-	MAIN_MENU,
-	OPTIONS_MENU,
-	LEVEL_SELECT_MENU,
+	MENU,
 	PLAYING,
 	PAUSED
 };
@@ -23,10 +22,12 @@ class APrimaryPlayerController;
 class APrimaryHUD;
 
 class ALevelManagement;
+class AEnemyManagementSystem;
+class AWaveManager;
 class ULevelSelectEntrySpec;
+class UWaveManagerSpec;
 
-
-UCLASS(abstract)
+UCLASS(Abstract)
 class GP4TESTING_API APrimaryGameMode : public AGameModeBase {
 	GENERATED_BODY()
 
@@ -45,6 +46,9 @@ public:
 	inline APrimaryHUD* GetPrimaryHUD() const noexcept { return primaryHUDRef; }
 
 	static inline ALevelManagement* GetLevelManagement() noexcept { return levelManagementRef; }
+
+	inline AEnemyManagementSystem* GetEnemyManagementSystem() noexcept { return enemyManagementSystemRef; }
+	inline AWaveManager* GetWaveManager() noexcept { return waveManagerRef; }
 
 public:
 	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
@@ -71,6 +75,7 @@ private:
 	void SetupApplicationStartState() noexcept;
 	void SetupPrePlayingState() noexcept;
 	void SetupPlayingState() noexcept;
+	void SetupDebugModeState();
 
 private:
 	void InitMainSystems();
@@ -83,6 +88,12 @@ private:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
 	TSubclassOf<ALevelManagement> levelManagementClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
+	TSubclassOf<AEnemyManagementSystem> enemyManagementSystemClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
+	TSubclassOf<AWaveManager> waveManagerClass;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|LevelManagement", meta = (AllowPrivateAcces = "true"))
@@ -101,8 +112,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
 	bool gamePaused = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAcces = "true"))
+	FName loadedLevelKey = "None";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings", meta = (AllowPrivateAcces = "true"))
 	bool launchInDebugMode = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings", meta = (AllowPrivateAcces = "true"))
+	UWaveManagerSpec* debugModeWaveManagerSpec = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Settings", meta = (AllowPrivateAcces = "true"))
+	FName defaultPlayerSpawnPoint = "PlayerStart";
 
 private:
 	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
@@ -111,5 +131,7 @@ private:
 
 private:
 	inline static TObjectPtr<ALevelManagement> levelManagementRef = nullptr;
+	TObjectPtr<AEnemyManagementSystem> enemyManagementSystemRef = nullptr;
+	TObjectPtr<AWaveManager> waveManagerRef = nullptr;
 
 };

@@ -3,7 +3,7 @@
 bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
 	if (AcquiredWeapons.Num() > 0)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 
 		if (EquippedWeapon == WeaponType::MACHINE_GUN)
 		{
@@ -29,7 +29,7 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 {
 	if (AcquiredWeapons.Num() > 0)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Weapon->Reload();
 	}
 	
@@ -40,9 +40,9 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Weapon->StopFire();
-		Weapon->SetVisibility(false);
+		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
 		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
@@ -55,14 +55,14 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 		{
 			int32 NextIndex = CurrentIndex + 1;
 			EquippedWeapon = weapons[NextIndex];
-			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
-			NextWeapon->SetVisibility(true);
+			AGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetActorHiddenInGame(false);
 		}
 		else if (CurrentIndex == weapons.Num() - 1)
 		{
 			EquippedWeapon = weapons[0];
-			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
-			NextWeapon->SetVisibility(true);
+			AGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetActorHiddenInGame(false);
 		}
 	}
 
@@ -71,9 +71,9 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Weapon->StopFire();
-		Weapon->SetVisibility(false);
+		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
 		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
@@ -86,14 +86,14 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 		{
 			int32 NextIndex = CurrentIndex - 1;
 			EquippedWeapon = weapons[NextIndex];
-			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
-			NextWeapon->SetVisibility(true);
+			AGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetActorHiddenInGame(false);
 		}
 		else if (CurrentIndex == 0)
 		{
 			EquippedWeapon = weapons[weapons.Num() - 1];
-			UGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
-			NextWeapon->SetVisibility(true);
+			AGunComponent* NextWeapon = AcquiredWeapons.FindRef(EquippedWeapon);
+			NextWeapon->SetActorHiddenInGame(false);
 		}
 	}
 
@@ -104,17 +104,17 @@ bool AWeaponManagementSystem::WeaponSlot1() noexcept
 {
 	if (AcquiredWeapons.Num() > 0)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Weapon->StopFire();
-		Weapon->SetVisibility(false);
+		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
 		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
 			weapons.Add(it->Key);
 		}
 
-		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[0]);
-		NextWeapon->SetVisibility(true);
+		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[0]);
+		NextWeapon->SetActorHiddenInGame(false);
 		EquippedWeapon = weapons[0];
 	}
 	
@@ -125,17 +125,17 @@ bool AWeaponManagementSystem::WeaponSlot2() noexcept
 {
 	if (AcquiredWeapons.Num() > 1)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Weapon->StopFire();
-		Weapon->SetVisibility(false);
+		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
 		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
 			weapons.Add(it->Key);
 		}
 
-		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[1]);
-		NextWeapon->SetVisibility(true);
+		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[1]);
+		NextWeapon->SetActorHiddenInGame(false);
 		EquippedWeapon = weapons[1];
 	}
 	
@@ -146,17 +146,17 @@ bool AWeaponManagementSystem::WeaponSlot3() noexcept
 {
 	if (AcquiredWeapons.Num() > 2)
 	{
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Weapon->StopFire();
-		Weapon->SetVisibility(false);
+		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
 		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
 			weapons.Add(it->Key);
 		}
 
-		UGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[2]);
-		NextWeapon->SetVisibility(true);
+		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[2]);
+		NextWeapon->SetActorHiddenInGame(false);
 		EquippedWeapon = weapons[2];
 	}
 	
@@ -164,12 +164,12 @@ bool AWeaponManagementSystem::WeaponSlot3() noexcept
 }
 
 
-bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, UGunComponent* weapon) noexcept {
+bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weapon) noexcept {
 	if (AcquiredWeapons.Num() >= 1)
 	{
 		// Hide current weapon
-		UGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
-		Weapon->SetVisibility(false);
+		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->SetActorHiddenInGame(true);
 	}
 	
 	AcquiredWeapons.Add(type, weapon);
@@ -183,9 +183,9 @@ void AWeaponManagementSystem::SetupStartingState() noexcept {
 
 }
 
-UGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
+AGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
 {
-	UGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = nullptr;
 	if (AcquiredWeapons.Num() > 0)
 	{
 		Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
@@ -193,14 +193,14 @@ UGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
 	return Weapon;
 }
 
-TMap<WeaponType, UGunComponent*> AWeaponManagementSystem::GetAcquiredWeapons()
+TMap<WeaponType, AGunComponent*> AWeaponManagementSystem::GetAcquiredWeapons()
 {
 	return AcquiredWeapons;
 }
 
 int AWeaponManagementSystem::GetMaxAmmo()
 {
-	UGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = nullptr;
 	int MaxAmmo = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
@@ -212,7 +212,7 @@ int AWeaponManagementSystem::GetMaxAmmo()
 
 int AWeaponManagementSystem::GetAmmo()
 {
-	UGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = nullptr;
 	int Ammo = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
@@ -224,7 +224,7 @@ int AWeaponManagementSystem::GetAmmo()
 
 bool AWeaponManagementSystem::AddAmmo(PickupType type, int newAmmo)
 {
-	UGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = nullptr;
 
 	if (type == PickupType::AMMO_MACHINE_GUN)
 	{
@@ -263,7 +263,7 @@ bool AWeaponManagementSystem::AddAmmo(PickupType type, int newAmmo)
 
 int AWeaponManagementSystem::GetMaxMagazine()
 {
-	UGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = nullptr;
 	int MaxMag = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
@@ -275,7 +275,7 @@ int AWeaponManagementSystem::GetMaxMagazine()
 
 int AWeaponManagementSystem::GetLoadedMagazine()
 {
-	UGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = nullptr;
 	int Mag = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
