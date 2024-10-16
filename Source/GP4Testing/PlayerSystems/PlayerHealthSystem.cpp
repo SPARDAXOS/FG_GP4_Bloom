@@ -1,6 +1,7 @@
 
 
 #include "PlayerHealthSystem.h"
+#include "GP4Testing/Systems/PrimaryGameMode.h"
 
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 
@@ -17,5 +18,6 @@ void APlayerHealthSystem::SetupStartingState() noexcept {
 void APlayerHealthSystem::KillPlayer()
 {
 	primaryPlayerRef->SetPlayerState(false);
-	//HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
+	primaryPlayerRef->GetPrimaryGameMode()->CompleteGame(GameResults::LOSE);
+
 }

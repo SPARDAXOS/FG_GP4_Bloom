@@ -16,8 +16,8 @@ void UWinMenuWidget::NativeOnInitialized() {
 
 
 void UWinMenuWidget::NextButtonClicked() {
-	primaryHUDRef->SetMenuState(MenuState::LEVEL_SELECT_MENU);
+	primaryGameModeRef->ProgressGame();
 }
 void UWinMenuWidget::QuitButtonClicked() {
-	primaryGameModeRef->QuitGame();
+	primaryGameModeRef->EndGame();
 }
