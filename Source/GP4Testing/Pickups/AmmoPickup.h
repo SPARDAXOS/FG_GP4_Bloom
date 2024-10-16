@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "AmmoPickup")
 	int value = 1;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* PickupSound;
+
 protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults) override;

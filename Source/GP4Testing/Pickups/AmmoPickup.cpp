@@ -5,6 +5,7 @@
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 #include "GP4Testing/Pickups/PickupSpawner.h"
+#include <Kismet/GameplayStatics.h>
 
 
 AAmmoPickup::AAmmoPickup()
@@ -28,6 +29,12 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (!gunRef)
 			return;
 		
+		if (PickupSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, PickupSound,playerRef->GetActorLocation());
+
+		}
+
 		if (gunRef->AddAmmo(pickupType, value)) {
 			if (registeredSpawner)
 				registeredSpawner->NotifyPickup(*this);
