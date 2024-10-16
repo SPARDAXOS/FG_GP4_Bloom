@@ -3,6 +3,7 @@
 #include "GP4Testing/Pickups/HealthPickup.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/Pickups/PickupSpawner.h"
+#include "Kismet/GameplayStatics.h"
 
 AHealthPickup::AHealthPickup()
 {
@@ -24,6 +25,11 @@ void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		APrimaryPlayer* playerRef = Cast<APrimaryPlayer>(OtherActor);
 		if (!playerRef)
 			return;
+
+		if (PickupSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, PickupSound, playerRef->GetActorLocation());
+		}
 
 		playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
 
