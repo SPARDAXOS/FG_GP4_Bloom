@@ -92,6 +92,16 @@ void AGunComponent::Fire()
 					}
 				}
 			}
+
+			// Camera shake when shooting
+			if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+			{
+				
+			}
+			if (TypeOfWeapon == WeaponType::SHOTGUN)
+			{
+
+			}
 		}
 
 		// Play fire sound when shooting
