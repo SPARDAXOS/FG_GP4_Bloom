@@ -7,7 +7,11 @@ ATriggerVFX::ATriggerVFX() {
 
 	PrimaryActorTick.bCanEverTick = true;
 
+	root = CreateDefaultSubobject<USceneComponent>("Root");
+	SetRootComponent(root);
+
 	vfx = CreateDefaultSubobject<UNiagaraComponent>("VFX");
+	vfx->SetupAttachment(root);
 	vfx->bAutoActivate = false;
 	vfx->OnSystemFinished.AddDynamic(this, &ATriggerVFX::OnVFXFinished);
 	timer.SetTriggerOnce(true);

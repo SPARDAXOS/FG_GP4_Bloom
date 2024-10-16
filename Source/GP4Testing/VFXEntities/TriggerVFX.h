@@ -6,6 +6,7 @@
 
 
 class UNiagaraComponent;
+class USceneComponent;
 
 DECLARE_DELEGATE(FOnVFXFinishedSignature)
 
@@ -31,6 +32,9 @@ private:
 	void OnTimerFinished();
 
 private:
+	UPROPERTY(EditAnywhere)
+	USceneComponent* root = nullptr;
+
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* vfx = nullptr;
 

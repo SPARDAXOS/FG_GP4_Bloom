@@ -11,6 +11,8 @@ class AWaveManager;
 class AEnemyManagementSystem;
 class ATriggerVFX;
 
+enum class EnemyType : uint8;
+
 UCLASS()
 class GP4TESTING_API AEnemyAIBase : public ACharacter
 {
@@ -26,11 +28,11 @@ protected:
 	FHitResult GetHitDetectionResult(FVector Location) const;
 	
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupStartingState();
 
 	UFUNCTION()
 	virtual void Die();
@@ -49,6 +51,8 @@ public:
 	inline bool IsMarkedForSpawn() { return MarkedForSpawn; }
 	inline void MarkForSpawn() { MarkedForSpawn = true; }
 	inline void SetWaveManagerRef(AWaveManager& reference) { WaveManagerSystem = &reference; }
+	inline void SetEnemyType(EnemyType type) { Type = type; }
+	inline EnemyType GetEnemyType() const { return Type; }
 	
 	UFUNCTION()
 	virtual void SetEnemyState(bool state);
@@ -95,6 +99,7 @@ public:
 	AEnemyManagementSystem* EnemyManagementSystem = nullptr;
 
 	AWaveManager* WaveManagerSystem = nullptr;
+	EnemyType Type;
 
 	virtual void Landed(const FHitResult& Hit) override;
 	void ResetLandingState();

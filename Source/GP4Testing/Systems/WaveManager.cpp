@@ -69,6 +69,7 @@ void AWaveManager::Deactivate() noexcept {
 	}
 
 	Clear();
+	enemyManagementSystemRef->ClearAllPools();
 }
 
 
@@ -89,7 +90,7 @@ void AWaveManager::Clear() noexcept {
 	currentSpawnedMeleeEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
 
-	enemyManagementSystemRef->ClearPools();
+	enemyManagementSystemRef->ClearAllPools();
 }
 bool AWaveManager::StartNextWave() noexcept {
 	if (!activeWaveManagerSpec)
@@ -228,7 +229,7 @@ bool AWaveManager::CreateEnemyPools() {
 	if (!enemyManagementSystemRef)
 		return false;
 
-	enemyManagementSystemRef->ClearPools();
+	enemyManagementSystemRef->ClearAllPools();
 	for (auto& enemyType : activeWaveSpecData.allowedTypes) {
 		if (!enemyManagementSystemRef->CreateEnemyPool(enemyType.type, enemyType.allowedConcurentSpawns))
 			return false;
