@@ -41,6 +41,7 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->ClearWeaponTimer();
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -72,6 +73,7 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		Weapon->ClearWeaponTimer();
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -180,7 +182,9 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 
 
 void AWeaponManagementSystem::SetupStartingState() noexcept {
-
+	TMap<WeaponType, AGunComponent*> Reset;
+	AcquiredWeapons = Reset;
+	EquippedWeapon = WeaponType::NONE;
 }
 
 AGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
