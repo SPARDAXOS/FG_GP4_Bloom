@@ -185,6 +185,14 @@ ATriggerVFX* AEnemyManagementSystem::GetAvailableVFX() const noexcept {
 
 	return nullptr;
 }
+bool AEnemyManagementSystem::IsSpawnPointOccupied(FVector location) const noexcept {
+	for (auto& vfx : enemySpawnPortalVFXPool) {
+		if (vfx->GetActorLocation() == location && vfx->GetStatus())
+			return true;
+	}
+
+	return false;
+}
 
 
 bool AEnemyManagementSystem::CreateMeleeEnemiesPool(uint32 count) {
