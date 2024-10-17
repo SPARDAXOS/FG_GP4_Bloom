@@ -3,6 +3,7 @@
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void APlayerMovementSystem::UpdateMovement(FVector2D axis) noexcept {
@@ -105,6 +106,14 @@ void APlayerMovementSystem::resetSlide()
 void APlayerMovementSystem::resetDash()
 {
 	bCanDash = true;
+}
+
+void APlayerMovementSystem::PlayJumpAudio() noexcept
+{
+	if (JumpAudio != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, JumpAudio, GetActorLocation());
+	}
 }
 
 
