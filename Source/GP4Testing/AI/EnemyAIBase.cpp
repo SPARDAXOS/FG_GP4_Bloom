@@ -5,6 +5,7 @@
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GP4Testing/Systems/WaveManager.h"
 #include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -55,15 +56,25 @@ void AEnemyAIBase::Tick(float DeltaTime)
 	}
 }
 
-// Called to bind functionality to input
-void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+
+void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+void AEnemyAIBase::SetupStartingState() {
+	//Reset everything to its default state.
+	//Behavior flags, data such as health and any cooldowns.
+	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
+	bCanPlayAttackAnim = false;
+	bCanAttack = true;
+	SetActorEnableCollision(true);
+	GetCharacterMovement()->GravityScale = 1.0f;
 }
 
 void AEnemyAIBase::Die()
 {
-	HealthComponent->CurrentHealth = HealthComponent->MaxHealth;
+	Debugging::CustomError("Die!");
+	if (WaveManagerSystem)
+		WaveManagerSystem->NotifyEnemyDeath(Type);
 }
 
 void AEnemyAIBase::Attack()

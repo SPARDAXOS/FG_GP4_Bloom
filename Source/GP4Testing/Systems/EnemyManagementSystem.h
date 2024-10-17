@@ -11,10 +11,9 @@
 class APrimaryGameMode;
 class AWaveManager;
 class AEnemyAIBase;
+class ATriggerVFX;
 class AMeleeAI;
 class ARangedAI;
-class ATriggerVFX;
-
 
 UENUM(BlueprintType)
 enum class EnemyType : uint8 {
@@ -40,7 +39,23 @@ public:
 
 public:
 	bool CreateEnemyPool(EnemyType type, uint32 count);
-	void ClearPools() noexcept;
+	void ClearAllPools() noexcept;
+	void DispawnAllVFX() noexcept;
+	bool IsSpawnPointOccupied(FVector location) const noexcept;
+
+public:
+	template<typename T>
+	TArray<T*> GetAllEnemies(AEnemyAIBase* self, bool excludeSelf);
+
+	template<>
+	TArray<AEnemyAIBase*> GetAllEnemies<AEnemyAIBase>(AEnemyAIBase* self, bool excludeSelf);
+
+	template<>
+	TArray<AMeleeAI*> GetAllEnemies<AMeleeAI>(AEnemyAIBase* self, bool excludeSelf);
+
+	template<>
+	TArray<ARangedAI*> GetAllEnemies<ARangedAI>(AEnemyAIBase* self, bool excludeSelf);
+
 
 public:
 	inline void SetActiveState(bool state) noexcept { active = state; }
@@ -52,6 +67,7 @@ public:
 private:
 	bool SpawnMeleeEnemy(FVector location);
 	bool SpawnRangedEnemy(FVector location);
+	bool SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FVector location);
 	ATriggerVFX* GetAvailableVFX() const noexcept;
 
 private:
@@ -95,10 +111,10 @@ private:
 	TArray<ATriggerVFX*> enemySpawnPortalVFXPool;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
-	TArray<AMeleeAI*> meleeEnemiesPool;
+	TArray<AEnemyAIBase*> meleeEnemiesPool;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
-	TArray<ARangedAI*> rangedEnemiesPool;
+	TArray<AEnemyAIBase*> rangedEnemiesPool;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;
