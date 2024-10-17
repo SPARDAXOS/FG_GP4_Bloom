@@ -60,11 +60,11 @@ public:
 	int MaxMagazine;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
-	int MaxAmmo;
+	int32 MaxAmmo;
 
-	int Magazine;
+	int32 Magazine;
 
-	int Ammo;
+	int32 Ammo;
 
 public:
 

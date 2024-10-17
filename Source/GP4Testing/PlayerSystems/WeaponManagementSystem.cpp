@@ -321,3 +321,4 @@ int AWeaponManagementSystem::GetLoadedMagazine()
 	}
 	return Mag;
 }
+
