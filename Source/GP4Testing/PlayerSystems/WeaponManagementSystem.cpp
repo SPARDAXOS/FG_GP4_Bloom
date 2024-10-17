@@ -5,6 +5,11 @@ bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 
+		if (!Weapon)
+		{
+			return false;
+		}
+
 		if (EquippedWeapon == WeaponType::MACHINE_GUN)
 		{
 			if (input)
@@ -30,6 +35,10 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 	if (AcquiredWeapons.Num() > 0)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
 		Weapon->Reload();
 	}
 	
@@ -41,6 +50,11 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
+		Weapon->ClearWeaponTimer();
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -72,6 +86,11 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
+		Weapon->ClearWeaponTimer();
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -105,6 +124,10 @@ bool AWeaponManagementSystem::WeaponSlot1() noexcept
 	if (AcquiredWeapons.Num() > 0)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -126,6 +149,10 @@ bool AWeaponManagementSystem::WeaponSlot2() noexcept
 	if (AcquiredWeapons.Num() > 1)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -147,6 +174,10 @@ bool AWeaponManagementSystem::WeaponSlot3() noexcept
 	if (AcquiredWeapons.Num() > 2)
 	{
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
 		Weapon->StopFire();
 		Weapon->SetActorHiddenInGame(true);
 
@@ -169,6 +200,10 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 	{
 		// Hide current weapon
 		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		if (!Weapon)
+		{
+			return false;
+		}
 		Weapon->SetActorHiddenInGame(true);
 	}
 	
@@ -180,7 +215,9 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 
 
 void AWeaponManagementSystem::SetupStartingState() noexcept {
-
+	TMap<WeaponType, AGunComponent*> Reset;
+	AcquiredWeapons = Reset;
+	EquippedWeapon = WeaponType::NONE;
 }
 
 AGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
@@ -284,3 +321,4 @@ int AWeaponManagementSystem::GetLoadedMagazine()
 	}
 	return Mag;
 }
+
