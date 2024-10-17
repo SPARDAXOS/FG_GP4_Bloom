@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float VisionRange = 1000;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* DeathSound;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ARangedAIBullet> Bullet;
 

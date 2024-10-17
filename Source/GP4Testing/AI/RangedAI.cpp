@@ -9,6 +9,7 @@
 #include "GP4Testing/Utility/Debugging.h"
 #include "GP4Testing/VFXEntities/TriggerVFX.h"
 #include "Kismet/KismetMathLibrary.h"
+#include <Kismet/GameplayStatics.h>
 
 ARangedAI::ARangedAI()
 {
@@ -28,6 +29,12 @@ void ARangedAI::EnemyDeath()
 void ARangedAI::Die()
 {
 	Super::Die();
+
+	if (DeathSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
+
 	SetEnemyState(false);
 	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
 	FOnVFXFinishedSignature callback;
