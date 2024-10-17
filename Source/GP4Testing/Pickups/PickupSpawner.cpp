@@ -25,6 +25,13 @@ APickupSpawner::APickupSpawner() {
 void APickupSpawner::BeginPlay() {
     Super::BeginPlay();
 
+    UE_LOG(LogTemp, Warning, TEXT("PickupSpawner: %s"), *GetName());
+
+    pickupSpawned = false;
+    pickupRef = nullptr;
+
+    
+
     respawnTimer.SetLengthRef(&respawnDuration);
     respawnTimer.SetOnCompletedCallback(std::bind(&APickupSpawner::Respawn, this));
     if (spawnAtStart || (!spawnAtStart && respawnDuration <= 0.0f))
@@ -34,6 +41,18 @@ void APickupSpawner::Tick(float deltaTime) {
     Super::Tick(deltaTime);
     if (pickupClass && !pickupSpawned)
         respawnTimer.Update(deltaTime);
+}
+
+void APickupSpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+
+    Super::EndPlay(EndPlayReason); 
+
+   
+    if (pickupRef) {
+        pickupRef->Destroy();  
+        pickupRef = nullptr;   
+        pickupSpawned = false; 
 }
 
 
@@ -51,6 +70,8 @@ void APickupSpawner::NotifyPickup(APickup& outer) {
 void APickupSpawner::Respawn() {
     if (!pickupClass || pickupSpawned)
         return;
+
+    UE_LOG(LogTemp, Warning, TEXT("Respawning Pickup!"));
 
     pickupRef = GetWorld()->SpawnActor<APickup>(pickupClass);
     pickupRef->RegisterPickupSpawner(*this);
