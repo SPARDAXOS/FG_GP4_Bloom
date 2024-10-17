@@ -201,6 +201,7 @@ void APrimaryPlayer::OnJumped_Implementation()
 {
 	StartJumpDistance = GetCharacterMovement()->GetActorLocation().Z;
 	Debugging::PrintString("Jumped");
+	playerMovementSystemRef->PlayJumpAudio();
 }
 void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall length check
 {

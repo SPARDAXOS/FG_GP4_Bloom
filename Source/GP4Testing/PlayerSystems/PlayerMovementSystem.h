@@ -19,6 +19,7 @@ public:
 	void Jump() noexcept;
 	void Dash() noexcept;
 	void Slide() noexcept;
+	void PlayJumpAudio() noexcept;
 
 public:
 	void SetupStartingState() noexcept;
@@ -31,7 +32,6 @@ private:
 	void StopDash();
 	void resetSlide();
 	void resetDash();
-
 	
 
 private:
@@ -67,6 +67,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideCooldown = 2.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* JumpAudio;
 
 private:
     bool bCanDash = true;
