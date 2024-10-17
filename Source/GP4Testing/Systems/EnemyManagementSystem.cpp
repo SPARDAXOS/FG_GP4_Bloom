@@ -65,6 +65,14 @@ void AEnemyManagementSystem::ClearAllPools() noexcept {
 	ClearMeleeEnemiesPool();
 	ClearRangedEnemiesPool();
 }
+void AEnemyManagementSystem::DispawnAllVFX() noexcept {
+	if (enemySpawnPortalVFXPool.Num() <= 0)
+		return;
+
+	for (auto& vfx : enemySpawnPortalVFXPool)
+		vfx->Deactivate();
+
+}
 
 
 template<>
