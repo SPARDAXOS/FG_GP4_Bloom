@@ -75,7 +75,7 @@ void AGunComponent::Fire()
 						ECollisionChannel::ECC_GameTraceChannel3
 					);
 
-					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
+					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
 				}
 			}
 
