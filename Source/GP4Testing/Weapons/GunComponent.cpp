@@ -181,6 +181,11 @@ void AGunComponent::StopFire()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
+void AGunComponent::ClearWeaponTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+}
+
 // Attach weapon the the player
 void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 {
