@@ -28,18 +28,18 @@ void AAmmoPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		AWeaponManagementSystem* gunRef = &playerRef->GetWeaponManagementSystem();
 		if (!gunRef)
 			return;
-		
-		if (PickupSound != nullptr)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, PickupSound,playerRef->GetActorLocation());
-
-		}
 
 		if (gunRef->AddAmmo(pickupType, value)) {
 			if (registeredSpawner)
 				registeredSpawner->NotifyPickup(*this);
 
-			Destroy();		
+			Destroy();	
+
+			if (PickupSound != nullptr)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, PickupSound, playerRef->GetActorLocation());
+
+			}
 		}
 	}
 }
