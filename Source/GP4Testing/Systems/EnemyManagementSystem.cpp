@@ -65,6 +65,14 @@ void AEnemyManagementSystem::ClearAllPools() noexcept {
 	ClearMeleeEnemiesPool();
 	ClearRangedEnemiesPool();
 }
+void AEnemyManagementSystem::DispawnAllVFX() noexcept {
+	if (enemySpawnPortalVFXPool.Num() <= 0)
+		return;
+
+	for (auto& vfx : enemySpawnPortalVFXPool)
+		vfx->Deactivate();
+
+}
 
 
 template<>
@@ -184,6 +192,14 @@ ATriggerVFX* AEnemyManagementSystem::GetAvailableVFX() const noexcept {
 	}
 
 	return nullptr;
+}
+bool AEnemyManagementSystem::IsSpawnPointOccupied(FVector location) const noexcept {
+	for (auto& vfx : enemySpawnPortalVFXPool) {
+		if (vfx->GetActorLocation() == location && vfx->GetStatus())
+			return true;
+	}
+
+	return false;
 }
 
 

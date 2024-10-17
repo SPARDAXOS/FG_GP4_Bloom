@@ -22,6 +22,7 @@ public:
 
 public:
 	void Activate();
+	void Deactivate();
 	void SetupOnFinishedCallback(FOnVFXFinishedSignature callback);
 	void SetupTimer(FOnVFXFinishedSignature callback, float duration);
 	inline bool GetStatus() const noexcept { return status; }

@@ -40,6 +40,8 @@ public:
 public:
 	bool CreateEnemyPool(EnemyType type, uint32 count);
 	void ClearAllPools() noexcept;
+	void DispawnAllVFX() noexcept;
+	bool IsSpawnPointOccupied(FVector location) const noexcept;
 
 public:
 	template<typename T>
