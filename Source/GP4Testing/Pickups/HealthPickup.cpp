@@ -22,22 +22,28 @@ void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 {
 	if (OtherActor->ActorHasTag("Player"))
 	{
+
+
 		APrimaryPlayer* playerRef = Cast<APrimaryPlayer>(OtherActor);
 		if (!playerRef)
 			return;
 
-		if (PickupSound != nullptr)
+		if (playerRef->GetPlayerHealthSystem().HealthComponent->CurrentHealth < playerRef->GetPlayerHealthSystem().HealthComponent->MaxHealth)
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, PickupSound, playerRef->GetActorLocation());
-		}
+			playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
 
-		playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
+			if (registeredSpawner)
+				registeredSpawner->NotifyPickup(*this);
 
-		if (registeredSpawner)
-			registeredSpawner->NotifyPickup(*this);
+			Destroy();
 
-		Destroy();
-		UE_LOG(LogTemp, Warning, TEXT("its health"));
+			if (PickupSound != nullptr)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, PickupSound, playerRef->GetActorLocation());
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("its health"));
+		}	
 	}
 }
 
