@@ -53,6 +53,7 @@ void APickupSpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)
         pickupRef->Destroy();  
         pickupRef = nullptr;   
         pickupSpawned = false; 
+    }
 }
 
 
