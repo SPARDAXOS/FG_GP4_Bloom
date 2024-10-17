@@ -26,6 +26,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HealthPickup")
 	float value = 1.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* PickupSound;
+
+
 protected:
 	virtual void OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults) override;

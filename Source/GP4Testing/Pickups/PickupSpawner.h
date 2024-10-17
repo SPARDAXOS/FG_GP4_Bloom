@@ -5,6 +5,7 @@
 #include "GP4Testing/Utility/Timer.h"
 #include "PickupSpawner.generated.h"
 
+
 class APickup;
 
 
@@ -22,6 +23,7 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float deltaTime) override;
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
     void Respawn();
@@ -30,8 +32,11 @@ private:
     UPROPERTY(EditDefaultsOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
     TSubclassOf<APickup> pickupClass; 
 
-    UPROPERTY(EditDefaultsOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(EditAnywhere, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
     float respawnDuration = 1.0f;
+
+    UPROPERTY(EditAnywhere, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+    bool spawnAtStart = true;
 
     UPROPERTY(VisibleAnywhere, Category = "Debugging", meta = (AllowPrivateAccess = "true"))
     bool pickupSpawned = false;
@@ -49,5 +54,4 @@ private:
 private:
     TObjectPtr<APickup> pickupRef;
     Timer respawnTimer;
-
 };

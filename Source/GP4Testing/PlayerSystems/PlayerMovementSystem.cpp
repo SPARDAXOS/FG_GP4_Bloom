@@ -3,6 +3,7 @@
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void APlayerMovementSystem::UpdateMovement(FVector2D axis) noexcept {
@@ -53,8 +54,9 @@ void APlayerMovementSystem::Slide() noexcept
 		StoredVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
 
 		FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
+		SlideDir.Z = 0.0f;
 		FVector SlideVel = SlideDir * SlideSpeed;
-		primaryPlayerRef->LaunchCharacter(SlideVel, true, true);
+		primaryPlayerRef->LaunchCharacter(SlideVel, true, false);
 
 		bCanSlide = false;
 		bIsSliding = true;
@@ -71,21 +73,27 @@ void APlayerMovementSystem::Slide() noexcept
 void APlayerMovementSystem::SetupStartingState() noexcept {
 	currentMovementSpeedModifier = defaultMovementSpeedModifier;
 	if (primaryPlayerRef) {
+		primaryPlayerRef->GetCharacterMovement()->StopActiveMovement();
 		primaryPlayerRef->GetCharacterMovement()->MaxWalkSpeed = movementSpeed;
 
 	}
+
+	bCanSlide = true;
+	bCanDash = true;
+	bIsSliding = false;
+	bIsDashing = false;
 }
 
 void APlayerMovementSystem::StopSlide()
 {
-	primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	//primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
 	
 	bIsSliding = false;
 }
 
 void APlayerMovementSystem::StopDash()
 {
-	primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	// primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
 	
 	bIsDashing = false;
 }
@@ -98,6 +106,14 @@ void APlayerMovementSystem::resetSlide()
 void APlayerMovementSystem::resetDash()
 {
 	bCanDash = true;
+}
+
+void APlayerMovementSystem::PlayJumpAudio() noexcept
+{
+	if (JumpAudio != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, JumpAudio, GetActorLocation());
+	}
 }
 
 

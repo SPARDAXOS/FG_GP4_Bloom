@@ -15,6 +15,12 @@ enum class PrimaryGameState : uint8 {
 	PLAYING,
 	PAUSED
 };
+UENUM(BlueprintType)
+enum class GameResults : uint8 {
+	NONE = 0,
+	WIN,
+	LOSE
+};
 
 
 class APrimaryPlayer;
@@ -52,6 +58,9 @@ public:
 
 public:
 	bool StartGame(const ULevelSelectEntrySpec& spec) noexcept;
+	void CompleteGame(GameResults results) noexcept;
+	void RestartGame() noexcept;
+	void ProgressGame() noexcept;
 	void EndGame() noexcept;
 	void QuitGame() noexcept;
 

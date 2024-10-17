@@ -75,7 +75,7 @@ void AGunComponent::Fire()
 						ECollisionChannel::ECC_GameTraceChannel3
 					);
 
-					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
+					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
 				}
 			}
 
@@ -91,6 +91,16 @@ void AGunComponent::Fire()
 						Enemy->HealthComponent->TakeDamage(WeaponDamage);
 					}
 				}
+			}
+
+			// Camera shake when shooting
+			if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+			{
+				Character->HandleShootShakeRifle();
+			}
+			if (TypeOfWeapon == WeaponType::SHOTGUN)
+			{
+				Character->HandleShootShakeShotgun();
 			}
 		}
 
@@ -168,6 +178,11 @@ void AGunComponent::StartFire()
 void AGunComponent::StopFire()
 {
 	bFiredWeapon = false;
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+}
+
+void AGunComponent::ClearWeaponTimer()
+{
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 

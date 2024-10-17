@@ -1,33 +1,34 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "HealthComponent.h"
 
-void UHealthComponent::BeginPlay()
-{
+
+void UHealthComponent::BeginPlay() {
 	Super::BeginPlay();
-	CurrentHealth = MaxHealth;
+
 }
 
-void UHealthComponent::TakeDamage(float Damage)
-{
+void UHealthComponent::TakeDamage(float Damage) {
 	CurrentHealth -= Damage;
-	if(OnDamage.IsBound())
+	if (OnDamage.IsBound())
 		OnDamage.Broadcast();
-	if(CurrentHealth <= 0.f)
-	{
-		CurrentHealth = 0;
+	if (CurrentHealth <= 0.0f) {
+		CurrentHealth = 0.0f;
 		if (OnDeath.IsBound())
 			OnDeath.Broadcast();
 	}
 }
 
-void UHealthComponent::AddHealth(float Amount)
-{
-	if(CurrentHealth != MaxHealth)
-	{
+void UHealthComponent::AddHealth(float Amount) {
+	if (CurrentHealth < MaxHealth) {
 		CurrentHealth += Amount;
+		if (CurrentHealth > MaxHealth)
+			CurrentHealth = MaxHealth;
+
 		if (OnHeal.IsBound())
 			OnHeal.Broadcast();
 	}
+}
+
+
+void UHealthComponent::SetupStartingState() noexcept {
+	CurrentHealth = MaxHealth;
 }

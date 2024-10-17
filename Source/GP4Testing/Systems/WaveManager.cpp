@@ -1,6 +1,7 @@
 
 
 #include "GP4Testing/Systems/WaveManager.h"
+#include "GP4Testing/Systems/PrimaryGameMode.h"
 
 #include "GP4Testing/DataAssets/WaveManagerSpec.h"
 #include "GP4Testing/DataAssets/WaveSpec.h"
@@ -69,11 +70,34 @@ void AWaveManager::Deactivate() noexcept {
 	}
 
 	Clear();
+	enemyManagementSystemRef->ClearAllPools();
+}
+void AWaveManager::Restart() noexcept {
+	if (!active)
+		return;
+
+	enemyManagementSystemRef->DispawnAllEnemies();
+	enemyManagementSystemRef->DispawnAllVFX();
+	currentWaveCursor = -1;
+	currentSpawnedMeleeEnemies = 0;
+	currentSpawnedRangedEnemies = 0;
+	currentTotalSpawnedEnemies = 0;
+	
+	StartNextWave();
 }
 
+void AWaveManager::NotifyEnemyDeath(EnemyType type) {
+	if (type == EnemyType::MELEE) {
+		currentTotalSpawnedEnemies--;
+		currentSpawnedMeleeEnemies--;
+	}
+	else if (type == EnemyType::RANGED) {
+		currentTotalSpawnedEnemies--;
+		currentSpawnedRangedEnemies--;
+	}
 
-void AWaveManager::NotifyEnemyDeath() {
-
+	if (IsWaveCompleted())
+		StartNextWave();
 }
 
 
@@ -89,7 +113,7 @@ void AWaveManager::Clear() noexcept {
 	currentSpawnedMeleeEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
 
-	enemyManagementSystemRef->ClearPools();
+	enemyManagementSystemRef->ClearAllPools();
 }
 bool AWaveManager::StartNextWave() noexcept {
 	if (!activeWaveManagerSpec)
@@ -118,6 +142,7 @@ bool AWaveManager::StartNextWave() noexcept {
 	return true;
 }
 void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
+	Debugging::CustomLog("Update!");
 	if (type == EnemyType::MELEE) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::MELEE);
 		if (!spec) {
@@ -125,13 +150,22 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 			return;
 		}
 
+		if (spec->totalSpawns <= 0)
+			return;
+
 		if (currentSpawnedMeleeEnemies >= spec->allowedConcurentSpawns)
 			return;
 		
 		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
 			return;
 
-		if (SpawnEnemy(EnemyType::MELEE, GetRandomSpawnPoint())) {
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::MELEE, spawnLocation)) {
 			currentSpawnedMeleeEnemies++;
 			currentTotalSpawnedEnemies++;
 		}
@@ -145,13 +179,22 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 			return;
 		}
 
+		if (spec->totalSpawns <= 0)
+			return;
+
 		if (currentSpawnedRangedEnemies >= spec->allowedConcurentSpawns)
 			return;
 
 		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
 			return;
 
-		if (SpawnEnemy(EnemyType::RANGED, GetRandomSpawnPoint())) {
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::RANGED, spawnLocation)) {
 			currentSpawnedRangedEnemies++;
 			currentTotalSpawnedEnemies++;
 		}
@@ -180,10 +223,9 @@ bool AWaveManager::SetupTimers() noexcept {
 	return true;
 }
 void AWaveManager::Completed() noexcept {
-	//Signal Gamemode that game is over and player has won!
-	Clear();
+	primaryGameModeRef->CompleteGame(GameResults::WIN);
 }
-bool AWaveManager::ValidateAllowedEnemyTypes() noexcept {
+bool AWaveManager::ValidateAllowedEnemyTypes() const noexcept {
 	if (!activeWaveManagerSpec)
 		return false;
 
@@ -205,6 +247,21 @@ bool AWaveManager::ValidateAllowedEnemyTypes() noexcept {
 
 	return true;
 }
+
+bool AWaveManager::IsWaveCompleted() const noexcept {
+	if (!active)
+		return false;
+
+	if (currentTotalSpawnedEnemies > 0)
+		return false;
+
+	for (auto& entry : activeWaveSpecData.allowedTypes) {
+		if (entry.totalSpawns > 0)
+			return false;
+	}
+
+	return true;
+}
 FEnemyTypeSpawnSpec* AWaveManager::FindSpawnSpec(const EnemyType& type) {
 	if (activeWaveSpecData.allowedTypes.Num() == 0)
 		return nullptr;
@@ -222,13 +279,25 @@ bool AWaveManager::SpawnEnemy(const EnemyType& type, FVector location) noexcept 
 	if (!enemyManagementSystemRef)
 		return false;
 
-	return enemyManagementSystemRef->SpawnEnemy(type, location);
+	bool Result = enemyManagementSystemRef->SpawnEnemy(type, location);
+	if (Result) {
+		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(type);
+		if (!spec) {
+			Debugging::CustomError("Failed to update total spawns data! - Unable to find appropriate spec");
+			return false;
+		}
+
+		spec->totalSpawns--;
+		return true;
+	}
+	else
+		return false;
 }
 bool AWaveManager::CreateEnemyPools() {
 	if (!enemyManagementSystemRef)
 		return false;
 
-	enemyManagementSystemRef->ClearPools();
+	enemyManagementSystemRef->ClearAllPools();
 	for (auto& enemyType : activeWaveSpecData.allowedTypes) {
 		if (!enemyManagementSystemRef->CreateEnemyPool(enemyType.type, enemyType.allowedConcurentSpawns))
 			return false;
@@ -236,12 +305,29 @@ bool AWaveManager::CreateEnemyPools() {
 
 	return true;
 }
-FVector AWaveManager::GetRandomSpawnPoint() noexcept {
+bool AWaveManager::GetRandomSpawnPoint(bool isOccupied, FVector& outLocation) noexcept {
 	if (spawnPoints.Num() <= 0)
-		return FVector::Zero();
+		return false;
 
-	int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
-	return spawnPoints[random]->GetActorLocation();
+	if (isOccupied) {
+		int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
+		outLocation = spawnPoints[random]->GetActorLocation();
+		return true;
+	}
+	else {
+		int spawnReattempts = 0;
+		while(spawnReattempts < spawnPointFetchReattempts) {
+			int32 random = FMath::RandRange(0, spawnPoints.Num() - 1);
+			if (!enemyManagementSystemRef->IsSpawnPointOccupied(spawnPoints[random]->GetActorLocation())) {
+				outLocation = spawnPoints[random]->GetActorLocation();
+				return true;
+			}
+
+			spawnReattempts++;
+		}
+
+		return false;
+	}
 }
 
   

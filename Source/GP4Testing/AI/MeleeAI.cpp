@@ -10,11 +10,20 @@
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/Utility/Debugging.h"
 #include "../Utility/Timer.h"
+#include "Kismet/GameplayStatics.h"
 
 void AMeleeAI::Die()
 {
 	Super::Die();
+
+	if (DeathSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
+
 	bIsDead = true;
+	SetActorEnableCollision(false);
+	GetCharacterMovement()->GravityScale = 0.0f;
 	DynMaterial = UMaterialInstanceDynamic::Create(DissolveMat, this);
 	DissolveTimer();
 }

@@ -3,19 +3,20 @@
 #include "GP4Testing/Pickups/HealthPickup.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/Pickups/PickupSpawner.h"
+#include "Kismet/GameplayStatics.h"
 
 AHealthPickup::AHealthPickup()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	pickupType = PickupType::HEALTH;
-
-	
 }
+
 void AHealthPickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
+
 void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResults) 
 {
@@ -25,13 +26,22 @@ void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		if (!playerRef)
 			return;
 
-		playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
+		if (playerRef->GetPlayerHealthSystem().HealthComponent->CurrentHealth < playerRef->GetPlayerHealthSystem().HealthComponent->MaxHealth)
+		{
+			playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
 
-		if (registeredSpawner)
-			registeredSpawner->NotifyPickup(*this);
+			if (registeredSpawner)
+				registeredSpawner->NotifyPickup(*this);
 
-		Destroy();
-		UE_LOG(LogTemp, Warning, TEXT("its health"));
+			Destroy();
+
+			if (PickupSound != nullptr)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, PickupSound, playerRef->GetActorLocation());
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("its health"));
+		}	
 	}
 }
 

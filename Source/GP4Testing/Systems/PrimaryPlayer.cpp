@@ -43,7 +43,10 @@ void APrimaryPlayer::Start() {
 	StartPlayerSystems();
 }
 void APrimaryPlayer::Update(float deltaTime) {
-
+	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
+	{
+		HandleRunningShake();
+	}
 }
 void APrimaryPlayer::SetupStartingState() noexcept {
 	//Reset all player data to default.
@@ -107,7 +110,7 @@ void APrimaryPlayer::HandleSlideInput() noexcept {
 	if (!playerMovementSystemRef)
 		return;
 
-	//playerMovementSystemRef->Slide();
+	playerMovementSystemRef->Slide();
 }
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
@@ -118,7 +121,6 @@ void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
 void APrimaryPlayer::HandleMeleeInput() noexcept {
-	//HERE!
 	if (bCanMelee)
 	{
 		FHitResult Hit;
@@ -190,7 +192,6 @@ void APrimaryPlayer::ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase, 
 	{
 		CameraManager->StartCameraShake(CameraShakeBase, Scale);
 	}
-	Debugging::PrintString("Has tried to shake");
 }
 void APrimaryPlayer::HandleHitShake()
 {
@@ -200,6 +201,7 @@ void APrimaryPlayer::OnJumped_Implementation()
 {
 	StartJumpDistance = GetCharacterMovement()->GetActorLocation().Z;
 	Debugging::PrintString("Jumped");
+	playerMovementSystemRef->PlayJumpAudio();
 }
 void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall length check
 {
@@ -212,7 +214,19 @@ void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall 
 		ShakeCamera(LandShake, Strength);
 	}
 }
-
+void APrimaryPlayer::HandleShootShakeRifle()
+{
+	ShakeCamera(ShootingShakeRifle, 1.f);
+}
+void APrimaryPlayer::HandleShootShakeShotgun()
+{
+	ShakeCamera(ShootingShakeShotgun, 1.f);
+}
+void APrimaryPlayer::HandleRunningShake()
+{
+	float Strength = GetCharacterMovement()->GetLastUpdateVelocity().Length() / MaxRunSpeed;
+	ShakeCamera(RunningShake, Strength);
+}
 void APrimaryPlayer::CreatePlayerSystems() {
 	checkf(playerMovementSystemAsset, TEXT("PlayerMovementSystemAsset ref is null!"));
 	playerMovementSystemRef = GetWorld()->SpawnActor<APlayerMovementSystem>(playerMovementSystemAsset);
