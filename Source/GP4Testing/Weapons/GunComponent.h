@@ -47,6 +47,9 @@ public:
 	UFUNCTION()
 	void ClearWeaponTimer();
 
+	UFUNCTION(BlueprintCallable)
+	WeaponType GetWeaponType();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Grenade Launcher", meta = (EditCondition = "TypeOfWeapon == WeaponType::GRENADE_LAUNCHER", EditConditionHides))
 	TSubclassOf<AExplosiveProjectile> ProjectileClass;
 

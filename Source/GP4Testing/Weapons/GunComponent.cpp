@@ -117,6 +117,7 @@ void AGunComponent::Fire()
 			UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
 			if (AnimInstance != nullptr)
 			{
+				UE_LOG(LogTemp, Error, TEXT("Play animation"));
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 		}
@@ -184,6 +185,11 @@ void AGunComponent::StopFire()
 void AGunComponent::ClearWeaponTimer()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+}
+
+WeaponType AGunComponent::GetWeaponType()
+{
+	return TypeOfWeapon;
 }
 
 // Attach weapon the the player
