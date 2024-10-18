@@ -210,7 +210,10 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 }
 
 
-void AWeaponManagementSystem::SetupStartingState() noexcept {
+void AWeaponManagementSystem::SetupStartingState() noexcept {}
+
+void AWeaponManagementSystem::ClearAllWeapons() noexcept
+{
 	TMap<WeaponType, AGunComponent*> Reset;
 	AcquiredWeapons = Reset;
 	EquippedWeapon = WeaponType::NONE;
