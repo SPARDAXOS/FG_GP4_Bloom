@@ -79,8 +79,10 @@ void APrimaryPlayer::SetPlayerHUDState(bool state) noexcept {
 	else
 		primaryPlayerHUDRef->SetVisibilityState(ESlateVisibility::Collapsed);
 }
-
-
+AWeaponManagementSystem* APrimaryPlayer::GetWeaponManagementSystemPointer()
+{
+	return weaponManagementSystemRef;
+}
 //HandleInput
 void APrimaryPlayer::HandleMovementInput(FVector2D axis) noexcept {
 	if (!playerMovementSystemRef)
