@@ -186,6 +186,11 @@ void AGunComponent::ClearWeaponTimer()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
+WeaponType AGunComponent::GetWeaponType()
+{
+	return TypeOfWeapon;
+}
+
 // Attach weapon the the player
 void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 {

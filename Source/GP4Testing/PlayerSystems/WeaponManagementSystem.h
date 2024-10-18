@@ -33,12 +33,15 @@ public:
 
 public:
 	void SetupStartingState() noexcept;
+	void ClearAllWeapons() noexcept;
 
 public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
 
 public:
+	UFUNCTION(BlueprintCallable)
 	AGunComponent* GetCurrentWeapon();
+
 	TMap<WeaponType, AGunComponent*> GetAcquiredWeapons();
 
 	int GetMaxAmmo();

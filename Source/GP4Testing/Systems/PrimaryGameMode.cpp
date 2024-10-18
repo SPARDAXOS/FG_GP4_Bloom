@@ -14,7 +14,7 @@
 #include "GP4Testing/DataAssets/LevelSelectEntrySpec.h"
 #include "GP4Testing/DataAssets/WaveManagerSpec.h"
 
-
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -81,6 +81,7 @@ void APrimaryGameMode::SetupApplicationStartState() noexcept {
 		
 		auto lambda = [this]() {
 			//Main Menu Music
+			PlayMainMenuMusic();
 			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 			primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
 			currentPrimaryGameState = PrimaryGameState::MENU;
@@ -112,6 +113,7 @@ void APrimaryGameMode::SetupPlayingState() noexcept {
 	primaryPlayerRef->SetPlayerHUDState(true);
 	primaryPlayerRef->SetupStartingState();
 	//SetupStartingState() all custom systems
+	PlayGamePlayMusic();
 }
 void APrimaryGameMode::SetupDebugModeState() {
 	SetupPrePlayingState();
@@ -256,6 +258,7 @@ void APrimaryGameMode::EndGame() noexcept {
 	levelManagementRef->LoadLevel("MainMenu", [this]() {
 		levelManagementRef->UnloadLevel(loadedLevelKey, [this]() {
 				//Main Menu Music
+				PlayMainMenuMusic();
 				primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 				primaryHUDRef->SetMenuState(MenuState::MAIN_MENU);
 				currentPrimaryGameState = PrimaryGameState::MENU;
@@ -291,6 +294,32 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 		currentPrimaryGameState = PrimaryGameState::PLAYING;
 	}
 }
+
+void APrimaryGameMode::PlayMainMenuMusic()
+{
+	if (audioComponent)
+	{
+		audioComponent->Stop();
+	}
+	if (MainMenuMusic)
+	{
+		audioComponent = UGameplayStatics::SpawnSound2D(this, MainMenuMusic);
+	}
+}
+
+void APrimaryGameMode::PlayGamePlayMusic()
+{
+	if (audioComponent)
+	{
+		audioComponent->Stop();
+	}
+	if (GamePlayMusic)
+	{
+		audioComponent = UGameplayStatics::SpawnSound2D(this, GamePlayMusic);
+	}
+}
+
+
 
 
 //Systems
