@@ -117,7 +117,6 @@ void AGunComponent::Fire()
 			UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
 			if (AnimInstance != nullptr)
 			{
-				UE_LOG(LogTemp, Error, TEXT("Play animation"));
 				AnimInstance->Montage_Play(FireAnimation, 1.f);
 			}
 		}
