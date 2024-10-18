@@ -46,6 +46,9 @@ public:
 	inline APlayerMovementSystem& GetPlayerMovementSystem() noexcept { return *playerMovementSystemRef; }
 	inline APlayerHealthSystem& GetPlayerHealthSystem() noexcept { return *playerHealthSystemRef; }
 
+	UFUNCTION(BlueprintCallable)
+	AWeaponManagementSystem* GetWeaponManagementSystemPointer();
+
 	inline UCameraComponent* GetCamera() noexcept { return cameraComponent; }
 	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
 	inline APrimaryGameMode* GetPrimaryGameMode() noexcept { return primaryGameModeRef; }
