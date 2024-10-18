@@ -3,7 +3,7 @@
 bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
 	if (AcquiredWeapons.Num() > 0)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 
 		if (!Weapon)
 		{
@@ -34,7 +34,7 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 {
 	if (AcquiredWeapons.Num() > 0)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -49,7 +49,7 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -59,9 +59,7 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
+		AcquiredWeapons.GetKeys(weapons);
 
 		int32 CurrentIndex = weapons.Find(EquippedWeapon);
 
@@ -85,7 +83,7 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -95,9 +93,7 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
+		AcquiredWeapons.GetKeys(weapons);
 
 		int32 CurrentIndex = weapons.Find(EquippedWeapon);
 
@@ -123,7 +119,7 @@ bool AWeaponManagementSystem::WeaponSlot1() noexcept
 {
 	if (AcquiredWeapons.Num() > 0)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -148,7 +144,7 @@ bool AWeaponManagementSystem::WeaponSlot2() noexcept
 {
 	if (AcquiredWeapons.Num() > 1)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -173,7 +169,7 @@ bool AWeaponManagementSystem::WeaponSlot3() noexcept
 {
 	if (AcquiredWeapons.Num() > 2)
 	{
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -199,7 +195,7 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 	if (AcquiredWeapons.Num() >= 1)
 	{
 		// Hide current weapon
-		AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
 			return false;
@@ -237,11 +233,14 @@ TMap<WeaponType, AGunComponent*> AWeaponManagementSystem::GetAcquiredWeapons()
 
 int AWeaponManagementSystem::GetMaxAmmo()
 {
-	AGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = GetCurrentWeapon();
+	if (!Weapon)
+	{
+		return false;
+	}
 	int MaxAmmo = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
-		Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		MaxAmmo = Weapon->MaxAmmo;
 	}
 	return MaxAmmo;
@@ -249,11 +248,14 @@ int AWeaponManagementSystem::GetMaxAmmo()
 
 int AWeaponManagementSystem::GetAmmo()
 {
-	AGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = GetCurrentWeapon();
+	if (!Weapon)
+	{
+		return false;
+	}
 	int Ammo = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
-		Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Ammo = Weapon->Ammo;
 	}
 	return Ammo;
@@ -300,11 +302,14 @@ bool AWeaponManagementSystem::AddAmmo(PickupType type, int newAmmo)
 
 int AWeaponManagementSystem::GetMaxMagazine()
 {
-	AGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = GetCurrentWeapon();
+	if (!Weapon)
+	{
+		return false;
+	}
 	int MaxMag = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
-		Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		MaxMag = Weapon->MaxMagazine;
 	}
 	return MaxMag;
@@ -312,11 +317,14 @@ int AWeaponManagementSystem::GetMaxMagazine()
 
 int AWeaponManagementSystem::GetLoadedMagazine()
 {
-	AGunComponent* Weapon = nullptr;
+	AGunComponent* Weapon = GetCurrentWeapon();
+	if (!Weapon)
+	{
+		return false;
+	}
 	int Mag = 0;
 	if (AcquiredWeapons.Num() > 0)
 	{
-		Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
 		Mag = Weapon->Magazine;
 	}
 	return Mag;
