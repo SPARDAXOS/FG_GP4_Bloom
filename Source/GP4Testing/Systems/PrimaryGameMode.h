@@ -66,6 +66,9 @@ public:
 
 	void PauseGame() noexcept;
 	void UnpauseGame() noexcept;
+
+	void PlayMainMenuMusic();
+	void PlayGamePlayMusic();
 	
 public:
 	inline bool GetGameStarted() const noexcept { return gameStarted; }
@@ -132,6 +135,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Settings", meta = (AllowPrivateAcces = "true"))
 	FName defaultPlayerSpawnPoint = "PlayerStart";
+
+	UPROPERTY(EditDefaultsONly, Category = "Audio Settings", meta = (AllowPrivateAcces = "true"))
+	USoundBase* MainMenuMusic;
+
+	UPROPERTY(EditDefaultsONly, Category = "Audio Settings", meta = (AllowPrivateAcces = "true"))
+	USoundBase* GamePlayMusic;
+
+	UPROPERTY()
+	UAudioComponent* audioComponent;
 
 private:
 	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
