@@ -297,8 +297,7 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 
 void APrimaryGameMode::PlayMainMenuMusic()
 {
-	if (audioComponent)
-	{
+	if (audioComponent) {
 		audioComponent->Stop();
 	}
 	if (MainMenuMusic)

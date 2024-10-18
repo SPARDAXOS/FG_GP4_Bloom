@@ -4,6 +4,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "GP4Testing/Weapons/GunComponent.h"
 #include "GP4Testing/Utility/Debugging.h"
+#include "GP4Testing/Systems/PrimaryGameMode.h"
+#include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 
 #include <functional>
 
@@ -62,8 +65,12 @@ void AWeaponSpawner::Respawn() {
     if (!weaponPickupClass || pickupSpawned)
         return;
 
+    if (APrimaryGameMode::GetPrimaryPlayer()->GetWeaponManagementSystem().HasWeapon(type))
+        return;
+
+
     pickupRef = GetWorld()->SpawnActor<AGunComponent>(weaponPickupClass);
-    //pickupRef->RegisterPickupSpawner(*this);
+    //pickupRef->RegisterPickupSpawner(*this);     //This is what is left
     pickupRef->SetActorLocation(spawnPoint->GetComponentLocation());
     pickupSpawned = true;
 }

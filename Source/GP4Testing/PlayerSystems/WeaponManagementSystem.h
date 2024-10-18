@@ -30,6 +30,7 @@ public:
 
 public:
 	bool AcquireWeapon(WeaponType type, AGunComponent* weapon) noexcept;
+	bool HasWeapon(WeaponType type);
 
 public:
 	void SetupStartingState() noexcept;
