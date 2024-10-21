@@ -21,6 +21,9 @@ AGunComponent::AGunComponent()
 
 	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	VFX->SetupAttachment(WeaponMesh);
+
+	VFX2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX2"));
+	VFX2->SetupAttachment(WeaponMesh);
 	
 }
 
@@ -89,8 +92,10 @@ void AGunComponent::Fire()
 								Enemy->HealthComponent->TakeDamage(WeaponDamage);
 							}
 						}
+
+						VFX2->Activate(true);
 					}
-					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
+					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}
 			}
 
