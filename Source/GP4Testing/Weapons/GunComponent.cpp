@@ -10,6 +10,7 @@
 #include <GP4Testing/Components/HealthComponent.h>
 #include "../AI/EnemyAIBase.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/Utility/Debugging.h"
 
 AGunComponent::AGunComponent()
 {
@@ -44,8 +45,6 @@ void AGunComponent::Fire()
 		{
 			Magazine--;
 
-			FHitResult Hit;
-
 			APrimaryPlayerController* PlayerController = Cast<APrimaryPlayerController>(Character->GetController());
 
 			FVector ViewOrigin;
@@ -69,27 +68,29 @@ void AGunComponent::Fire()
 			{
 				for (int i = 0; i < BulletsPerShot; i++)
 				{
+					Debugging::PrintString("Started fire");
+					FHitResult Hit;
 					World->LineTraceSingleByChannel(
 						Hit,
 						ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward),
 						ECollisionChannel::ECC_GameTraceChannel3
 					);
-
-					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
-				}
-			}
-
-			// Do damage if enemy is hit
-			if (Hit.bBlockingHit)
-			{
-				AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Hit.GetActor());
-				if (Enemy != nullptr)
-				{
-					if (Enemy->HealthComponent != nullptr)
+					// Do damage if enemy is hit
+					if (Hit.bBlockingHit)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
-						Enemy->HealthComponent->TakeDamage(WeaponDamage);
+						Debugging::PrintString("Hit an object");
+						AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Hit.GetActor());
+						if (Enemy != nullptr)
+						{
+							if (Enemy->HealthComponent != nullptr)
+							{
+								Debugging::PrintString("Damage");
+								UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
+								Enemy->HealthComponent->TakeDamage(WeaponDamage);
+							}
+						}
 					}
+					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}
 			}
 
@@ -262,6 +263,6 @@ void AGunComponent::EndPlay()
 	UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
 	if (AnimInstance != nullptr)
 	{
-		AnimInstance->StopAllMontages(0.5f);
+		AnimInstance->StopAllMontages(0);
 	}
 }
