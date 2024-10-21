@@ -35,8 +35,8 @@ public:
 	UPROPERTY(EditAnywhere, Category="Audio")
 	USoundBase* DeathSound;
 
-private:
-	void DissolveTimer();
+protected:
+	virtual	void DissolveTimer();
 
 	UMaterialInstanceDynamic* DynMaterial;
 	FTimerHandle TimerHandle;

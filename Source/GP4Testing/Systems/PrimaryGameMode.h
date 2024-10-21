@@ -47,7 +47,7 @@ protected:
 	virtual void StartPlay() override;
 
 public:
-	inline APrimaryPlayer* GetPrimaryPlayer() const noexcept { return primaryPlayerRef; }
+	static inline APrimaryPlayer* GetPrimaryPlayer() noexcept { return primaryPlayerRef; }
 	inline APrimaryPlayerController* GetPrimaryPlayerController() const noexcept { return primaryPlayerControllerRef; }
 	inline APrimaryHUD* GetPrimaryHUD() const noexcept { return primaryHUDRef; }
 
@@ -98,6 +98,10 @@ private:
 	void CacheMainSystemsReferences() noexcept;
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Audio", meta = (AllowPrivateAcces = "true"))
+	UAudioComponent* audioComponent;
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Systems|CustomSystems", meta = (AllowPrivateAcces = "true"))
 	TSubclassOf<ALevelManagement> levelManagementClass;
 
@@ -136,17 +140,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Settings", meta = (AllowPrivateAcces = "true"))
 	FName defaultPlayerSpawnPoint = "PlayerStart";
 
-	UPROPERTY(EditDefaultsONly, Category = "Audio Settings", meta = (AllowPrivateAcces = "true"))
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Audio", meta = (AllowPrivateAcces = "true"))
 	USoundBase* MainMenuMusic;
 
-	UPROPERTY(EditDefaultsONly, Category = "Audio Settings", meta = (AllowPrivateAcces = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Audio", meta = (AllowPrivateAcces = "true"))
 	USoundBase* GamePlayMusic;
 
-	UPROPERTY()
-	UAudioComponent* audioComponent;
-
 private:
-	TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
+	inline static TObjectPtr<APrimaryPlayer> primaryPlayerRef = nullptr;
 	TObjectPtr<APrimaryPlayerController> primaryPlayerControllerRef = nullptr;
 	TObjectPtr<APrimaryHUD> primaryHUDRef = nullptr;
 

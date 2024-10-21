@@ -207,15 +207,20 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 
 	return true;
 }
+bool AWeaponManagementSystem::HasWeapon(WeaponType type) {
+	return AcquiredWeapons.Contains(type);
+}
 
+void AWeaponManagementSystem::SetupStartingState() noexcept {
+	ClearAllWeapons();
 
-void AWeaponManagementSystem::SetupStartingState() noexcept {}
+}
 
 void AWeaponManagementSystem::ClearAllWeapons() noexcept
 {
-	TMap<WeaponType, AGunComponent*> Reset;
-	AcquiredWeapons = Reset;
+	AcquiredWeapons.Reset();
 	EquippedWeapon = WeaponType::NONE;
+
 }
 
 AGunComponent* AWeaponManagementSystem::GetCurrentWeapon()

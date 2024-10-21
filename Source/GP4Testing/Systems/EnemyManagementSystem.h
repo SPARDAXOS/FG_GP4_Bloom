@@ -14,10 +14,12 @@ class AEnemyAIBase;
 class ATriggerVFX;
 class AMeleeAI;
 class ARangedAI;
+class ASpiderAI;
 
 UENUM(BlueprintType)
 enum class EnemyType : uint8 {
 	MELEE,
+	SPIDER,
 	RANGED
 };
 
@@ -33,14 +35,15 @@ public:
 
 public:
 	bool SpawnEnemy(EnemyType type, FVector location) noexcept;
-	void DispawnAllEnemies() const noexcept;
-	void DispawnMeleeEnemies() const noexcept;
-	void DispawnRangedEnemies() const noexcept;
+	void DespawnAllEnemies() const noexcept;
+	void DespawnMeleeEnemies() const noexcept;
+	void DespawnSpiderEnemies() const noexcept;
+	void DespawnRangedEnemies() const noexcept;
 
 public:
 	bool CreateEnemyPool(EnemyType type, uint32 count);
 	void ClearAllPools() noexcept;
-	void DispawnAllVFX() noexcept;
+	void DespawnAllVFX() noexcept;
 	bool IsSpawnPointOccupied(FVector location) const noexcept;
 
 public:
@@ -56,6 +59,9 @@ public:
 	template<>
 	TArray<ARangedAI*> GetAllEnemies<ARangedAI>(AEnemyAIBase* self, bool excludeSelf);
 
+	template<>
+	TArray<ASpiderAI*> GetAllEnemies<ASpiderAI>(AEnemyAIBase* self, bool excludeSelf);
+
 
 public:
 	inline void SetActiveState(bool state) noexcept { active = state; }
@@ -66,14 +72,17 @@ public:
 
 private:
 	bool SpawnMeleeEnemy(FVector location);
+	bool SpawnSpiderEnemy(FVector location);
 	bool SpawnRangedEnemy(FVector location);
 	bool SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FVector location);
 	ATriggerVFX* GetAvailableVFX() const noexcept;
 
 private:
 	bool CreateMeleeEnemiesPool(uint32 count);
+	bool CreateSpiderEnemiesPool(uint32 count);
 	bool CreateRangedEnemiesPool(uint32 count);
 	void ClearMeleeEnemiesPool() noexcept;
+	void ClearSpiderEnemiesPool() noexcept;
 	void ClearRangedEnemiesPool() noexcept;
 	void ValidateEnemyTypesClasses() const noexcept;
 	void ValidateVFXClasses() const noexcept;
@@ -102,6 +111,9 @@ private:
 	TSubclassOf<AEnemyAIBase> meleeEnemyClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
+	TSubclassOf<AEnemyAIBase> spiderEnemyClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
 	TSubclassOf<AEnemyAIBase> rangedEnemyClass = nullptr;
 
 
@@ -115,6 +127,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
 	TArray<AEnemyAIBase*> meleeEnemiesPool;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
+	TArray<AEnemyAIBase*> spiderEnemiesPool;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
 	TArray<AEnemyAIBase*> rangedEnemiesPool;
