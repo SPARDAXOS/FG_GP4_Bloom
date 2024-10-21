@@ -3,6 +3,7 @@
 #include "GP4Testing/AI/MeleeAI.h"
 #include "GP4Testing/AI/RangedAI.h"
 #include "GP4Testing/VFXEntities/TriggerVFX.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -170,6 +171,9 @@ bool AEnemyManagementSystem::SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FV
 				spawnPosition.Z += enemySpawnPortalVFXZOffset;
 				vfx->SetActorLocation(spawnPosition);
 				vfx->Activate();
+
+				UGameplayStatics::PlaySoundAtLocation(this, PortalSound, spawnPosition);
+
 				enemy->MarkForSpawn();
 			}
 			else {

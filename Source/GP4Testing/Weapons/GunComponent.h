@@ -48,7 +48,7 @@ public:
 	void StopFire();
 
 	UFUNCTION()
-	void ClearWeaponTimer();
+	void ClearTimers();
 
 	UFUNCTION(BlueprintCallable)
 	WeaponType GetWeaponType();
@@ -101,8 +101,21 @@ private:
 	FVector GetBulletSpread(FVector ViewOrigin, FVector ViewForward);
 
 	FTimerHandle TimerHandle;
+	FTimerHandle ReloadTimerHandle;
 
 	void Fire();
 
 	bool bFiredWeapon = false;
+
+private:
+	void ReloadTimer();
+
+public:
+	UPROPERTY(EditAnywhere)
+	float ReloadLength = 0;
+
+	bool bReloading = false;
+
+public:
+	void EndPlay();
 };

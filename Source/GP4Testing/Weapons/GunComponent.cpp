@@ -35,7 +35,7 @@ void AGunComponent::Fire()
 		return;
 	}
 
-	if (Magazine > 0)
+	if (Magazine > 0 && !bReloading)
 	{
 		VFX->Activate(true);
 
@@ -121,6 +121,28 @@ void AGunComponent::Fire()
 			}
 		}
 	}
+	else if(Magazine <= 0 && !bReloading)
+	{
+		Reload();
+	}
+}
+
+void AGunComponent::ReloadTimer()
+{
+	bReloading = false;
+	for (int i = 0; Magazine < MaxMagazine; i++)
+	{
+		if (Ammo == 0)
+		{
+			return;
+		}
+		Magazine++;
+		Ammo--;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
+	UE_LOG(LogTemp, Warning, TEXT("Current Magazine: %f"), Magazine);
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 }
 
 FVector AGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
@@ -142,6 +164,8 @@ void AGunComponent::Reload()
 {
 	if (Magazine < MaxMagazine && Ammo > 0)
 	{
+		bReloading = true;
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AGunComponent::ReloadTimer, ReloadLength, false);
 		if (ReloadAnimation != nullptr)
 		{
 			USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
@@ -151,18 +175,6 @@ void AGunComponent::Reload()
 				AnimInstance->Montage_Play(ReloadAnimation, 1.f);
 			}
 		}
-		for (int i = 0; Magazine < MaxMagazine; i++)
-		{
-			if (Ammo == 0)
-			{
-				return;
-			}
-			Magazine++;
-			Ammo--;
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
-		UE_LOG(LogTemp, Warning, TEXT("Current Magazine: %f"), Magazine);
 	}
 }
 
@@ -190,9 +202,10 @@ void AGunComponent::StopFire()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
-void AGunComponent::ClearWeaponTimer()
+void AGunComponent::ClearTimers()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 }
 
 WeaponType AGunComponent::GetWeaponType()
@@ -237,5 +250,18 @@ void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
 		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+	}
+}
+
+void AGunComponent::EndPlay()
+{
+	bReloading = false;
+	StopFire();
+	ClearTimers();
+	USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
+	UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		AnimInstance->StopAllMontages(0.5f);
 	}
 }
