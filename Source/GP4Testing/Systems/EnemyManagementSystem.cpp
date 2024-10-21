@@ -285,8 +285,6 @@ bool AEnemyManagementSystem::CreateSpiderEnemiesPool(uint32 count) {
 		return true;
 	else
 		return false;
-
-	return true;
 }
 bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
 	if (!rangedEnemyClass)
