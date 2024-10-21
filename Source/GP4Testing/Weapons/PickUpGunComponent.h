@@ -17,6 +17,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
 	FOnPickUpGun OnPickUp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	USoundBase* PickUpSound;
+
 	UPickUpGunComponent();
 protected:
 

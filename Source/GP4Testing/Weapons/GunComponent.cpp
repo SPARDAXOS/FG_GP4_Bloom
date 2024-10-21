@@ -10,6 +10,7 @@
 #include <GP4Testing/Components/HealthComponent.h>
 #include "../AI/EnemyAIBase.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
+#include "GP4Testing/Utility/Debugging.h"
 
 AGunComponent::AGunComponent()
 {
@@ -44,8 +45,6 @@ void AGunComponent::Fire()
 		{
 			Magazine--;
 
-			FHitResult Hit;
-
 			APrimaryPlayerController* PlayerController = Cast<APrimaryPlayerController>(Character->GetController());
 
 			FVector ViewOrigin;
@@ -69,27 +68,29 @@ void AGunComponent::Fire()
 			{
 				for (int i = 0; i < BulletsPerShot; i++)
 				{
+					Debugging::PrintString("Started fire");
+					FHitResult Hit;
 					World->LineTraceSingleByChannel(
 						Hit,
 						ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward),
 						ECollisionChannel::ECC_GameTraceChannel3
 					);
-
-					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
-				}
-			}
-
-			// Do damage if enemy is hit
-			if (Hit.bBlockingHit)
-			{
-				AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Hit.GetActor());
-				if (Enemy != nullptr)
-				{
-					if (Enemy->HealthComponent != nullptr)
+					// Do damage if enemy is hit
+					if (Hit.bBlockingHit)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
-						Enemy->HealthComponent->TakeDamage(WeaponDamage);
+						Debugging::PrintString("Hit an object");
+						AEnemyAIBase* Enemy = Cast<AEnemyAIBase>(Hit.GetActor());
+						if (Enemy != nullptr)
+						{
+							if (Enemy->HealthComponent != nullptr)
+							{
+								Debugging::PrintString("Damage");
+								UE_LOG(LogTemp, Warning, TEXT("Enemy health: %f"), Enemy->HealthComponent->CurrentHealth);
+								Enemy->HealthComponent->TakeDamage(WeaponDamage);
+							}
+						}
 					}
+					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}
 			}
 
@@ -121,11 +122,27 @@ void AGunComponent::Fire()
 			}
 		}
 	}
+	else if(Magazine <= 0 && !bReloading)
+	{
+		Reload();
+	}
 }
 
 void AGunComponent::ReloadTimer()
 {
 	bReloading = false;
+	for (int i = 0; Magazine < MaxMagazine; i++)
+	{
+		if (Ammo == 0)
+		{
+			return;
+		}
+		Magazine++;
+		Ammo--;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
+	UE_LOG(LogTemp, Warning, TEXT("Current Magazine: %f"), Magazine);
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 }
 
@@ -134,9 +151,9 @@ FVector AGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
 	FVector Target = ViewOrigin + ViewForward * LineTraceDistance;
 
 	Target = FVector(
-		Target.X = FMath::RandRange(-BulletSpread, BulletSpread),
-		Target.Y = FMath::RandRange(-BulletSpread, BulletSpread),
-		Target.Z = FMath::RandRange(-BulletSpread, BulletSpread)
+		Target.X = FMath::RandRange(-BulletSpreadX, BulletSpreadX),
+		Target.Y = FMath::RandRange(-BulletSpreadY, BulletSpreadY),
+		Target.Z = FMath::RandRange(-BulletSpreadZ, BulletSpreadZ) 
 	);
 
 	FVector Direction = (ViewOrigin + ViewForward * LineTraceDistance) + Target;
@@ -159,18 +176,6 @@ void AGunComponent::Reload()
 				AnimInstance->Montage_Play(ReloadAnimation, 1.f);
 			}
 		}
-		for (int i = 0; Magazine < MaxMagazine; i++)
-		{
-			if (Ammo == 0)
-			{
-				return;
-			}
-			Magazine++;
-			Ammo--;
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("Current Ammo: %f"), Ammo);
-		UE_LOG(LogTemp, Warning, TEXT("Current Magazine: %f"), Magazine);
 	}
 }
 
@@ -198,9 +203,10 @@ void AGunComponent::StopFire()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
-void AGunComponent::ClearWeaponTimer()
+void AGunComponent::ClearTimers()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 }
 
 WeaponType AGunComponent::GetWeaponType()
@@ -245,5 +251,18 @@ void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
 		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+	}
+}
+
+void AGunComponent::EndPlay()
+{
+	bReloading = false;
+	StopFire();
+	ClearTimers();
+	USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
+	UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		AnimInstance->StopAllMontages(0.5f);
 	}
 }

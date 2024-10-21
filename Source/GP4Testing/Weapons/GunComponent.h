@@ -48,7 +48,7 @@ public:
 	void StopFire();
 
 	UFUNCTION()
-	void ClearWeaponTimer();
+	void ClearTimers();
 
 	UFUNCTION(BlueprintCallable)
 	WeaponType GetWeaponType();
@@ -87,7 +87,11 @@ private:
 	float LineTraceDistance = 20000.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
-	float BulletSpread = 5.f;
+	float BulletSpreadX = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
+	float BulletSpreadY = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
+	float BulletSpreadZ = 5.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float BulletsPerShot = 1.f;
@@ -115,4 +119,7 @@ public:
 	float ReloadLength = 0;
 
 	bool bReloading = false;
+
+public:
+	void EndPlay();
 };
