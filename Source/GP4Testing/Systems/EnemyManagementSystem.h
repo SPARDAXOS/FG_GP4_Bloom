@@ -94,6 +94,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	float enemySpawnVFXDelay = 5.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	USoundBase* PortalSound;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
 	TSubclassOf<AEnemyAIBase> meleeEnemyClass = nullptr;

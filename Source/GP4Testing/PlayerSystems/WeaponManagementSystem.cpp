@@ -54,8 +54,7 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 		{
 			return false;
 		}
-		Weapon->ClearWeaponTimer();
-		Weapon->StopFire();
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
@@ -88,8 +87,7 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 		{
 			return false;
 		}
-		Weapon->ClearWeaponTimer();
-		Weapon->StopFire();
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
@@ -124,7 +122,7 @@ bool AWeaponManagementSystem::WeaponSlot1() noexcept
 		{
 			return false;
 		}
-		Weapon->StopFire();
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
@@ -149,7 +147,7 @@ bool AWeaponManagementSystem::WeaponSlot2() noexcept
 		{
 			return false;
 		}
-		Weapon->StopFire();
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
@@ -174,7 +172,7 @@ bool AWeaponManagementSystem::WeaponSlot3() noexcept
 		{
 			return false;
 		}
-		Weapon->StopFire();
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 
 		TArray<WeaponType> weapons;
@@ -200,6 +198,7 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 		{
 			return false;
 		}
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 	}
 	

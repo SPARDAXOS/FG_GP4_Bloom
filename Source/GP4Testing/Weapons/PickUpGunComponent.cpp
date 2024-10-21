@@ -1,4 +1,5 @@
 #include "PickUpGunComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 UPickUpGunComponent::UPickUpGunComponent()
 {
@@ -18,6 +19,8 @@ void UPickUpGunComponent::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCo
 	if (Character != nullptr)
 	{
 		OnPickUp.Broadcast(Character);
+
+		UGameplayStatics::PlaySoundAtLocation(this, PickUpSound, Character->GetActorLocation());
 
 		OnComponentBeginOverlap.RemoveAll(this);
 	}

@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UAnimMontage* FireAnimation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UAnimMontage* ReloadAnimation;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ShootAction;
 
@@ -45,7 +48,7 @@ public:
 	void StopFire();
 
 	UFUNCTION()
-	void ClearWeaponTimer();
+	void ClearTimers();
 
 	UFUNCTION(BlueprintCallable)
 	WeaponType GetWeaponType();
@@ -74,6 +77,9 @@ public:
 	UPROPERTY(Editanywhere)
 	UNiagaraComponent* VFX;
 
+	UPROPERTY(Editanywhere)
+	UNiagaraComponent* VFX2;
+
 private:
 	APrimaryPlayer* Character;
 
@@ -84,7 +90,11 @@ private:
 	float LineTraceDistance = 20000.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
-	float BulletSpread = 5.f;
+	float BulletSpreadX = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
+	float BulletSpreadY = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
+	float BulletSpreadZ = 5.f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float BulletsPerShot = 1.f;
@@ -98,8 +108,21 @@ private:
 	FVector GetBulletSpread(FVector ViewOrigin, FVector ViewForward);
 
 	FTimerHandle TimerHandle;
+	FTimerHandle ReloadTimerHandle;
 
 	void Fire();
 
 	bool bFiredWeapon = false;
+
+private:
+	void ReloadTimer();
+
+public:
+	UPROPERTY(EditAnywhere)
+	float ReloadLength = 0;
+
+	bool bReloading = false;
+
+public:
+	void EndPlay();
 };
