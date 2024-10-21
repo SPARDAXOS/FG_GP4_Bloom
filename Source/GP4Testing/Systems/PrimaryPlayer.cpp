@@ -16,6 +16,7 @@
 
 #include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 APrimaryPlayer::APrimaryPlayer() {
@@ -43,9 +44,13 @@ void APrimaryPlayer::Start() {
 	StartPlayerSystems();
 }
 void APrimaryPlayer::Update(float deltaTime) {
-	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0)
+	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0) // same thing as getting the ABS
 	{
 		HandleRunningShake();
+	}
+	else if (GetCharacterMovement()->GetLastUpdateVelocity().Length() == 0)
+	{
+		StopShakeCamera();
 	}
 }
 void APrimaryPlayer::SetupStartingState() noexcept {
