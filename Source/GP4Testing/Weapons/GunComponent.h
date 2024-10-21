@@ -77,6 +77,9 @@ public:
 	UPROPERTY(Editanywhere)
 	UNiagaraComponent* VFX;
 
+	UPROPERTY(Editanywhere)
+	UNiagaraComponent* VFX2;
+
 private:
 	APrimaryPlayer* Character;
 
