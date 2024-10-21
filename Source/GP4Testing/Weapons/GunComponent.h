@@ -48,7 +48,7 @@ public:
 	void StopFire();
 
 	UFUNCTION()
-	void ClearWeaponTimer();
+	void ClearTimers();
 
 	UFUNCTION(BlueprintCallable)
 	WeaponType GetWeaponType();
@@ -115,4 +115,7 @@ public:
 	float ReloadLength = 0;
 
 	bool bReloading = false;
+
+public:
+	void EndPlay();
 };
