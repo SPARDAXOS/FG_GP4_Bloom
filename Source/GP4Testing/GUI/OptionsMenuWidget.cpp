@@ -1,5 +1,6 @@
 #include "OptionsMenuWidget.h"
 #include "CustomButton.h"
+#include "Components/CanvasPanel.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/Slider.h"
@@ -36,19 +37,102 @@ void UOptionsMenuWidget::SetWidgetOpacity(float opacity) noexcept {
 
 
 void UOptionsMenuWidget::SetBackgroundType(OptionsMenuBackgroundType type) noexcept {
+	if (currentBackgroundType == type)
+		return;
 
+	currentBackgroundType = type;
+	if (currentBackgroundType == OptionsMenuBackgroundType::STATIC) {
+		staticBackground->SetRenderOpacity(1.0f);
+		dynamicBackground->SetRenderOpacity(0.0f);
+		backgroundDynamicMaterial->SetScalarParameterValue("Time", 0.0f);
+	}
+	else if (currentBackgroundType == OptionsMenuBackgroundType::DYNAMIC) {
+		staticBackground->SetRenderOpacity(0.0f);
+		dynamicBackground->SetRenderOpacity(1.0f);
+		backgroundDynamicMaterial->SetScalarParameterValue("Time", 1.0f);
+	}
+	else if (currentBackgroundType == OptionsMenuBackgroundType::NONE) {
+		staticBackground->SetRenderOpacity(0.0f);
+		dynamicBackground->SetRenderOpacity(0.0f);
+		backgroundDynamicMaterial->SetScalarParameterValue("Time", 0.0f);
+	}
 }
 void UOptionsMenuWidget::SetActiveTab(OptionsMenuTab tab) noexcept {
-
+	if (tab == OptionsMenuTab::NONE) {
+		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		graphicsTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		applySettingsButton->SetVisibility(ESlateVisibility::Collapsed);
+		applyButtonBar->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else if (tab == OptionsMenuTab::DISPLAY) {
+		displayTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		graphicsTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
+		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
+	}
+	else if (tab == OptionsMenuTab::GRAPHICS) {
+		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		graphicsTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
+		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
+	}
+	else if (tab == OptionsMenuTab::AUDIO) {
+		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		graphicsTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		audioTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
+		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
+	}
+	else if (tab == OptionsMenuTab::INPUT) {
+		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		graphicsTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
+		inputTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
+		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 void UOptionsMenuWidget::SetConfirmationPopupState(bool state) noexcept {
-
+	if (state)
+		confirmationPopupCanvas->SetVisibility(ESlateVisibility::Visible);
+	else
+		confirmationPopupCanvas->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 
 //Settings Detection
 void UOptionsMenuWidget::DetectCurrentSettings() noexcept {
 
+	DetectCurrentResolution();
+	DetectCurrentWindowMode();
+	DetectCurrentResolutionScale();
+	DetectCurrentDynamicResolution();
+	DetectCurrentVSync();
+	DetectCurrentFramerateLimit();
+
+	DetectCurrentTextureQuality();
+	DetectCurrentAntiAliasingMode();
+	DetectCurrentAntiAliasingQuality();
+	DetectCurrentShadingQuality();
+	DetectCurrentGlobalIlluminationQuality();
+
+	DetectCurrentPostProcessQuality();
+	DetectCurrentReflectionQuality();
+	DetectCurrentShadowQuality();
+	DetectCurrentVisualEffectQuality();
+	DetectCurrentViewDistanceQuality();
+	DetectCurrentFoliageQuality();
+	DetectCurrentAudioQuality();
+	DetectCurrentAudioLevels();
+	DetectCurrentKeybindings();
+	DetectCurrentSensitivitySettings();
 }
 void UOptionsMenuWidget::DetectCurrentResolution() noexcept {
 

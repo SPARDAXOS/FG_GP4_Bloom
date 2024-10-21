@@ -91,6 +91,9 @@ private:
 	int currentSpawnedMeleeEnemies = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentSpawnedSpiderEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
 	int currentSpawnedRangedEnemies = 0;
 
 public:
