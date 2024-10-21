@@ -75,7 +75,7 @@ void AGunComponent::Fire()
 						ECollisionChannel::ECC_GameTraceChannel3
 					);
 
-					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 0.5f, 0, 1.0f);
+					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}
 			}
 
@@ -150,9 +150,9 @@ FVector AGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
 	FVector Target = ViewOrigin + ViewForward * LineTraceDistance;
 
 	Target = FVector(
-		Target.X = FMath::RandRange(-BulletSpread, BulletSpread),
-		Target.Y = FMath::RandRange(-BulletSpread, BulletSpread),
-		Target.Z = FMath::RandRange(-BulletSpread, BulletSpread)
+		Target.X = FMath::RandRange(-BulletSpreadX, BulletSpreadX),
+		Target.Y = FMath::RandRange(-BulletSpreadY, BulletSpreadY),
+		Target.Z = FMath::RandRange(-BulletSpreadZ, BulletSpreadZ) 
 	);
 
 	FVector Direction = (ViewOrigin + ViewForward * LineTraceDistance) + Target;
