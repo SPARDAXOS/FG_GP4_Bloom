@@ -198,6 +198,7 @@ bool AWeaponManagementSystem::AcquireWeapon(WeaponType type, AGunComponent* weap
 		{
 			return false;
 		}
+		Weapon->EndPlay();
 		Weapon->SetActorHiddenInGame(true);
 	}
 	
