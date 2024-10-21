@@ -142,6 +142,15 @@ void AGunComponent::Reload()
 {
 	if (Magazine < MaxMagazine && Ammo > 0)
 	{
+		if (ReloadAnimation != nullptr)
+		{
+			USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
+			UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
+			if (AnimInstance != nullptr)
+			{
+				AnimInstance->Montage_Play(ReloadAnimation, 1.f);
+			}
+		}
 		for (int i = 0; Magazine < MaxMagazine; i++)
 		{
 			if (Ammo == 0)
