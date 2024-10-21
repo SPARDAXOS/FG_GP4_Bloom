@@ -19,7 +19,7 @@ public:
 
 public:
 	void Dissolve();
-
+	virtual void SetupStartingState() override;
 
 protected:
 	virtual void Die() override;
@@ -29,6 +29,13 @@ private:
 	void CreateDynamicMaterials();
 	void UpdateDynamicMaterials(const float& value);
 	void RandomizeVariation();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Meshes")
+	FVector randomScaleMin = FVector(0.8f, 0.8f, 0.8f);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Meshes")
+	FVector randomScaleMax = FVector(1.2f, 1.2f, 1.2f);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Meshes")

@@ -30,7 +30,6 @@ void ASpiderAI::BeginPlay() {
 	Super::BeginPlay();
 
 	CreateDynamicMaterials();
-	RandomizeVariation();
 }
 void ASpiderAI::Die() {
 	if (WaveManagerSystem)
@@ -58,6 +57,15 @@ void ASpiderAI::Dissolve()
 	}
 	else
 		UpdateDynamicMaterials(DissolveValue);
+}
+void ASpiderAI::SetupStartingState() {
+	AEnemyAIBase::SetupStartingState();
+
+	float X = FMath::RandRange(randomScaleMin.X, randomScaleMax.X);
+	float Y = FMath::RandRange(randomScaleMin.Y, randomScaleMax.Y);
+	float Z = FMath::RandRange(randomScaleMin.Z, randomScaleMax.Z);
+	SetActorScale3D(FVector(X, Y, Z));
+	RandomizeVariation();
 }
 
 void ASpiderAI::DissolveTimer()
