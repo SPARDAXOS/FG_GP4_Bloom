@@ -262,6 +262,6 @@ void AGunComponent::EndPlay()
 	UAnimInstance* AnimInstance = Mesh->GetAnimInstance();
 	if (AnimInstance != nullptr)
 	{
-		AnimInstance->StopAllMontages(0.5f);
+		AnimInstance->StopAllMontages(0);
 	}
 }
