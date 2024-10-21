@@ -35,7 +35,7 @@ void AGunComponent::Fire()
 		return;
 	}
 
-	if (Magazine > 0)
+	if (Magazine > 0 && !bReloading)
 	{
 		VFX->Activate(true);
 
@@ -123,6 +123,12 @@ void AGunComponent::Fire()
 	}
 }
 
+void AGunComponent::ReloadTimer()
+{
+	bReloading = false;
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+}
+
 FVector AGunComponent::GetBulletSpread(FVector ViewOrigin, FVector ViewForward)
 {
 	FVector Target = ViewOrigin + ViewForward * LineTraceDistance;
@@ -142,6 +148,8 @@ void AGunComponent::Reload()
 {
 	if (Magazine < MaxMagazine && Ammo > 0)
 	{
+		bReloading = true;
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AGunComponent::ReloadTimer, ReloadLength, false);
 		if (ReloadAnimation != nullptr)
 		{
 			USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();

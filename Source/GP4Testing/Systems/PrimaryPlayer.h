@@ -135,6 +135,7 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	TSubclassOf<UCameraShakeBase> RunningShake = nullptr;
 	
 	void ShakeCamera(TSubclassOf<UCameraShakeBase> CameraShakeBase, float Scale);
+	inline void StopShakeCamera() { CameraManager->StopAllCameraShakes(); }
 
 	UFUNCTION()
 	void HandleHitShake();
