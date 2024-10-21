@@ -82,6 +82,7 @@ void AWaveManager::Restart() noexcept {
 	currentSpawnedMeleeEnemies = 0;
 	currentSpawnedSpiderEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
+	currentSpawnedTyrantEnemies = 0;
 	currentTotalSpawnedEnemies = 0;
 	
 	StartNextWave();
@@ -99,6 +100,10 @@ void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 	else if (type == EnemyType::RANGED) {
 		currentTotalSpawnedEnemies--;
 		currentSpawnedRangedEnemies--;
+	}
+	else if (type == EnemyType::RANGED) {
+		currentTotalSpawnedEnemies--;
+		currentSpawnedTyrantEnemies--;
 	}
 
 	if (IsWaveCompleted())
@@ -118,6 +123,7 @@ void AWaveManager::Clear() noexcept {
 	currentSpawnedMeleeEnemies = 0;
 	currentSpawnedSpiderEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
+	currentSpawnedTyrantEnemies = 0;
 
 	enemyManagementSystemRef->ClearAllPools();
 }
@@ -148,7 +154,6 @@ bool AWaveManager::StartNextWave() noexcept {
 	return true;
 }
 void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
-	Debugging::CustomLog("Update!");
 	if (type == EnemyType::MELEE) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::MELEE);
 		if (!spec) {
@@ -235,6 +240,35 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		}
 		else
 			Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");
+	}
+	else if (type == EnemyType::TYRANT) {
+		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::TYRANT);
+		if (!spec) {
+			Debugging::CustomError("Failed to spawn enemy with type Tyrant! - FindSpawnSpec() returned nullptr!");
+			return;
+		}
+
+		if (spec->totalSpawns <= 0)
+			return;
+
+		if (currentSpawnedTyrantEnemies >= spec->allowedConcurentSpawns)
+			return;
+
+		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
+			return;
+
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::TYRANT, spawnLocation)) {
+			currentSpawnedTyrantEnemies++;
+			currentTotalSpawnedEnemies++;
+		}
+		else
+			Debugging::CustomError("Failed to spawn enemy with type Tyrant! - SpawnEnemy Failed!");
 	}
 }
 bool AWaveManager::SetupTimers() noexcept {

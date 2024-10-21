@@ -3,6 +3,7 @@
 #include "GP4Testing/AI/MeleeAI.h"
 #include "GP4Testing/AI/SpiderAI.h"
 #include "GP4Testing/AI/RangedAI.h"
+#include "GP4Testing/AI/TyrantAI.h"
 #include "GP4Testing/VFXEntities/TriggerVFX.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -32,6 +33,8 @@ bool AEnemyManagementSystem::SpawnEnemy(EnemyType type, FVector location) noexce
 		return SpawnSpiderEnemy(location);
 	else if (type == EnemyType::RANGED)
 		return SpawnRangedEnemy(location);
+	else if (type == EnemyType::TYRANT)
+		return SpawnTyrantEnemy(location);
 
 	return false;
 }
@@ -39,6 +42,7 @@ void AEnemyManagementSystem::DespawnAllEnemies() const noexcept {
 	DespawnMeleeEnemies();
 	DespawnSpiderEnemies();
 	DespawnRangedEnemies();
+	DespawnTyrantEnemies();
 }
 void AEnemyManagementSystem::DespawnMeleeEnemies() const noexcept {
 	if (meleeEnemiesPool.Num() == 0)
@@ -61,6 +65,13 @@ void AEnemyManagementSystem::DespawnRangedEnemies() const noexcept {
 	for (auto& enemy : rangedEnemiesPool)
 		enemy->SetEnemyState(false);
 }
+void AEnemyManagementSystem::DespawnTyrantEnemies() const noexcept {
+	if (tyrantEnemiesPool.Num() == 0)
+		return;
+
+	for (auto& enemy : tyrantEnemiesPool)
+		enemy->SetEnemyState(false);
+}
 bool AEnemyManagementSystem::CreateEnemyPool(EnemyType type, uint32 count) {
 	if (type == EnemyType::MELEE) {
 		ClearMeleeEnemiesPool();
@@ -74,6 +85,10 @@ bool AEnemyManagementSystem::CreateEnemyPool(EnemyType type, uint32 count) {
 		ClearRangedEnemiesPool();
 		return CreateRangedEnemiesPool(count);
 	}
+	else if (type == EnemyType::TYRANT) {
+		ClearTyrantEnemiesPool();
+		return CreateTyrantEnemiesPool(count);
+	}
 
 	return false;
 }
@@ -81,6 +96,7 @@ void AEnemyManagementSystem::ClearAllPools() noexcept {
 	ClearMeleeEnemiesPool();
 	ClearSpiderEnemiesPool();
 	ClearRangedEnemiesPool();
+	ClearTyrantEnemiesPool();
 }
 void AEnemyManagementSystem::DespawnAllVFX() noexcept {
 	if (enemySpawnPortalVFXPool.Num() <= 0)
@@ -164,6 +180,22 @@ TArray<ASpiderAI*> AEnemyManagementSystem::GetAllEnemies<ASpiderAI>(AEnemyAIBase
 
 	return list;
 }
+template<>
+TArray<ATyrantAI*> AEnemyManagementSystem::GetAllEnemies<ATyrantAI>(AEnemyAIBase* self, bool excludeSelf) {
+	TArray<ATyrantAI*> list;
+	list.Reserve(tyrantEnemiesPool.Num());
+
+	for (auto& entry : tyrantEnemiesPool) {
+		if (excludeSelf) {
+			if (self == entry)
+				continue;
+		}
+
+		list.Add((ATyrantAI*)entry);
+	}
+
+	return list;
+}
 
 
 bool AEnemyManagementSystem::SpawnMeleeEnemy(FVector location) {
@@ -183,6 +215,12 @@ bool AEnemyManagementSystem::SpawnRangedEnemy(FVector location) {
 		return false;
 
 	return SpawnEnemy_Internal(rangedEnemiesPool, location);
+}
+bool AEnemyManagementSystem::SpawnTyrantEnemy(FVector location) {
+	if (tyrantEnemiesPool.Num() == 0)
+		return false;
+
+	return SpawnEnemy_Internal(tyrantEnemiesPool, location);
 }
 bool AEnemyManagementSystem::SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FVector location) {
 	if (pool.Num() == 0)
@@ -307,6 +345,27 @@ bool AEnemyManagementSystem::CreateRangedEnemiesPool(uint32 count) {
 	else
 		return false;
 }
+bool AEnemyManagementSystem::CreateTyrantEnemiesPool(uint32 count) {
+	if (!tyrantEnemyClass)
+		return false;
+
+	for (uint32 i = 0; i < count; i++) {
+		ATyrantAI* newEnemy = GetWorld()->SpawnActor<ATyrantAI>(tyrantEnemyClass);
+		if (!newEnemy)
+			continue;
+
+		newEnemy->SetEnemyState(false);
+		newEnemy->SetEnemyManagementRef(*this);
+		newEnemy->SetWaveManagerRef(*waveManagerRef);
+		newEnemy->SetEnemyType(EnemyType::RANGED);
+		tyrantEnemiesPool.Add(newEnemy);
+	}
+
+	if (tyrantEnemiesPool.Num() > 0)
+		return true;
+	else
+		return false;
+}
 void AEnemyManagementSystem::ClearMeleeEnemiesPool() noexcept {
 	if (meleeEnemiesPool.Num() == 0)
 		return;
@@ -334,6 +393,15 @@ void AEnemyManagementSystem::ClearRangedEnemiesPool() noexcept {
 
 	rangedEnemiesPool.Empty();
 }
+void AEnemyManagementSystem::ClearTyrantEnemiesPool() noexcept {
+	if (tyrantEnemiesPool.Num() == 0)
+		return;
+
+	for (auto& entry : tyrantEnemiesPool)
+		entry->Destroy();
+
+	tyrantEnemiesPool.Empty();
+}
 void AEnemyManagementSystem::ValidateEnemyTypesClasses() const noexcept {
 	if (!meleeEnemyClass)
 		Debugging::CustomWarning("Melee enemy class is invalid!\nEnemyManagementSystem wont be able to spawn melee enemies!");
@@ -343,6 +411,9 @@ void AEnemyManagementSystem::ValidateEnemyTypesClasses() const noexcept {
 
 	if (!rangedEnemyClass)
 		Debugging::CustomWarning("Ranged enemy class is invalid!\nEnemyManagementSystem wont be able to spawn ranged enemies!");
+
+	if (!tyrantEnemyClass)
+		Debugging::CustomWarning("Tyrant enemy class is invalid!\nEnemyManagementSystem wont be able to spawn tyrant enemies!");
 }
 void AEnemyManagementSystem::ValidateVFXClasses() const noexcept {
 	if (!enemySpawnPortalVFXClass)

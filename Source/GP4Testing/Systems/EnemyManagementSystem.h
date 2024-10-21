@@ -15,12 +15,14 @@ class ATriggerVFX;
 class AMeleeAI;
 class ARangedAI;
 class ASpiderAI;
+class ATyrantAI;
 
 UENUM(BlueprintType)
 enum class EnemyType : uint8 {
 	MELEE,
 	SPIDER,
-	RANGED
+	RANGED,
+	TYRANT
 };
 
 
@@ -39,6 +41,7 @@ public:
 	void DespawnMeleeEnemies() const noexcept;
 	void DespawnSpiderEnemies() const noexcept;
 	void DespawnRangedEnemies() const noexcept;
+	void DespawnTyrantEnemies() const noexcept;
 
 public:
 	bool CreateEnemyPool(EnemyType type, uint32 count);
@@ -62,6 +65,10 @@ public:
 	template<>
 	TArray<ASpiderAI*> GetAllEnemies<ASpiderAI>(AEnemyAIBase* self, bool excludeSelf);
 
+	template<>
+	TArray<ATyrantAI*> GetAllEnemies<ATyrantAI>(AEnemyAIBase* self, bool excludeSelf);
+	
+
 
 public:
 	inline void SetActiveState(bool state) noexcept { active = state; }
@@ -74,6 +81,7 @@ private:
 	bool SpawnMeleeEnemy(FVector location);
 	bool SpawnSpiderEnemy(FVector location);
 	bool SpawnRangedEnemy(FVector location);
+	bool SpawnTyrantEnemy(FVector location);
 	bool SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FVector location);
 	ATriggerVFX* GetAvailableVFX() const noexcept;
 
@@ -81,9 +89,11 @@ private:
 	bool CreateMeleeEnemiesPool(uint32 count);
 	bool CreateSpiderEnemiesPool(uint32 count);
 	bool CreateRangedEnemiesPool(uint32 count);
+	bool CreateTyrantEnemiesPool(uint32 count);
 	void ClearMeleeEnemiesPool() noexcept;
 	void ClearSpiderEnemiesPool() noexcept;
 	void ClearRangedEnemiesPool() noexcept;
+	void ClearTyrantEnemiesPool() noexcept;
 	void ValidateEnemyTypesClasses() const noexcept;
 	void ValidateVFXClasses() const noexcept;
 
@@ -116,6 +126,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
 	TSubclassOf<AEnemyAIBase> rangedEnemyClass = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyTypes")
+	TSubclassOf<AEnemyAIBase> tyrantEnemyClass = nullptr;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging")
@@ -133,6 +145,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
 	TArray<AEnemyAIBase*> rangedEnemiesPool;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pools|Enemies")
+	TArray<AEnemyAIBase*> tyrantEnemiesPool;
 
 private:
 	APrimaryGameMode* primaryGameModeRef = nullptr;

@@ -96,6 +96,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
 	int currentSpawnedRangedEnemies = 0;
 
+	UPROPERTY(VisibleAnywhere, Category = "Debugging|Spawns")
+	int currentSpawnedTyrantEnemies = 0;
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Spawns")
 	TArray<AActor*> spawnPoints;
