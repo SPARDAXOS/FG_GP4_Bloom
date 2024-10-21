@@ -95,7 +95,7 @@ void AGunComponent::Fire()
 
 						VFX2->Activate(true);
 					}
-					DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
+					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}
 			}
 
