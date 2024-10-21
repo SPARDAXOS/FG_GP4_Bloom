@@ -23,7 +23,7 @@ APrimaryGameMode::APrimaryGameMode()
 	: Super()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	audioComponent = CreateDefaultSubobject<UAudioComponent>("Audio");
 
 }
 
@@ -276,6 +276,7 @@ void APrimaryGameMode::PauseGame() noexcept {
 
 	gamePaused = UGameplayStatics::SetGamePaused(this, true);
 	if (gamePaused) {
+		audioComponent->SetPaused(true);
 		primaryPlayerRef->SetPlayerHUDState(false);
 		primaryHUDRef->SetMenuState(MenuState::PAUSE_MENU);
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::PAUSED);
@@ -288,6 +289,7 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 
 	gamePaused = UGameplayStatics::SetGamePaused(this, false);
 	if (!gamePaused) {
+		audioComponent->SetPaused(false);
 		primaryPlayerRef->SetPlayerHUDState(true);
 		primaryHUDRef->ClearViewport();
 		primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::GAMEPLAY);
@@ -295,27 +297,21 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 	}
 }
 
-void APrimaryGameMode::PlayMainMenuMusic()
-{
-	if (audioComponent) {
-		audioComponent->Stop();
-	}
-	if (MainMenuMusic)
-	{
-		audioComponent = UGameplayStatics::SpawnSound2D(this, MainMenuMusic);
-	}
-}
+void APrimaryGameMode::PlayMainMenuMusic() {
+	if (!audioComponent)
+		return;
 
-void APrimaryGameMode::PlayGamePlayMusic()
-{
-	if (audioComponent)
-	{
-		audioComponent->Stop();
-	}
-	if (GamePlayMusic)
-	{
-		audioComponent = UGameplayStatics::SpawnSound2D(this, GamePlayMusic);
-	}
+	audioComponent->Stop();
+	audioComponent->SetSound(MainMenuMusic);
+	audioComponent->Play();
+}
+void APrimaryGameMode::PlayGamePlayMusic() {
+	if (!audioComponent)
+		return;
+
+	audioComponent->Stop();
+	audioComponent->SetSound(GamePlayMusic);
+	audioComponent->Play();
 }
 
 

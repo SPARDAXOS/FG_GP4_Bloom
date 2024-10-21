@@ -72,7 +72,6 @@ void AEnemyManagementSystem::DispawnAllVFX() noexcept {
 
 	for (auto& vfx : enemySpawnPortalVFXPool)
 		vfx->Deactivate();
-
 }
 
 
