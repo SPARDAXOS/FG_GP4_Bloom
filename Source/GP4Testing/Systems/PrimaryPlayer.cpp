@@ -65,6 +65,8 @@ void APrimaryPlayer::SetupStartingState() noexcept {
 
 	if (weaponManagementSystemRef)
 		weaponManagementSystemRef->SetupStartingState();
+
+	GetCamera()->SetRelativeTransform(cameraInitialTransform);
 }
 void APrimaryPlayer::SetPlayerState(bool state) noexcept {
 	SetActorTickEnabled(state);
