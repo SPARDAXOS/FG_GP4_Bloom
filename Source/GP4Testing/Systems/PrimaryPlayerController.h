@@ -50,7 +50,6 @@ protected:
 	void HandleDash();
 	void HandleSlide(const FInputActionValue& value);
 	void HandleShoot(const FInputActionValue& value);
-	void HandleMelee();
 	void HandlePause();
 	void HandleReload();
 	void HandleSwitchNextWeapon();

@@ -58,7 +58,6 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	enhancedInputComponentRef->BindAction(dash, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleDash);
 	enhancedInputComponentRef->BindAction(slide, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleSlide);
 	enhancedInputComponentRef->BindAction(shoot, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleShoot);
-	enhancedInputComponentRef->BindAction(melee, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleMelee);
 	enhancedInputComponentRef->BindAction(pauseToggle, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandlePause);
 	enhancedInputComponentRef->BindAction(reload, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleReload);
 	enhancedInputComponentRef->BindAction(switchNextWeapon, ETriggerEvent::Triggered, this, &APrimaryPlayerController::HandleSwitchNextWeapon);
@@ -178,12 +177,6 @@ void APrimaryPlayerController::HandleShoot(const FInputActionValue& value) {
 
 	bool input = value.Get<bool>();
 	primaryPlayerRef->HandleShootInput(input);
-}
-void APrimaryPlayerController::HandleMelee() {
-	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
-		return;
-
-	primaryPlayerRef->HandleMeleeInput();
 }
 void APrimaryPlayerController::HandlePause() {
 	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
