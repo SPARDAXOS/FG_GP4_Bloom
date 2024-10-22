@@ -58,4 +58,11 @@ private:
 
 	TMap<WeaponType, AGunComponent*> AcquiredWeapons;
 	WeaponType EquippedWeapon;
+
+public:
+	void StartWeaponSwap();
+	FTimerHandle SwapTimerHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bSwappingWeapon = false;
 };

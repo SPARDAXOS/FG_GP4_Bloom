@@ -1,7 +1,7 @@
 #include "WeaponManagementSystem.h"
 
 bool AWeaponManagementSystem::UseCurrentWeapon(bool& input) noexcept {
-	if (AcquiredWeapons.Num() > 0)
+	if (AcquiredWeapons.Num() > 0 && !bSwappingWeapon)
 	{
 		AGunComponent* Weapon = GetCurrentWeapon();
 
@@ -49,6 +49,7 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
+		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -82,6 +83,7 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 	if (AcquiredWeapons.Num() > 1)
 	{
+		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -117,6 +119,7 @@ bool AWeaponManagementSystem::WeaponSlot1() noexcept
 {
 	if (AcquiredWeapons.Num() > 0)
 	{
+		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -142,6 +145,7 @@ bool AWeaponManagementSystem::WeaponSlot2() noexcept
 {
 	if (AcquiredWeapons.Num() > 1)
 	{
+		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -167,6 +171,7 @@ bool AWeaponManagementSystem::WeaponSlot3() noexcept
 {
 	if (AcquiredWeapons.Num() > 2)
 	{
+		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -335,5 +340,18 @@ int AWeaponManagementSystem::GetLoadedMagazine()
 		Mag = Weapon->Magazine;
 	}
 	return Mag;
+}
+
+void AWeaponManagementSystem::StartWeaponSwap()
+{
+	bSwappingWeapon = true;
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
+		{
+			bSwappingWeapon = false;
+		});
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.3f, false);
 }
 

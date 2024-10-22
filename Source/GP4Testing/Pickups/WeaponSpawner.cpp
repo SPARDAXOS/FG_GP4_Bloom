@@ -68,9 +68,8 @@ void AWeaponSpawner::Respawn() {
     if (APrimaryGameMode::GetPrimaryPlayer()->GetWeaponManagementSystem().HasWeapon(type))
         return;
 
-
     pickupRef = GetWorld()->SpawnActor<AGunComponent>(weaponPickupClass);
-    //pickupRef->RegisterPickupSpawner(*this);     //This is what is left
+    pickupRef->RegisterPickupSpawner(*this);
     pickupRef->SetActorLocation(spawnPoint->GetComponentLocation());
     pickupSpawned = true;
 }
