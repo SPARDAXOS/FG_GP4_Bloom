@@ -3,7 +3,29 @@
 #include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+
+
+APlayerMovementSystem::APlayerMovementSystem() {
+	PrimaryActorTick.bCanEverTick = true;
+}
+void APlayerMovementSystem::Tick(float deltaTime) {
+	Super::Tick(deltaTime);
+
+	if (bIsSliding || CurrentSlideSpeed > 0.0f) {
+		CurrentSlideSpeed -= SlideSpeedDecreaseRate * deltaTime;
+		if (CurrentSlideSpeed <= 0.0f) {
+			CurrentSlideSpeed = 0.0f;
+			UpdateSlideVelocity();
+			StopSlide();
+			return;
+		}
+
+		UpdateSlideVelocity();
+	}
+}
+
 
 
 void APlayerMovementSystem::UpdateMovement(FVector2D axis) noexcept {
@@ -33,6 +55,7 @@ void APlayerMovementSystem::Dash() noexcept
 	{
 
 		FVector DashDir = primaryPlayerRef->GetCamera()->GetForwardVector();
+		DashDir.Z += DashZOffset;
 		FVector DashVel = DashDir * DashStrength;
 		primaryPlayerRef->LaunchCharacter(DashVel, true, true);
 		
@@ -46,26 +69,16 @@ void APlayerMovementSystem::Dash() noexcept
 	}
 }
 
-void APlayerMovementSystem::Slide() noexcept
-{
-	if (bCanSlide && primaryPlayerRef) 
-	{
+void APlayerMovementSystem::Slide() noexcept {
+	if (!bIsSliding && CurrentSlideSpeed == 0.0f) {
 
-		FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
-		SlideDir.Z = 0.0f;
-		FVector SlideVel = SlideDir * SlideSpeed;
-		primaryPlayerRef->LaunchCharacter(SlideVel, true, false);
-
-		bCanSlide = false;
+		CurrentSlideSpeed = SlideSpeed;
 		bIsSliding = true;
 
-		GetWorld()->GetTimerManager().SetTimer(SlideTimerHandle, this, &APlayerMovementSystem::StopSlide, SlideDuration, false);
-
-		GetWorld()->GetTimerManager().SetTimer(SlideCooldownTimerHandle, this, &APlayerMovementSystem::resetSlide, SlideCooldown, false);
-
+		FVector cameraLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
+		cameraLocation.Z = SlideCameraZHeight;
+		primaryPlayerRef->GetCamera()->SetRelativeLocation(cameraLocation);
 	}
-
-
 }
 
 void APlayerMovementSystem::SetupStartingState() noexcept {
@@ -76,35 +89,35 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 
 	}
 
-	bCanSlide = true;
 	bCanDash = true;
 	bIsSliding = false;
 	bIsDashing = false;
+	CurrentSlideSpeed = 0.0f;
 }
 
-void APlayerMovementSystem::StopSlide()
-{
-	FVector currentVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
-	primaryPlayerRef->GetCharacterMovement()->Velocity = currentVelocity * slideRegainedVelocity;
-	
+
+void APlayerMovementSystem::UpdateSlideVelocity() {
+	FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
+	FVector SlideVel = SlideDir * CurrentSlideSpeed;
+	SlideVel.Z = primaryPlayerRef->GetCharacterMovement()->Velocity.Z;
+	primaryPlayerRef->GetCharacterMovement()->Velocity = SlideVel;
+}
+void APlayerMovementSystem::StopSlide() noexcept {
+
+	FVector cameraLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
+	cameraLocation.Z = primaryPlayerRef->GetInitialCameraPosition().Z;
+	primaryPlayerRef->GetCamera()->SetRelativeLocation(cameraLocation);
+
+	CurrentSlideSpeed = 0.0f;
 	bIsSliding = false;
 }
-
-void APlayerMovementSystem::StopDash()
-{
+void APlayerMovementSystem::StopDash() {
 	FVector currentVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
 	primaryPlayerRef->GetCharacterMovement()->Velocity = currentVelocity * dashRegainedVelocity;
 	
 	bIsDashing = false;
 }
-
-void APlayerMovementSystem::resetSlide()
-{
-	bCanSlide = true;
-}
-
-void APlayerMovementSystem::resetDash()
-{
+void APlayerMovementSystem::resetDash() {
 	bCanDash = true;
 }
 

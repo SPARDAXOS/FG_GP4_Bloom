@@ -14,6 +14,12 @@ class GP4TESTING_API APlayerMovementSystem : public AActor {
 	GENERATED_BODY()
 
 public:
+	APlayerMovementSystem();
+
+public:
+	virtual void Tick(float deltaTime) override;
+
+public:
 	void UpdateMovement(FVector2D axis) noexcept;
 	void UpdateRotation(FVector2D axis) noexcept;
 	void Jump() noexcept;
@@ -28,9 +34,9 @@ public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
 
 private:
-	void StopSlide();
+	void UpdateSlideVelocity();
+	void StopSlide() noexcept;
 	void StopDash();
-	void resetSlide();
 	void resetDash();
 	
 
@@ -61,18 +67,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
 	float DashCooldown = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	float DashZOffset = 10.0f;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
-	float slideRegainedVelocity = 1.0f;
+	float SlideRegainedVelocity = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideSpeed = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
-	float SlideDuration = 1.0f;
+	float SlideSpeedDecreaseRate = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
-	float SlideCooldown = 2.0f;
+	float SlideCameraZHeight = -90.0f;
 
 
 	UPROPERTY(EditAnywhere, Category = "Audio")
@@ -80,14 +89,13 @@ protected:
 
 private:
     bool bCanDash = true;
-	bool bCanSlide = true;
 	bool bIsDashing = false;
 	bool bIsSliding = false;
 
+	float CurrentSlideSpeed = 0.0f;
+
 	FTimerHandle DashTimerHandle;
-	FTimerHandle SlideTimerHandle;
 	FTimerHandle DashCooldownTimerHandle;
-	FTimerHandle SlideCooldownTimerHandle;
 
 private:
 	

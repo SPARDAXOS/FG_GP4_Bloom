@@ -50,7 +50,7 @@ void APrimaryPlayer::Update(float deltaTime) {
 	}
 	else if (GetCharacterMovement()->GetLastUpdateVelocity().Length() == 0)
 	{
-		StopShakeCamera();
+		StopShakeCamera(); 
 	}
 }
 void APrimaryPlayer::SetupStartingState() noexcept {

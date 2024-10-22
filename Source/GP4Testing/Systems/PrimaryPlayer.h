@@ -53,6 +53,8 @@ public:
 	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
 	inline APrimaryGameMode* GetPrimaryGameMode() noexcept { return primaryGameModeRef; }
 
+	inline FVector GetInitialCameraPosition() const noexcept { return cameraInitialTransform.GetLocation(); }
+
 
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;

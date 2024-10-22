@@ -218,7 +218,10 @@ void AWeaponManagementSystem::SetupStartingState() noexcept {
 
 void AWeaponManagementSystem::ClearAllWeapons() noexcept
 {
-	AcquiredWeapons.Reset();
+	for (auto& entity : AcquiredWeapons)
+		entity.Value->Destroy();
+
+	AcquiredWeapons.Empty();
 	EquippedWeapon = WeaponType::NONE;
 
 }
