@@ -11,6 +11,7 @@
 #include "GP4Testing/Utility/Debugging.h"
 #include "../Utility/Timer.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void AMeleeAI::Die()
 {
@@ -45,6 +46,7 @@ void AMeleeAI::Attack()
 			if(Hit.GetActor()->ActorHasTag("Player")) // CHECK IF ENGINE TRACE HAS BEEN ADDED IF THIS DOESN'T FUNCTION
 				{
 				APrimaryPlayer* HitPlayer = Cast<APrimaryPlayer>(Hit.GetActor());
+				SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), HitPlayer->GetActorLocation()));
 				HitPlayer->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
 				}
 		}
