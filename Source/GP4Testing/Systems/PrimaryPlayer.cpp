@@ -44,7 +44,7 @@ void APrimaryPlayer::Start() {
 	StartPlayerSystems();
 }
 void APrimaryPlayer::Update(float deltaTime) {
-	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0 && bIsGrounded) // same thing as getting the ABS
+	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0 && GetCharacterMovement()->IsMovingOnGround()) // same thing as getting the ABS
 	{
 		HandleRunningShake();
 	}
@@ -65,6 +65,8 @@ void APrimaryPlayer::SetupStartingState() noexcept {
 
 	if (weaponManagementSystemRef)
 		weaponManagementSystemRef->SetupStartingState();
+
+	GetCamera()->SetRelativeTransform(cameraInitialTransform);
 }
 void APrimaryPlayer::SetPlayerState(bool state) noexcept {
 	SetActorTickEnabled(state);
@@ -129,29 +131,6 @@ void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 
 	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
-void APrimaryPlayer::HandleMeleeInput() noexcept {
-	if (bCanMelee)
-	{
-		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit, GetCamera()->GetComponentLocation(), (GetCamera()->GetForwardVector()*MeleeRange)+GetCamera()->GetComponentLocation(), ECC_GameTraceChannel3);
-		DrawDebugLine(GetWorld(), GetCamera()->GetComponentLocation(), (GetCamera()->GetForwardVector()*MeleeRange)+GetCamera()->GetComponentLocation(), FColor::Black, false, 3);
-		if (Hit.bBlockingHit)
-		{
-			AEnemyAIBase* HitEnemy = Cast<AEnemyAIBase>(Hit.GetActor());
-			if(HitEnemy)
-			{
-				HitEnemy->HealthComponent->TakeDamage(40);
-			}
-		}
-		bCanMelee = false;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APrimaryPlayer::ResetMelee, MeleeCooldown);
-	}
-}
-void APrimaryPlayer::ResetMelee()
-{
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	bCanMelee = true;
-}
 void APrimaryPlayer::HandlePauseInput() noexcept {
 	if (!primaryGameModeRef->GetGamePaused())
 		primaryGameModeRef->PauseGame();
@@ -208,7 +187,6 @@ void APrimaryPlayer::HandleHitShake()
 }
 void APrimaryPlayer::OnJumped_Implementation()
 {
-	bIsGrounded = false;
 	StartJumpDistance = GetCharacterMovement()->GetActorLocation().Z;
 	Debugging::PrintString("Jumped");
 	playerMovementSystemRef->PlayJumpAudio();
@@ -216,7 +194,6 @@ void APrimaryPlayer::OnJumped_Implementation()
 void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall length check
 {
 	Super::Landed(Hit);
-	bIsGrounded = true;
 	DistanceFallen = StartJumpDistance - GetCharacterMovement()->GetActorLocation().Z;
 	Debugging::PrintString(FString::SanitizeFloat(DistanceFallen));
 	if (DistanceFallen >= 150)

@@ -9,6 +9,7 @@
 #include "../Systems/PrimaryPlayer.h"
 #include <GP4Testing/Components/HealthComponent.h>
 #include "GP4Testing/Pickups/WeaponSpawner.h"
+#include "GP4Testing/VFXEntities/ImpactVFX.h"
 
 #include "../AI/EnemyAIBase.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
@@ -23,17 +24,14 @@ AGunComponent::AGunComponent()
 
 	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	VFX->SetupAttachment(WeaponMesh);
-
-	/*VFX2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX2"));
-	VFX2->SetupAttachment(WeaponMesh);*/
 	
 }
 
-/*void BeginPlay() {
+void AGunComponent::BeginPlay() {
 	Super::BeginPlay();
 
-
-}*/
+	impactVFX = GetWorld()->SpawnActor<AImpactVFX>(ImpactVFXClass);
+}
 
 void AGunComponent::Fire()
 {
@@ -101,9 +99,9 @@ void AGunComponent::Fire()
 							}
 						}
 
-						/*VFX2->SetWorldLocation(Hit.Location);
-						VFX2->SetWorldRotation(Hit.Normal.ToOrientationQuat());
-						VFX2->Activate(true);*/
+						impactVFX->SetActorLocation(Hit.Location);
+						impactVFX->SetActorRotation(Hit.Normal.ToOrientationQuat());
+						impactVFX->Activate();
 					}
 					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}

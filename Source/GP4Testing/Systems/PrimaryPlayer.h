@@ -63,7 +63,6 @@ public: //Add Callbacks For Input Here!
 	void HandleDashInput() noexcept;
 	void HandleSlideInput(bool& input) noexcept;
 	void HandleShootInput(bool& input) noexcept;
-	void HandleMeleeInput() noexcept;
 	void HandlePauseInput() noexcept;
 	void HandleReloadInput() noexcept;
 	void HandleSwitchNextWeaponInput() noexcept;
@@ -115,17 +114,6 @@ private: //Camera
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
 	float springArmLength;
-
-private: //Melee
-	UPROPERTY(EditDefaultsOnly)
-	float MeleeRange = 250;
-
-	UPROPERTY(EditDefaultsOnly)
-	float MeleeCooldown = 1.f;
-
-	bool bCanMelee = true;
-	FTimerHandle TimerHandle;
-	void ResetMelee();
 
 public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.com/documentation/en-us/unreal-engine/camera-shakes-in-unreal-engine
 	APlayerCameraManager* CameraManager = nullptr;

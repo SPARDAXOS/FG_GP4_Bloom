@@ -237,10 +237,13 @@ bool AEnemyManagementSystem::SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FV
 			if (vfx) {
 				FOnVFXFinishedSignature callback;
 				callback.BindLambda([this, &enemy, location]() {
+					if (!active)
+						return;
+
 					enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
 					enemy->SetupStartingState();
 					enemy->SetEnemyState(true);
-					});
+				});
 				vfx->SetupTimer(callback, enemySpawnVFXDelay);
 				FVector spawnPosition = location;
 				spawnPosition.Z += enemySpawnPortalVFXZOffset;
