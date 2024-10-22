@@ -31,7 +31,6 @@ void APlayerMovementSystem::Dash() noexcept
 {
 	if (bCanDash && primaryPlayerRef)
 	{
-		StoredVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
 
 		FVector DashDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 		FVector DashVel = DashDir * DashStrength;
@@ -51,7 +50,6 @@ void APlayerMovementSystem::Slide() noexcept
 {
 	if (bCanSlide && primaryPlayerRef) 
 	{
-		StoredVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
 
 		FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 		SlideDir.Z = 0.0f;
@@ -86,14 +84,16 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 
 void APlayerMovementSystem::StopSlide()
 {
-	//primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	FVector currentVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
+	primaryPlayerRef->GetCharacterMovement()->Velocity = currentVelocity * slideRegainedVelocity;
 	
 	bIsSliding = false;
 }
 
 void APlayerMovementSystem::StopDash()
 {
-	// primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	FVector currentVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
+	primaryPlayerRef->GetCharacterMovement()->Velocity = currentVelocity * dashRegainedVelocity;
 	
 	bIsDashing = false;
 }
