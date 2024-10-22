@@ -103,6 +103,10 @@ private: //HUD
 	UPROPERTY(EditDefaultsOnly, Category = "Player|HUD", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UPrimaryPlayerHUD> primaryPlayerHUDClass = nullptr;
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Player|Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* fallLandSound;
+
 private: //Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
 	FTransform cameraInitialTransform;
