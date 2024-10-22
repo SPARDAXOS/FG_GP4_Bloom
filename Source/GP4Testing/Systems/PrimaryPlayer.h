@@ -53,13 +53,15 @@ public:
 	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
 	inline APrimaryGameMode* GetPrimaryGameMode() noexcept { return primaryGameModeRef; }
 
+	inline FVector GetInitialCameraPosition() const noexcept { return cameraInitialTransform.GetLocation(); }
+
 
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;
 	void HandleLookInput(FVector2D axis) noexcept;
 	void HandleJumpInput() noexcept;
 	void HandleDashInput() noexcept;
-	void HandleSlideInput() noexcept;
+	void HandleSlideInput(bool& input) noexcept;
 	void HandleShootInput(bool& input) noexcept;
 	void HandleMeleeInput() noexcept;
 	void HandlePauseInput() noexcept;
