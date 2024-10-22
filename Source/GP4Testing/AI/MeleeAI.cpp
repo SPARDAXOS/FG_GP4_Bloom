@@ -46,7 +46,11 @@ void AMeleeAI::Attack()
 			if(Hit.GetActor()->ActorHasTag("Player")) // CHECK IF ENGINE TRACE HAS BEEN ADDED IF THIS DOESN'T FUNCTION
 				{
 				APrimaryPlayer* HitPlayer = Cast<APrimaryPlayer>(Hit.GetActor());
-				SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), HitPlayer->GetActorLocation()));
+				FRotator LookAtRotator = FRotator::ZeroRotator;
+				LookAtRotator.Pitch = GetActorRotation().Pitch;
+				LookAtRotator.Yaw = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), HitPlayer->GetActorLocation()).Yaw;
+				LookAtRotator.Roll = GetActorRotation().Roll;
+				SetActorRotation(LookAtRotator);
 				HitPlayer->GetPlayerHealthSystem().HealthComponent->TakeDamage(Damage);
 				}
 		}
