@@ -129,29 +129,6 @@ void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 
 	weaponManagementSystemRef->UseCurrentWeapon(input);
 }
-void APrimaryPlayer::HandleMeleeInput() noexcept {
-	if (bCanMelee)
-	{
-		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit, GetCamera()->GetComponentLocation(), (GetCamera()->GetForwardVector()*MeleeRange)+GetCamera()->GetComponentLocation(), ECC_GameTraceChannel3);
-		DrawDebugLine(GetWorld(), GetCamera()->GetComponentLocation(), (GetCamera()->GetForwardVector()*MeleeRange)+GetCamera()->GetComponentLocation(), FColor::Black, false, 3);
-		if (Hit.bBlockingHit)
-		{
-			AEnemyAIBase* HitEnemy = Cast<AEnemyAIBase>(Hit.GetActor());
-			if(HitEnemy)
-			{
-				HitEnemy->HealthComponent->TakeDamage(40);
-			}
-		}
-		bCanMelee = false;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APrimaryPlayer::ResetMelee, MeleeCooldown);
-	}
-}
-void APrimaryPlayer::ResetMelee()
-{
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	bCanMelee = true;
-}
 void APrimaryPlayer::HandlePauseInput() noexcept {
 	if (!primaryGameModeRef->GetGamePaused())
 		primaryGameModeRef->PauseGame();
