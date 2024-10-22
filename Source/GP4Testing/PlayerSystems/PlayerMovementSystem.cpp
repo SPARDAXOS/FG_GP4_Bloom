@@ -86,14 +86,16 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 
 void APlayerMovementSystem::StopSlide()
 {
-	//primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	FVector currentVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
+	primaryPlayerRef->GetCharacterMovement()->Velocity = currentVelocity * slideRegainedVelocity;
 	
 	bIsSliding = false;
 }
 
 void APlayerMovementSystem::StopDash()
 {
-	// primaryPlayerRef->GetCharacterMovement()->Velocity = StoredVelocity;
+	FVector currentVelocity = primaryPlayerRef->GetCharacterMovement()->Velocity;
+	primaryPlayerRef->GetCharacterMovement()->Velocity = currentVelocity * dashRegainedVelocity;
 	
 	bIsDashing = false;
 }
