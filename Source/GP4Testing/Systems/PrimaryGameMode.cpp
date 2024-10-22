@@ -232,7 +232,7 @@ void APrimaryGameMode::ProgressGame() noexcept {
 
 	levelManagementRef->LoadLevel("MainMenu", [this]() {
 		levelManagementRef->UnloadLevel(loadedLevelKey, [this]() {
-			//Main Menu Music
+			PlayMainMenuMusic();
 			primaryPlayerControllerRef->SetControllerInputMode(ControllerInputMode::MENU);
 			primaryHUDRef->SetMenuState(MenuState::LEVEL_SELECT_MENU);
 			currentPrimaryGameState = PrimaryGameState::MENU;
@@ -301,6 +301,7 @@ void APrimaryGameMode::PlayMainMenuMusic() {
 	if (!audioComponent)
 		return;
 
+	audioComponent->SetPaused(false);
 	audioComponent->Stop();
 	audioComponent->SetSound(MainMenuMusic);
 	audioComponent->Play();
@@ -309,6 +310,7 @@ void APrimaryGameMode::PlayGamePlayMusic() {
 	if (!audioComponent)
 		return;
 
+	audioComponent->SetPaused(false);
 	audioComponent->Stop();
 	audioComponent->SetSound(GamePlayMusic);
 	audioComponent->Play();
