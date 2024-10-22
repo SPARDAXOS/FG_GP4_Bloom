@@ -221,6 +221,7 @@ void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall 
 	Debugging::PrintString(FString::SanitizeFloat(DistanceFallen));
 	if (DistanceFallen >= 150)
 	{
+		UGameplayStatics::PlaySoundAtLocation(this, fallLandSound, GetActorLocation());
 		float Strength = DistanceFallen / MaxFallHeight;
 		ShakeCamera(LandShake, Strength);
 	}
