@@ -49,6 +49,9 @@ private:
 	float currentMovementSpeedModifier = 1.0f;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float dashRegainedVelocity = 1.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
 	float DashStrength = 1000.0f;
 
@@ -60,6 +63,9 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float slideRegainedVelocity = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideSpeed = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
@@ -67,6 +73,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideCooldown = 2.0f;
+
 
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	USoundBase* JumpAudio;
