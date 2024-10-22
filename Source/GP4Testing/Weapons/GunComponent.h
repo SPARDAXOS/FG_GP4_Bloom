@@ -9,6 +9,7 @@
 class APrimaryPlayer;
 class UNiagaraComponent;
 class AWeaponSpawner;
+class AImpactVFX;
 
 UCLASS()
 class GP4TESTING_API AGunComponent : public AActor
@@ -17,7 +18,7 @@ class GP4TESTING_API AGunComponent : public AActor
 
 public:
 	AGunComponent();
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* WeaponMesh;
@@ -77,7 +78,6 @@ public:
 	int32 Ammo;
 
 public:
-
 	UPROPERTY(Editanywhere)
 	UNiagaraComponent* VFX;
 
@@ -111,6 +111,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Auto Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN", EditConditionHides))
 	float AutoFireRate = 0.15f;
 
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	TSubclassOf<AImpactVFX> ImpactVFXClass = nullptr;
+
 	FVector GetBulletSpread(FVector ViewOrigin, FVector ViewForward);
 
 	FTimerHandle TimerHandle;
@@ -122,6 +125,7 @@ private:
 
 private:
 	void ReloadTimer();
+	TObjectPtr<AImpactVFX> impactVFX;
 
 public:
 	UPROPERTY(EditAnywhere)
