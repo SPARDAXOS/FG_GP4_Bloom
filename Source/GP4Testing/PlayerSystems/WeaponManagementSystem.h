@@ -59,9 +59,17 @@ private:
 	TMap<WeaponType, AGunComponent*> AcquiredWeapons;
 	WeaponType EquippedWeapon;
 
+private:
+	FTimerHandle WeaponSwitchTimer;
+	FTimerHandle SwapTimerHandle;
+	FTimerHandle LambdaTimerHandle;
+
+	bool SwitchNextWeaponTimer();
+	bool SwitchPrevWeaponTimer();
+	bool WeaponSlotTimer(int32 value);
+
 public:
 	void StartWeaponSwap();
-	FTimerHandle SwapTimerHandle;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bSwappingWeapon = false;

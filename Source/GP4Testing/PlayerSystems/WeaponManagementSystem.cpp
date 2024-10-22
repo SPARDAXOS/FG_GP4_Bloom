@@ -45,11 +45,10 @@ bool AWeaponManagementSystem::ReloadWeapon() noexcept
 	return true;
 }
 
-
-bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
+bool AWeaponManagementSystem::SwitchNextWeaponTimer()
+{
 	if (AcquiredWeapons.Num() > 1)
 	{
-		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -77,13 +76,26 @@ bool AWeaponManagementSystem::SwitchNextWeapon() noexcept {
 			NextWeapon->SetActorHiddenInGame(false);
 		}
 	}
-
-	return true;
+	return false;
 }
-bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
+
+void AWeaponManagementSystem::StartWeaponSwap()
+{
+	bSwappingWeapon = true;
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
+		{
+			bSwappingWeapon = false;
+		});
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.3f, false);
+}
+
+bool AWeaponManagementSystem::SwitchPrevWeaponTimer()
+{
 	if (AcquiredWeapons.Num() > 1)
 	{
-		StartWeaponSwap();
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
 		{
@@ -111,84 +123,108 @@ bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept {
 			NextWeapon->SetActorHiddenInGame(false);
 		}
 	}
+	return false;
+}
+
+bool AWeaponManagementSystem::WeaponSlotTimer(int32 value)
+{
+	if (AcquiredWeapons.Num() > value)
+	{
+		AGunComponent* Weapon = GetCurrentWeapon();
+		if (!Weapon)
+		{
+			return false;
+		}
+		Weapon->EndPlay();
+		Weapon->SetActorHiddenInGame(true);
+
+		TArray<WeaponType> weapons;
+		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
+			weapons.Add(it->Key);
+		}
+
+		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[value]);
+		NextWeapon->SetActorHiddenInGame(false);
+		EquippedWeapon = weapons[value];
+	}
+	return false;
+}
+
+bool AWeaponManagementSystem::SwitchNextWeapon() noexcept 
+{
+	StartWeaponSwap();
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
+		{
+			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+			SwitchNextWeaponTimer();
+		});
+
+	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+
+	return true;
+}
+bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept 
+{
+	StartWeaponSwap();
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
+		{
+			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+			SwitchPrevWeaponTimer();
+		});
+
+	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
 
 	return true;
 }
 
 bool AWeaponManagementSystem::WeaponSlot1() noexcept
 {
-	if (AcquiredWeapons.Num() > 0)
-	{
-		StartWeaponSwap();
-		AGunComponent* Weapon = GetCurrentWeapon();
-		if (!Weapon)
+	StartWeaponSwap();
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
 		{
-			return false;
-		}
-		Weapon->EndPlay();
-		Weapon->SetActorHiddenInGame(true);
+			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+			WeaponSlotTimer(0);
+		});
 
-		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
+	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
 
-		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[0]);
-		NextWeapon->SetActorHiddenInGame(false);
-		EquippedWeapon = weapons[0];
-	}
-	
 	return false;
 }
 
 bool AWeaponManagementSystem::WeaponSlot2() noexcept
 {
-	if (AcquiredWeapons.Num() > 1)
-	{
-		StartWeaponSwap();
-		AGunComponent* Weapon = GetCurrentWeapon();
-		if (!Weapon)
+	StartWeaponSwap();
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
 		{
-			return false;
-		}
-		Weapon->EndPlay();
-		Weapon->SetActorHiddenInGame(true);
+			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+			WeaponSlotTimer(1);
+		});
 
-		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
+	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
 
-		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[1]);
-		NextWeapon->SetActorHiddenInGame(false);
-		EquippedWeapon = weapons[1];
-	}
-	
 	return false;
 }
 
 bool AWeaponManagementSystem::WeaponSlot3() noexcept
 {
-	if (AcquiredWeapons.Num() > 2)
-	{
-		StartWeaponSwap();
-		AGunComponent* Weapon = GetCurrentWeapon();
-		if (!Weapon)
+	StartWeaponSwap();
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
 		{
-			return false;
-		}
-		Weapon->EndPlay();
-		Weapon->SetActorHiddenInGame(true);
+			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+			WeaponSlotTimer(2);
+		});
 
-		TArray<WeaponType> weapons;
-		for (auto it = AcquiredWeapons.CreateConstIterator(); it; ++it) {
-			weapons.Add(it->Key);
-		}
-
-		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[2]);
-		NextWeapon->SetActorHiddenInGame(false);
-		EquippedWeapon = weapons[2];
-	}
+	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
 	
 	return false;
 }
@@ -342,16 +378,5 @@ int AWeaponManagementSystem::GetLoadedMagazine()
 	return Mag;
 }
 
-void AWeaponManagementSystem::StartWeaponSwap()
-{
-	bSwappingWeapon = true;
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]
-		{
-			bSwappingWeapon = false;
-		});
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.3f, false);
-}
 
