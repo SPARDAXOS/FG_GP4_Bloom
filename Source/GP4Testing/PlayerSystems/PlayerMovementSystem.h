@@ -34,6 +34,7 @@ public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
 
 private:
+	void UpdateSlideCameraTransition(float deltaTime);
 	void UpdateSlideVelocity();
 	void StopSlide() noexcept;
 	void StopDash();
@@ -87,6 +88,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideCameraZHeight = -90.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCameraTransitionSpeed = 10.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float CameraTransitionTolerans = 0.5f;
+	
+
 
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	USoundBase* JumpAudio;
@@ -110,6 +118,9 @@ protected:
 	FTimerHandle DashTimerHandle;
 	FTimerHandle DashCooldownTimerHandle;
 	Timer slideCooldownTimer;
+
+	bool transitionCameraToSlide = false;
+	bool transitionCameraToNormal = false;
 
 private:
 	
