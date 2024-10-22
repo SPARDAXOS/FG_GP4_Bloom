@@ -4,6 +4,7 @@
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryHUD.h"
+#include "GP4Testing/GUI/OptionsMenuWidget.h"
 
 
 
@@ -20,6 +21,7 @@ void UPauseMenuWidget::ContinueButtonClicked() {
 	primaryGameModeRef->UnpauseGame();
 }
 void UPauseMenuWidget::OptionsButtonClicked() {
+	primaryHUDRef->GetOptionsMenu()->SetBackgroundType(OptionsMenuBackgroundType::STATIC);
 	primaryHUDRef->SetMenuState(MenuState::OPTIONS_MENU);
 }
 void UPauseMenuWidget::QuitButtonClicked() {
