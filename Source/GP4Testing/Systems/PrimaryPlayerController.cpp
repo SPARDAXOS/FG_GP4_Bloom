@@ -165,11 +165,12 @@ void APrimaryPlayerController::HandleDash() {
 
 	primaryPlayerRef->HandleDashInput();
 }
-void APrimaryPlayerController::HandleSlide() {
+void APrimaryPlayerController::HandleSlide(const FInputActionValue& value) {
 	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())
 		return;
 
-	primaryPlayerRef->HandleSlideInput();
+	bool input = value.Get<bool>();
+	primaryPlayerRef->HandleSlideInput(input);
 }
 void APrimaryPlayerController::HandleShoot(const FInputActionValue& value) {
 	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())

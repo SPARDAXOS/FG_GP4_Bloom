@@ -61,7 +61,7 @@ public: //Add Callbacks For Input Here!
 	void HandleLookInput(FVector2D axis) noexcept;
 	void HandleJumpInput() noexcept;
 	void HandleDashInput() noexcept;
-	void HandleSlideInput() noexcept;
+	void HandleSlideInput(bool& input) noexcept;
 	void HandleShootInput(bool& input) noexcept;
 	void HandleMeleeInput() noexcept;
 	void HandlePauseInput() noexcept;

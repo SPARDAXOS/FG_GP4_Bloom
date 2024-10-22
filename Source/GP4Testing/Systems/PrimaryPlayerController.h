@@ -48,7 +48,7 @@ protected:
 	void HandleLook(const FInputActionValue& value);
 	void HandleJump();
 	void HandleDash();
-	void HandleSlide();
+	void HandleSlide(const FInputActionValue& value);
 	void HandleShoot(const FInputActionValue& value);
 	void HandleMelee();
 	void HandlePause();

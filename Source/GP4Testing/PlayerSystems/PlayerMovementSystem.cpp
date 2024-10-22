@@ -6,18 +6,24 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include <functional>
+
 
 APlayerMovementSystem::APlayerMovementSystem() {
 	PrimaryActorTick.bCanEverTick = true;
+
+	slideCooldownTimer.SetOnCompletedCallback(std::bind(&APlayerMovementSystem::ResetSlideCooldown, this));
+	slideCooldownTimer.SetLengthRef(&SlideCooldown);
 }
 void APlayerMovementSystem::Tick(float deltaTime) {
 	Super::Tick(deltaTime);
 
+	if (!bIsSliding && CurrentSlideSpeed == 0.0f && !bCanSlide)
+		slideCooldownTimer.Update(deltaTime);
+
 	if (bIsSliding || CurrentSlideSpeed > 0.0f) {
 		CurrentSlideSpeed -= SlideSpeedDecreaseRate * deltaTime;
 		if (CurrentSlideSpeed <= 0.0f) {
-			CurrentSlideSpeed = 0.0f;
-			UpdateSlideVelocity();
 			StopSlide();
 			return;
 		}
@@ -65,20 +71,28 @@ void APlayerMovementSystem::Dash() noexcept
 
 		GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerMovementSystem::StopDash, DashDuration, false);
 		
-		GetWorld()->GetTimerManager().SetTimer(DashCooldownTimerHandle, this, &APlayerMovementSystem::resetDash, DashCooldown, false);
+		GetWorld()->GetTimerManager().SetTimer(DashCooldownTimerHandle, this, &APlayerMovementSystem::ResetDash, DashCooldown, false);
 	}
 }
 
-void APlayerMovementSystem::Slide() noexcept {
-	if (!bIsSliding && CurrentSlideSpeed == 0.0f) {
+void APlayerMovementSystem::Slide(bool& input) noexcept {
+	if (bIsDashing)
+		return;
 
+	if (!primaryPlayerRef->GetCharacterMovement()->IsMovingOnGround())
+		return;
+
+	if (input && bCanSlide && !bIsSliding && CurrentSlideSpeed == 0.0f) {
 		CurrentSlideSpeed = SlideSpeed;
 		bIsSliding = true;
+		bCanSlide = false;
 
 		FVector cameraLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
 		cameraLocation.Z = SlideCameraZHeight;
 		primaryPlayerRef->GetCamera()->SetRelativeLocation(cameraLocation);
 	}
+	else if (bIsSliding && CurrentSlideSpeed > 0.0f)
+		StopSlide();
 }
 
 void APlayerMovementSystem::SetupStartingState() noexcept {
@@ -89,7 +103,9 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 
 	}
 
+	slideCooldownTimer.ResetTime();
 	bCanDash = true;
+	bCanSlide = true;
 	bIsSliding = false;
 	bIsDashing = false;
 	CurrentSlideSpeed = 0.0f;
@@ -103,12 +119,13 @@ void APlayerMovementSystem::UpdateSlideVelocity() {
 	primaryPlayerRef->GetCharacterMovement()->Velocity = SlideVel;
 }
 void APlayerMovementSystem::StopSlide() noexcept {
+	CurrentSlideSpeed = 0.0f;
+	UpdateSlideVelocity();
 
 	FVector cameraLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
 	cameraLocation.Z = primaryPlayerRef->GetInitialCameraPosition().Z;
 	primaryPlayerRef->GetCamera()->SetRelativeLocation(cameraLocation);
 
-	CurrentSlideSpeed = 0.0f;
 	bIsSliding = false;
 }
 void APlayerMovementSystem::StopDash() {
@@ -117,9 +134,13 @@ void APlayerMovementSystem::StopDash() {
 	
 	bIsDashing = false;
 }
-void APlayerMovementSystem::resetDash() {
+void APlayerMovementSystem::ResetDash() {
 	bCanDash = true;
 }
+void APlayerMovementSystem::ResetSlideCooldown() noexcept {
+	bCanSlide = true;
+}
+
 
 void APlayerMovementSystem::PlayJumpAudio() noexcept
 {

@@ -115,11 +115,11 @@ void APrimaryPlayer::HandleDashInput() noexcept {
 
 	playerMovementSystemRef->Dash();
 }
-void APrimaryPlayer::HandleSlideInput() noexcept {
+void APrimaryPlayer::HandleSlideInput(bool& input) noexcept {
 	if (!playerMovementSystemRef)
 		return;
 
-	playerMovementSystemRef->Slide();
+	playerMovementSystemRef->Slide(input);
 }
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed

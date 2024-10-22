@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
+#include "GP4Testing/Utility/Timer.h"
 
 #include "PlayerMovementSystem.generated.h"
 
@@ -24,7 +24,7 @@ public:
 	void UpdateRotation(FVector2D axis) noexcept;
 	void Jump() noexcept;
 	void Dash() noexcept;
-	void Slide() noexcept;
+	void Slide(bool& input) noexcept;
 	void PlayJumpAudio() noexcept;
 
 public:
@@ -37,7 +37,8 @@ private:
 	void UpdateSlideVelocity();
 	void StopSlide() noexcept;
 	void StopDash();
-	void resetDash();
+	void ResetDash();
+	void ResetSlideCooldown() noexcept;
 	
 
 private:
@@ -78,6 +79,9 @@ protected:
 	float SlideSpeed = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCooldown = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideSpeedDecreaseRate = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
@@ -87,15 +91,25 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Audio")
 	USoundBase* JumpAudio;
 
-private:
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
     bool bCanDash = true;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
+	bool bCanSlide = true;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	bool bIsDashing = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	bool bIsSliding = false;
 
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
 	float CurrentSlideSpeed = 0.0f;
 
 	FTimerHandle DashTimerHandle;
 	FTimerHandle DashCooldownTimerHandle;
+	Timer slideCooldownTimer;
 
 private:
 	
