@@ -40,7 +40,9 @@ void APickupSpawner::EndPlay(const EEndPlayReason::Type EndPlayReason) {
     Super::EndPlay(EndPlayReason); 
 
     if (pickupRef) {
-        pickupRef->Destroy();  
+        if (!pickupRef->IsActorBeingDestroyed())
+            pickupRef->Destroy();  
+
         pickupRef = nullptr;   
         pickupSpawned = false; 
     }

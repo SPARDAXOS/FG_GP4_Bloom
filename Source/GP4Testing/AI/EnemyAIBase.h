@@ -19,7 +19,6 @@ class GP4TESTING_API AEnemyAIBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AEnemyAIBase();
 
 protected:
