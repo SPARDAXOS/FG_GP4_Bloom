@@ -146,6 +146,7 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	void Landed(const FHitResult& Hit) override;
 	UPROPERTY(EditDefaultsOnly)
 	float MaxFallHeight = 1400.f;
+	bool bIsGrounded = true;
 
 	void HandleShootShakeRifle();
 	void HandleShootShakeShotgun();
