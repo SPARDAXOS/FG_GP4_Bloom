@@ -8,6 +8,7 @@
 
 class APrimaryPlayer;
 class UNiagaraComponent;
+class AWeaponSpawner;
 
 UCLASS()
 class GP4TESTING_API AGunComponent : public AActor
@@ -50,6 +51,8 @@ public:
 	UFUNCTION()
 	void ClearTimers();
 
+	inline void RegisterPickupSpawner(AWeaponSpawner& spawner) noexcept { RegisteredWeaponSpawner = &spawner; }
+
 	UFUNCTION(BlueprintCallable)
 	WeaponType GetWeaponType();
 
@@ -82,6 +85,7 @@ public:
 
 private:
 	APrimaryPlayer* Character;
+	AWeaponSpawner* RegisteredWeaponSpawner = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float WeaponDamage = 20;
