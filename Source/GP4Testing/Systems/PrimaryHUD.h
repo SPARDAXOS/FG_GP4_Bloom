@@ -54,6 +54,8 @@ public:
 	inline UMenuWidgetBase* GetPreviousActiveMenu() noexcept { return previousActiveMenu; }
 	inline MenuState GetCurrentActiveMenuState() const noexcept { return currentMenuState; }
 
+	inline UOptionsMenuWidget* GetOptionsMenu() noexcept { return optionsMenuRef; }
+
 public:
 	void SetupDependencies(APrimaryGameMode& gameMode, APrimaryPlayer& player, APrimaryPlayerController& controller) noexcept;
 

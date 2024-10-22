@@ -47,9 +47,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UTextBlock> WaveCounter = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UImage> DashAbility = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UImage> SlideAbility = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UTextBlock> DashKey = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UTextBlock> SlideKey = nullptr;
+
 	void HandleHealthBar();
 	void HandleAmmoText();
 	void HandleWaveCounter();
+	void HandleDashCooldown();
+	void HandleSlideCooldown();
 
 protected:
 	ESlateVisibility visible;

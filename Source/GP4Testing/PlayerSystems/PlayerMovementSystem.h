@@ -28,6 +28,10 @@ public:
 	void PlayJumpAudio() noexcept;
 
 public:
+	bool GetCanDash();
+	bool GetCanSlide();
+
+public:
 	void SetupStartingState() noexcept;
 
 public:
