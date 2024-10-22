@@ -24,10 +24,16 @@ AGunComponent::AGunComponent()
 	VFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX"));
 	VFX->SetupAttachment(WeaponMesh);
 
-	VFX2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX2"));
-	VFX2->SetupAttachment(WeaponMesh);
+	/*VFX2 = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFX2"));
+	VFX2->SetupAttachment(WeaponMesh);*/
 	
 }
+
+/*void BeginPlay() {
+	Super::BeginPlay();
+
+
+}*/
 
 void AGunComponent::Fire()
 {
@@ -74,7 +80,7 @@ void AGunComponent::Fire()
 				for (int i = 0; i < BulletsPerShot; i++)
 				{
 					Debugging::PrintString("Started fire");
-					FHitResult Hit;
+					//FHitResult Hit;
 					World->LineTraceSingleByChannel(
 						Hit,
 						ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward),
@@ -95,7 +101,9 @@ void AGunComponent::Fire()
 							}
 						}
 
-						VFX2->Activate(true);
+						/*VFX2->SetWorldLocation(Hit.Location);
+						VFX2->SetWorldRotation(Hit.Normal.ToOrientationQuat());
+						VFX2->Activate(true);*/
 					}
 					//DrawDebugLine(World, ViewOrigin, GetBulletSpread(ViewOrigin, ViewForward), FColor::Red, false, 4.f, 0, 1.0f);
 				}
