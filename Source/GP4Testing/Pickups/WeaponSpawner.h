@@ -7,6 +7,7 @@
 
 
 class AGunComponent;
+enum class WeaponType : uint8;
 
 
 UCLASS(Abstract)
@@ -31,6 +32,9 @@ private:
 private:
     UPROPERTY(EditDefaultsOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
     TSubclassOf<AGunComponent> weaponPickupClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
+    WeaponType type;
 
     UPROPERTY(EditAnywhere, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
     float respawnDuration = 1.0f;

@@ -76,11 +76,13 @@ void AWaveManager::Restart() noexcept {
 	if (!active)
 		return;
 
-	enemyManagementSystemRef->DispawnAllEnemies();
-	enemyManagementSystemRef->DispawnAllVFX();
+	enemyManagementSystemRef->DespawnAllEnemies();
+	enemyManagementSystemRef->DespawnAllVFX();
 	currentWaveCursor = -1;
 	currentSpawnedMeleeEnemies = 0;
+	currentSpawnedSpiderEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
+	currentSpawnedTyrantEnemies = 0;
 	currentTotalSpawnedEnemies = 0;
 	
 	StartNextWave();
@@ -91,9 +93,17 @@ void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 		currentTotalSpawnedEnemies--;
 		currentSpawnedMeleeEnemies--;
 	}
+	else if (type == EnemyType::SPIDER) {
+		currentTotalSpawnedEnemies--;
+		currentSpawnedSpiderEnemies--;
+	}
 	else if (type == EnemyType::RANGED) {
 		currentTotalSpawnedEnemies--;
 		currentSpawnedRangedEnemies--;
+	}
+	else if (type == EnemyType::RANGED) {
+		currentTotalSpawnedEnemies--;
+		currentSpawnedTyrantEnemies--;
 	}
 
 	if (IsWaveCompleted())
@@ -111,7 +121,9 @@ void AWaveManager::Clear() noexcept {
 
 	currentTotalSpawnedEnemies = 0;
 	currentSpawnedMeleeEnemies = 0;
+	currentSpawnedSpiderEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
+	currentSpawnedTyrantEnemies = 0;
 
 	enemyManagementSystemRef->ClearAllPools();
 }
@@ -142,7 +154,6 @@ bool AWaveManager::StartNextWave() noexcept {
 	return true;
 }
 void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
-	Debugging::CustomLog("Update!");
 	if (type == EnemyType::MELEE) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::MELEE);
 		if (!spec) {
@@ -172,6 +183,35 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		else
 			Debugging::CustomError("Failed to spawn enemy with type Melee! - SpawnEnemy Failed!");
 	}
+	else if (type == EnemyType::SPIDER) {
+		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::SPIDER);
+		if (!spec) {
+			Debugging::CustomError("Failed to spawn enemy with type Spider! - FindSpawnSpec() returned nullptr!");
+			return;
+		}
+
+		if (spec->totalSpawns <= 0)
+			return;
+
+		if (currentSpawnedSpiderEnemies >= spec->allowedConcurentSpawns)
+			return;
+
+		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
+			return;
+
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::SPIDER, spawnLocation)) {
+			currentSpawnedSpiderEnemies++;
+			currentTotalSpawnedEnemies++;
+		}
+		else
+			Debugging::CustomError("Failed to spawn enemy with type Spider! - SpawnEnemy Failed!");
+	}
 	else if (type == EnemyType::RANGED) {
 		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::RANGED);
 		if (!spec) {
@@ -200,6 +240,35 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		}
 		else
 			Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");
+	}
+	else if (type == EnemyType::TYRANT) {
+		FEnemyTypeSpawnSpec* spec = FindSpawnSpec(EnemyType::TYRANT);
+		if (!spec) {
+			Debugging::CustomError("Failed to spawn enemy with type Tyrant! - FindSpawnSpec() returned nullptr!");
+			return;
+		}
+
+		if (spec->totalSpawns <= 0)
+			return;
+
+		if (currentSpawnedTyrantEnemies >= spec->allowedConcurentSpawns)
+			return;
+
+		if (currentTotalSpawnedEnemies >= activeWaveSpecData.totalAllowedConcurrentSpawns)
+			return;
+
+		FVector spawnLocation = FVector::Zero();
+		if (!GetRandomSpawnPoint(false, spawnLocation)) {
+			Debugging::CustomWarning("Failed to find unoccupied spawn location! - SpawnEnemy Failed!");
+			return;
+		}
+
+		if (SpawnEnemy(EnemyType::TYRANT, spawnLocation)) {
+			currentSpawnedTyrantEnemies++;
+			currentTotalSpawnedEnemies++;
+		}
+		else
+			Debugging::CustomError("Failed to spawn enemy with type Tyrant! - SpawnEnemy Failed!");
 	}
 }
 bool AWaveManager::SetupTimers() noexcept {
