@@ -8,6 +8,7 @@
 
 class APrimaryPlayer;
 class UNiagaraComponent;
+class AWeaponSpawner;
 
 UCLASS()
 class GP4TESTING_API AGunComponent : public AActor
@@ -16,6 +17,7 @@ class GP4TESTING_API AGunComponent : public AActor
 
 public:
 	AGunComponent();
+	//virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* WeaponMesh;
@@ -50,6 +52,8 @@ public:
 	UFUNCTION()
 	void ClearTimers();
 
+	inline void RegisterPickupSpawner(AWeaponSpawner& spawner) noexcept { RegisteredWeaponSpawner = &spawner; }
+
 	UFUNCTION(BlueprintCallable)
 	WeaponType GetWeaponType();
 
@@ -77,11 +81,13 @@ public:
 	UPROPERTY(Editanywhere)
 	UNiagaraComponent* VFX;
 
-	UPROPERTY(Editanywhere)
-	UNiagaraComponent* VFX2;
+	void Fire();
+
+	FHitResult Hit;
 
 private:
 	APrimaryPlayer* Character;
+	AWeaponSpawner* RegisteredWeaponSpawner = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::MACHINE_GUN || TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float WeaponDamage = 20;
@@ -110,7 +116,7 @@ private:
 	FTimerHandle TimerHandle;
 	FTimerHandle ReloadTimerHandle;
 
-	void Fire();
+	
 
 	bool bFiredWeapon = false;
 
