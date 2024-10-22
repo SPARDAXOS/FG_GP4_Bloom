@@ -8,6 +8,8 @@
 #include "../Systems/PrimaryPlayerController.h"
 #include "../Systems/PrimaryPlayer.h"
 #include <GP4Testing/Components/HealthComponent.h>
+#include "GP4Testing/Pickups/WeaponSpawner.h"
+
 #include "../AI/EnemyAIBase.h"
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 #include "GP4Testing/Utility/Debugging.h"
@@ -264,6 +266,8 @@ void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
 		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+		if (RegisteredWeaponSpawner)
+			RegisteredWeaponSpawner->NotifyPickup(*this);
 	}
 }
 

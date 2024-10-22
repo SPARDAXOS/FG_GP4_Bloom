@@ -44,14 +44,16 @@ void APrimaryPlayer::Start() {
 	StartPlayerSystems();
 }
 void APrimaryPlayer::Update(float deltaTime) {
-	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0) // same thing as getting the ABS
+	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0 && bIsGrounded) // same thing as getting the ABS
 	{
 		HandleRunningShake();
 	}
+	/*
 	else if (GetCharacterMovement()->GetLastUpdateVelocity().Length() == 0)
 	{
-		StopShakeCamera();
+		StopShakeCamera(); 
 	}
+	*/
 }
 void APrimaryPlayer::SetupStartingState() noexcept {
 	//Reset all player data to default.
@@ -113,11 +115,11 @@ void APrimaryPlayer::HandleDashInput() noexcept {
 
 	playerMovementSystemRef->Dash();
 }
-void APrimaryPlayer::HandleSlideInput() noexcept {
+void APrimaryPlayer::HandleSlideInput(bool& input) noexcept {
 	if (!playerMovementSystemRef)
 		return;
 
-	playerMovementSystemRef->Slide();
+	playerMovementSystemRef->Slide(input);
 }
 void APrimaryPlayer::HandleShootInput(bool& input) noexcept {
 	//input == true => Pressed
@@ -206,6 +208,7 @@ void APrimaryPlayer::HandleHitShake()
 }
 void APrimaryPlayer::OnJumped_Implementation()
 {
+	bIsGrounded = false;
 	StartJumpDistance = GetCharacterMovement()->GetActorLocation().Z;
 	Debugging::PrintString("Jumped");
 	playerMovementSystemRef->PlayJumpAudio();
@@ -213,10 +216,12 @@ void APrimaryPlayer::OnJumped_Implementation()
 void APrimaryPlayer::Landed(const FHitResult& Hit) // need to convert to a fall length check
 {
 	Super::Landed(Hit);
+	bIsGrounded = true;
 	DistanceFallen = StartJumpDistance - GetCharacterMovement()->GetActorLocation().Z;
 	Debugging::PrintString(FString::SanitizeFloat(DistanceFallen));
 	if (DistanceFallen >= 150)
 	{
+		UGameplayStatics::PlaySoundAtLocation(this, fallLandSound, GetActorLocation());
 		float Strength = DistanceFallen / MaxFallHeight;
 		ShakeCamera(LandShake, Strength);
 	}

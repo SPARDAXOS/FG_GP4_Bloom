@@ -53,13 +53,15 @@ public:
 	inline UPrimaryPlayerHUD* GetPrimaryPlayerHUD() noexcept { return primaryPlayerHUDRef; }
 	inline APrimaryGameMode* GetPrimaryGameMode() noexcept { return primaryGameModeRef; }
 
+	inline FVector GetInitialCameraPosition() const noexcept { return cameraInitialTransform.GetLocation(); }
+
 
 public: //Add Callbacks For Input Here!
 	void HandleMovementInput(FVector2D axis) noexcept;
 	void HandleLookInput(FVector2D axis) noexcept;
 	void HandleJumpInput() noexcept;
 	void HandleDashInput() noexcept;
-	void HandleSlideInput() noexcept;
+	void HandleSlideInput(bool& input) noexcept;
 	void HandleShootInput(bool& input) noexcept;
 	void HandleMeleeInput() noexcept;
 	void HandlePauseInput() noexcept;
@@ -102,6 +104,10 @@ private: //Player  Systems
 private: //HUD
 	UPROPERTY(EditDefaultsOnly, Category = "Player|HUD", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UPrimaryPlayerHUD> primaryPlayerHUDClass = nullptr;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Player|Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* fallLandSound;
 
 private: //Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
@@ -146,6 +152,7 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	void Landed(const FHitResult& Hit) override;
 	UPROPERTY(EditDefaultsOnly)
 	float MaxFallHeight = 1400.f;
+	bool bIsGrounded = true;
 
 	void HandleShootShakeRifle();
 	void HandleShootShakeShotgun();
