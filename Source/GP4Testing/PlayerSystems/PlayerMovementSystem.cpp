@@ -18,6 +18,9 @@ APlayerMovementSystem::APlayerMovementSystem() {
 void APlayerMovementSystem::Tick(float deltaTime) {
 	Super::Tick(deltaTime);
 
+
+	UpdateSlideCameraTransition(deltaTime);
+
 	if (!bIsSliding && CurrentSlideSpeed == 0.0f && !bCanSlide)
 		slideCooldownTimer.Update(deltaTime);
 
@@ -87,9 +90,8 @@ void APlayerMovementSystem::Slide(bool& input) noexcept {
 		bIsSliding = true;
 		bCanSlide = false;
 
-		FVector cameraLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
-		cameraLocation.Z = SlideCameraZHeight;
-		primaryPlayerRef->GetCamera()->SetRelativeLocation(cameraLocation);
+		transitionCameraToSlide = true;
+		transitionCameraToNormal = false;
 	}
 	else if (bIsSliding && CurrentSlideSpeed > 0.0f)
 		StopSlide();
@@ -112,6 +114,33 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 }
 
 
+void APlayerMovementSystem::UpdateSlideCameraTransition(float deltaTime) {
+	if (transitionCameraToSlide) {
+		FVector currentLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
+		FVector targetLocation = currentLocation;
+		targetLocation.Z = SlideCameraZHeight;
+
+		FVector result = FMath::Lerp(currentLocation, targetLocation, SlideCameraTransitionSpeed * deltaTime);
+		if (FVector::Distance(targetLocation, result) <= CameraTransitionTolerans) {
+			result = targetLocation;
+			transitionCameraToSlide = false;
+		}
+
+		primaryPlayerRef->GetCamera()->SetRelativeLocation(result);
+	}
+	else if (transitionCameraToNormal) {
+		FVector currentLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
+		FVector targetLocation = primaryPlayerRef->GetInitialCameraPosition();
+
+		FVector result = FMath::Lerp(currentLocation, targetLocation, SlideCameraTransitionSpeed * deltaTime);
+		if (FVector::Distance(primaryPlayerRef->GetInitialCameraPosition(), result) <= CameraTransitionTolerans) {
+			result = primaryPlayerRef->GetInitialCameraPosition();
+			transitionCameraToNormal = false;
+		}
+
+		primaryPlayerRef->GetCamera()->SetRelativeLocation(result);
+	}
+}
 void APlayerMovementSystem::UpdateSlideVelocity() {
 	FVector SlideDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 	FVector SlideVel = SlideDir * CurrentSlideSpeed;
@@ -122,10 +151,8 @@ void APlayerMovementSystem::StopSlide() noexcept {
 	CurrentSlideSpeed = 0.0f;
 	UpdateSlideVelocity();
 
-	FVector cameraLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
-	cameraLocation.Z = primaryPlayerRef->GetInitialCameraPosition().Z;
-	primaryPlayerRef->GetCamera()->SetRelativeLocation(cameraLocation);
-
+	transitionCameraToSlide = false;
+	transitionCameraToNormal = true;
 	bIsSliding = false;
 }
 void APlayerMovementSystem::StopDash() {
