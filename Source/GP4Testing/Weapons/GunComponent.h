@@ -16,6 +16,7 @@ class GP4TESTING_API AGunComponent : public AActor
 
 public:
 	AGunComponent();
+	//virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* WeaponMesh;
@@ -77,8 +78,9 @@ public:
 	UPROPERTY(Editanywhere)
 	UNiagaraComponent* VFX;
 
-	UPROPERTY(Editanywhere)
-	UNiagaraComponent* VFX2;
+	void Fire();
+
+	FHitResult Hit;
 
 private:
 	APrimaryPlayer* Character;
@@ -110,7 +112,7 @@ private:
 	FTimerHandle TimerHandle;
 	FTimerHandle ReloadTimerHandle;
 
-	void Fire();
+	
 
 	bool bFiredWeapon = false;
 
