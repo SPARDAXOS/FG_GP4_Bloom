@@ -49,7 +49,7 @@ private:
 	float currentMovementSpeedModifier = 1.0f;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
 	float dashRegainedVelocity = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
@@ -88,8 +88,6 @@ private:
 	FTimerHandle SlideTimerHandle;
 	FTimerHandle DashCooldownTimerHandle;
 	FTimerHandle SlideCooldownTimerHandle;
-	
-	FVector StoredVelocity;
 
 private:
 	
