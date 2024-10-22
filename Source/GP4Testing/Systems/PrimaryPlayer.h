@@ -103,6 +103,10 @@ private: //HUD
 	UPROPERTY(EditDefaultsOnly, Category = "Player|HUD", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UPrimaryPlayerHUD> primaryPlayerHUDClass = nullptr;
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Player|Audio", meta = (AllowPrivateAccess = "true"))
+	USoundBase* fallLandSound;
+
 private: //Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
 	FTransform cameraInitialTransform;
@@ -146,6 +150,7 @@ public: //Camera shake - Explanation of UCameraShakeBase: https://dev.epicgames.
 	void Landed(const FHitResult& Hit) override;
 	UPROPERTY(EditDefaultsOnly)
 	float MaxFallHeight = 1400.f;
+	bool bIsGrounded = true;
 
 	void HandleShootShakeRifle();
 	void HandleShootShakeShotgun();
