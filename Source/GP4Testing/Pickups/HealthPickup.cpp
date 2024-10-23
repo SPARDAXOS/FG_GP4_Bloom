@@ -7,14 +7,14 @@
 
 AHealthPickup::AHealthPickup()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	pickupType = PickupType::HEALTH;
 }
 
 void AHealthPickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//Not used
 }
 
 void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* otherComp,
@@ -28,7 +28,7 @@ void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 
 		if (playerRef->GetPlayerHealthSystem().HealthComponent->CurrentHealth < playerRef->GetPlayerHealthSystem().HealthComponent->MaxHealth)
 		{
-			playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(10);
+			playerRef->GetPlayerHealthSystem().HealthComponent->AddHealth(value);
 
 			if (registeredSpawner)
 				registeredSpawner->NotifyPickup(*this);
@@ -39,8 +39,6 @@ void AHealthPickup::OnPickup(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 			{
 				UGameplayStatics::PlaySoundAtLocation(this, PickupSound, playerRef->GetActorLocation());
 			}
-
-			UE_LOG(LogTemp, Warning, TEXT("its health"));
 		}	
 	}
 }
