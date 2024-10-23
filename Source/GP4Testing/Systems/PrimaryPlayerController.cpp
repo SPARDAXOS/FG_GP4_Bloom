@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
+#include "PlayerMappableKeySettings.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -92,6 +93,12 @@ void APrimaryPlayerController::SetupMovementModifiers() noexcept {
 void APrimaryPlayerController::CacheKeybindings() noexcept {
 	
 	auto movementMappings = FindMappings(movement);
+	for (auto& input : movementMappings) {
+		if (input->Modifiers.Num() == 0) {
+			Debugging::CustomLog("Found the D input - Decern movement input through modifiers!");
+			Debugging::CustomLog(input->Key.ToString());
+		}
+	}
 
 	//Bug here if position moved
 	forwardKey = movementMappings[0]->Key;
