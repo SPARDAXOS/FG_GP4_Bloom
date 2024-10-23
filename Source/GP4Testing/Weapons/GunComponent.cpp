@@ -262,7 +262,14 @@ void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		// Attach to player mesh
 		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+		if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+		{
+			AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+		}
+		else
+		{
+			AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint2")));
+		}
 		if (RegisteredWeaponSpawner)
 			RegisteredWeaponSpawner->NotifyPickup(*this);
 	}
