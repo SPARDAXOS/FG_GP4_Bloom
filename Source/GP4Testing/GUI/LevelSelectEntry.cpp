@@ -14,7 +14,6 @@
 
 
 
-
 void ULevelSelectEntry::NativeOnListItemObjectSet(UObject* ListItemObject) {
 	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
 
@@ -36,13 +35,18 @@ void ULevelSelectEntry::NativeOnListItemObjectSet(UObject* ListItemObject) {
 		Debugging::CustomWarning("ULevelSelectEntrySpec managingMenu is invalid!");
 	else
 		SetLevelSelectMenuReference(*spec->managingMenu);
+
+	selectionFrameImage->SetVisibility(ESlateVisibility::Collapsed);
 }
 void ULevelSelectEntry::NativeOnItemSelectionChanged(bool selected) {
 	IUserObjectListEntry::NativeOnItemSelectionChanged(selected);
 
-	Debugging::CustomLog("Selected!");
-	if (selected && levelSelectMenuWidgetRef && targetSpec)
+	if (selected && levelSelectMenuWidgetRef && targetSpec) {
 		levelSelectMenuWidgetRef->SetSelectedLevelEntrySpec(targetSpec);
+		selectionFrameImage->SetVisibility(ESlateVisibility::Visible);
+	}
+	else if (!selected)
+		selectionFrameImage->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 

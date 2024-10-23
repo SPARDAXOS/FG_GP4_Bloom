@@ -37,7 +37,7 @@ private:
     WeaponType type;
 
     UPROPERTY(EditAnywhere, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
-    float respawnDuration = 1.0f;
+    float respawnDuration = 0.5f;
 
     UPROPERTY(EditAnywhere, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
     bool spawnAtStart = true;
