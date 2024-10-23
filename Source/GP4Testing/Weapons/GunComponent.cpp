@@ -30,7 +30,6 @@ AGunComponent::AGunComponent()
 void AGunComponent::BeginPlay() {
 	Super::BeginPlay();
 
-	impactVFX = GetWorld()->SpawnActor<AImpactVFX>(ImpactVFXClass);
 }
 
 void AGunComponent::Fire()
@@ -98,7 +97,7 @@ void AGunComponent::Fire()
 								Enemy->HealthComponent->TakeDamage(WeaponDamage);
 							}
 						}
-
+						impactVFX = GetWorld()->SpawnActor<AImpactVFX>(ImpactVFXClass);
 						impactVFX->SetActorLocation(Hit.Location);
 						impactVFX->SetActorRotation(Hit.Normal.ToOrientationQuat());
 						impactVFX->Activate();
