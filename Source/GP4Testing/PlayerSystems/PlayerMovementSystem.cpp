@@ -58,22 +58,24 @@ void APlayerMovementSystem::Jump() noexcept {
 	primaryPlayerRef->Jump();
 }
 
-void APlayerMovementSystem::Dash() noexcept
-{
+void APlayerMovementSystem::Dash() noexcept {
+	if (primaryPlayerRef->GetCharacterMovement()->IsMovingOnGround())
+		return;
+
 	if (bCanDash && primaryPlayerRef)
 	{
 
 		FVector DashDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 		DashDir.Z += DashZOffset;
 		FVector DashVel = DashDir * DashStrength;
-		primaryPlayerRef->LaunchCharacter(DashVel, true, true);
-		
+		//primaryPlayerRef->LaunchCharacter(DashVel, true, true);
+		primaryPlayerRef->GetCharacterMovement()->AddImpulse(DashVel);
 
 		bCanDash = false;
 		bIsDashing = true;;
 
 		GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &APlayerMovementSystem::StopDash, DashDuration, false);
-		
+
 		GetWorld()->GetTimerManager().SetTimer(DashCooldownTimerHandle, this, &APlayerMovementSystem::ResetDash, DashCooldown, false);
 	}
 }
@@ -87,14 +89,20 @@ void APlayerMovementSystem::Slide(bool& input) noexcept {
 
 	if (input && bCanSlide && !bIsSliding && CurrentSlideSpeed == 0.0f) {
 		CurrentSlideSpeed = SlideSpeed;
+		currentCameraTransitionSpeed = SlideCameraTransitionSpeed;
+
 		bIsSliding = true;
 		bCanSlide = false;
 
 		transitionCameraToSlide = true;
 		transitionCameraToNormal = false;
 	}
-	else if (bIsSliding && CurrentSlideSpeed > 0.0f)
-		StopSlide();
+	else if (bIsSliding && CurrentSlideSpeed > 0.0f) {
+		CurrentSlideSpeed *= SlideSpeedCancelRate;
+		if (CurrentSlideSpeed < 0.0f)
+			CurrentSlideSpeed = 0.0f;
+		currentCameraTransitionReverseSpeed = SlideCameraTransitionCancelSpeed;
+	}
 }
 
 void APlayerMovementSystem::SetupStartingState() noexcept {
@@ -111,6 +119,8 @@ void APlayerMovementSystem::SetupStartingState() noexcept {
 	bIsSliding = false;
 	bIsDashing = false;
 	CurrentSlideSpeed = 0.0f;
+	currentCameraTransitionSpeed = 0.0f;
+	currentCameraTransitionReverseSpeed = 0.0f;
 }
 
 
@@ -120,10 +130,11 @@ void APlayerMovementSystem::UpdateSlideCameraTransition(float deltaTime) {
 		FVector targetLocation = currentLocation;
 		targetLocation.Z = SlideCameraZHeight;
 
-		FVector result = FMath::Lerp(currentLocation, targetLocation, SlideCameraTransitionSpeed * deltaTime);
+		FVector result = FMath::Lerp(currentLocation, targetLocation, currentCameraTransitionSpeed * deltaTime);
 		if (FVector::Distance(targetLocation, result) <= CameraTransitionTolerans) {
 			result = targetLocation;
 			transitionCameraToSlide = false;
+			currentCameraTransitionSpeed = 0.0f;
 		}
 
 		primaryPlayerRef->GetCamera()->SetRelativeLocation(result);
@@ -132,10 +143,11 @@ void APlayerMovementSystem::UpdateSlideCameraTransition(float deltaTime) {
 		FVector currentLocation = primaryPlayerRef->GetCamera()->GetRelativeLocation();
 		FVector targetLocation = primaryPlayerRef->GetInitialCameraPosition();
 
-		FVector result = FMath::Lerp(currentLocation, targetLocation, SlideCameraTransitionSpeed * deltaTime);
+		FVector result = FMath::Lerp(currentLocation, targetLocation, currentCameraTransitionReverseSpeed * deltaTime);
 		if (FVector::Distance(primaryPlayerRef->GetInitialCameraPosition(), result) <= CameraTransitionTolerans) {
 			result = primaryPlayerRef->GetInitialCameraPosition();
 			transitionCameraToNormal = false;
+			currentCameraTransitionReverseSpeed = 0.0f;
 		}
 
 		primaryPlayerRef->GetCamera()->SetRelativeLocation(result);
@@ -149,6 +161,9 @@ void APlayerMovementSystem::UpdateSlideVelocity() {
 }
 void APlayerMovementSystem::StopSlide() noexcept {
 	CurrentSlideSpeed = 0.0f;
+	currentCameraTransitionSpeed = 0.0f;
+	if (currentCameraTransitionReverseSpeed == 0.0f)
+		currentCameraTransitionReverseSpeed = SlideCameraTransitionReverseSpeed;
 	UpdateSlideVelocity();
 
 	transitionCameraToSlide = false;
@@ -176,14 +191,10 @@ void APlayerMovementSystem::PlayJumpAudio() noexcept
 		UGameplayStatics::PlaySoundAtLocation(this, JumpAudio, GetActorLocation());
 	}
 }
-
-bool APlayerMovementSystem::GetCanDash()
-{
+bool APlayerMovementSystem::GetCanDash() {
 	return bCanDash;
 }
-
-bool APlayerMovementSystem::GetCanSlide()
-{
+bool APlayerMovementSystem::GetCanSlide() {
 	return bCanSlide;
 }
 
