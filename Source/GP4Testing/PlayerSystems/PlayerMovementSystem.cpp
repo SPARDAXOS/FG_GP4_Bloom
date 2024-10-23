@@ -177,6 +177,16 @@ void APlayerMovementSystem::PlayJumpAudio() noexcept
 	}
 }
 
+bool APlayerMovementSystem::GetCanDash()
+{
+	return bCanDash;
+}
+
+bool APlayerMovementSystem::GetCanSlide()
+{
+	return bCanSlide;
+}
+
 
 
 
