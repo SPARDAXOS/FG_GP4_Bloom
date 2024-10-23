@@ -67,7 +67,7 @@ void APlayerMovementSystem::Dash() noexcept {
 
 		FVector DashDir = primaryPlayerRef->GetCamera()->GetForwardVector();
 		DashDir.Z += DashZOffset;
-		FVector DashVel = DashDir * DashStrength;
+		FVector DashVel = DashDir * DashStrength * SlideSpeedMultiplier;
 		//primaryPlayerRef->LaunchCharacter(DashVel, true, true);
 		primaryPlayerRef->GetCharacterMovement()->AddImpulse(DashVel);
 

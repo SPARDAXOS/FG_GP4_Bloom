@@ -76,6 +76,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
 	float DashZOffset = 10.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	float SlideSpeedMultiplier = 10.0f;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideRegainedVelocity = 1.0f;
