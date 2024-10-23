@@ -5,6 +5,7 @@
 
 #include "EnemyAIBase.h"
 #include "NavLinkCustomComponent.h"
+#include "GP4Testing/Utility/Debugging.h"
 
 ANavLinkAI::ANavLinkAI()
 {
