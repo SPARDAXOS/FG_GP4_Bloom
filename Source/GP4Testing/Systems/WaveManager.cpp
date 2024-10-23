@@ -88,6 +88,7 @@ void AWaveManager::Restart() noexcept {
 	StartNextWave();
 }
 
+
 void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 	if (type == EnemyType::MELEE) {
 		currentTotalSpawnedEnemies--;
@@ -109,7 +110,6 @@ void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 	if (IsWaveCompleted())
 		StartNextWave();
 }
-
 
 
 void AWaveManager::Clear() noexcept {
