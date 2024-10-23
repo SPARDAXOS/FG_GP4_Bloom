@@ -90,8 +90,10 @@ void APrimaryPlayerController::SetupMovementModifiers() noexcept {
 	backwardMovementNegate->bZ = true;
 }
 void APrimaryPlayerController::CacheKeybindings() noexcept {
-
+	
 	auto movementMappings = FindMappings(movement);
+
+	//Bug here if position moved
 	forwardKey = movementMappings[0]->Key;
 	leftKey = movementMappings[1]->Key;
 	backwardKey = movementMappings[2]->Key;
