@@ -307,9 +307,6 @@ protected:
 	TObjectPtr<UCustomButton> applySettingsButton = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	TObjectPtr<UImage> applyButtonBar = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UCustomButton> popupConfirmButton = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
