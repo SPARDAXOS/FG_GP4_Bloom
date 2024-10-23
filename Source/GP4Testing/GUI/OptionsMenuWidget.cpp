@@ -13,7 +13,7 @@
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryHUD.h"
-
+#include "GP4Testing/Systems/PrimaryPlayerController.h"
 
 
 void UOptionsMenuWidget::NativeOnInitialized() {
@@ -132,7 +132,6 @@ void UOptionsMenuWidget::SetActiveTab(OptionsMenuTab tab) noexcept {
 		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		applySettingsButton->SetVisibility(ESlateVisibility::Collapsed);
-		applyButtonBar->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	else if (tab == OptionsMenuTab::DISPLAY) {
 		displayTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -140,7 +139,6 @@ void UOptionsMenuWidget::SetActiveTab(OptionsMenuTab tab) noexcept {
 		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
-		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
 	}
 	else if (tab == OptionsMenuTab::GRAPHICS) {
 		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
@@ -148,7 +146,6 @@ void UOptionsMenuWidget::SetActiveTab(OptionsMenuTab tab) noexcept {
 		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
-		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
 	}
 	else if (tab == OptionsMenuTab::AUDIO) {
 		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
@@ -156,7 +153,6 @@ void UOptionsMenuWidget::SetActiveTab(OptionsMenuTab tab) noexcept {
 		audioTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		inputTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
-		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
 	}
 	else if (tab == OptionsMenuTab::INPUT) {
 		displayTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
@@ -164,7 +160,6 @@ void UOptionsMenuWidget::SetActiveTab(OptionsMenuTab tab) noexcept {
 		audioTabCanvas->SetVisibility(ESlateVisibility::Collapsed);
 		inputTabCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		applySettingsButton->SetVisibility(ESlateVisibility::Visible);
-		applyButtonBar->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 void UOptionsMenuWidget::SetConfirmationPopupState(bool state) noexcept {
@@ -413,22 +408,22 @@ void UOptionsMenuWidget::DetectCurrentAudioLevels() noexcept {
 }
 void UOptionsMenuWidget::DetectCurrentKeybindings() noexcept {
 
-	//forwardKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetForwardKey()));
-	//leftKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetLeftKey()));
-	//backwardKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetBackwardKey()));
-	//rightKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetRightKey()));
-	//
-	//sprintKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetSprintKey()));
-	//crouchKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetCrouchKey()));
-	//jumpKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetJumpKey()));
-	//
-	//interactKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetInteractKey()));
-	//drawWeaponKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetADSKey()));
-	//inspectKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetInspectKey()));
-	//toggleInventoryKeySelector->SetSelectedKey(FInputChord(mainPlayerControllerRef->GetToggleInventoryKey()));
+	forwardKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetForwardKey()));
+	leftKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetLeftKey()));
+	backwardKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetBackwardKey()));
+	rightKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetRightKey()));
+	
+	dashKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetDashKey()));
+	slideKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetSlideKey()));
+	jumpKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetJumpKey()));
+	shootKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetShootKey()));
+
+	weaponSwitchUpKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetWeaponSwitchUpKey()));
+	weaponSwitchDownKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetWeaponSwitchDownKey()));
+	reloadKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetReloadKey()));
 }
 void UOptionsMenuWidget::DetectCurrentSensitivitySettings() noexcept {
-	//mouseSensitivitySlider->SetValue(mainPlayerRef->GetMouseSensitivity());
+	//mouseSensitivitySlider->SetValue(primaryPlayerRef->GetMouseSensitivity());
 
 }
 
@@ -611,24 +606,165 @@ void UOptionsMenuWidget::SetupInitialGlobalIlluminationQualitySettings() noexcep
 }
 void UOptionsMenuWidget::SetupInitialPostProcessingQualitySettings() noexcept {
 
+	FString name;
+
+	name = "Low";
+	postProcessingQualityOptions.Add({ name, 0 });
+	postProcessingQualitySelector->AddOption(name);
+
+	name = "Medium";
+	postProcessingQualityOptions.Add({ name, 1 });
+	postProcessingQualitySelector->AddOption(name);
+
+	name = "High";
+	postProcessingQualityOptions.Add({ name, 2 });
+	postProcessingQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	postProcessingQualityOptions.Add({ name, 3 });
+	postProcessingQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	postProcessingQualityOptions.Add({ name, 4 });
+	postProcessingQualitySelector->AddOption(name);
 }
 void UOptionsMenuWidget::SetupInitialReflectionQualitySettings() noexcept {
+	FString name;
 
+	name = "Low";
+	reflectionQualityOptions.Add({ name, 0 });
+	reflectionQualitySelector->AddOption(name);
+
+	name = "Medium";
+	reflectionQualityOptions.Add({ name, 1 });
+	reflectionQualitySelector->AddOption(name);
+
+	name = "High";
+	reflectionQualityOptions.Add({ name, 2 });
+	reflectionQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	reflectionQualityOptions.Add({ name, 3 });
+	reflectionQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	reflectionQualityOptions.Add({ name, 4 });
+	reflectionQualitySelector->AddOption(name);
 }
 void UOptionsMenuWidget::SetupInitialShadowQualitySettings() noexcept {
+	FString name;
 
+	name = "Low";
+	shadowQualityOptions.Add({ name, 0 });
+	shadowQualitySelector->AddOption(name);
+
+	name = "Medium";
+	shadowQualityOptions.Add({ name, 1 });
+	shadowQualitySelector->AddOption(name);
+
+	name = "High";
+	shadowQualityOptions.Add({ name, 2 });
+	shadowQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	shadowQualityOptions.Add({ name, 3 });
+	shadowQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	shadowQualityOptions.Add({ name, 4 });
+	shadowQualitySelector->AddOption(name);
 }
 void UOptionsMenuWidget::SetupInitialVisualEffectQualitySettings() noexcept {
+	FString name;
 
+	name = "Low";
+	visualEffectQualityOptions.Add({ name, 0 });
+	visualEffectQualitySelector->AddOption(name);
+
+	name = "Medium";
+	visualEffectQualityOptions.Add({ name, 1 });
+	visualEffectQualitySelector->AddOption(name);
+
+	name = "High";
+	visualEffectQualityOptions.Add({ name, 2 });
+	visualEffectQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	visualEffectQualityOptions.Add({ name, 3 });
+	visualEffectQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	visualEffectQualityOptions.Add({ name, 4 });
+	visualEffectQualitySelector->AddOption(name);
 }
 void UOptionsMenuWidget::SetupInitialViewDistanceQualitySettings() noexcept {
+	FString name;
 
+	name = "Low";
+	viewDistanceQualityOptions.Add({ name, 0 });
+	viewDistanceQualitySelector->AddOption(name);
+
+	name = "Medium";
+	viewDistanceQualityOptions.Add({ name, 1 });
+	viewDistanceQualitySelector->AddOption(name);
+
+	name = "High";
+	viewDistanceQualityOptions.Add({ name, 2 });
+	viewDistanceQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	viewDistanceQualityOptions.Add({ name, 3 });
+	viewDistanceQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	viewDistanceQualityOptions.Add({ name, 4 });
+	viewDistanceQualitySelector->AddOption(name);
 }
 void UOptionsMenuWidget::SetupInitialFoliageQualitySettings() noexcept {
+	FString name;
 
+	name = "Low";
+	foliageQualityOptions.Add({ name, 0 });
+	foliageQualitySelector->AddOption(name);
+
+	name = "Medium";
+	foliageQualityOptions.Add({ name, 1 });
+	foliageQualitySelector->AddOption(name);
+
+	name = "High";
+	foliageQualityOptions.Add({ name, 2 });
+	foliageQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	foliageQualityOptions.Add({ name, 3 });
+	foliageQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	foliageQualityOptions.Add({ name, 4 });
+	foliageQualitySelector->AddOption(name);
 }
 void UOptionsMenuWidget::SetupInitialAudioQualitySettings() noexcept {
+	FString name;
 
+	name = "Low";
+	audioQualityOptions.Add({ name, 0 });
+	audioQualitySelector->AddOption(name);
+
+	name = "Medium";
+	audioQualityOptions.Add({ name, 1 });
+	audioQualitySelector->AddOption(name);
+
+	name = "High";
+	audioQualityOptions.Add({ name, 2 });
+	audioQualitySelector->AddOption(name);
+
+	name = "Ultra";
+	audioQualityOptions.Add({ name, 3 });
+	audioQualitySelector->AddOption(name);
+
+	name = "Ultra High";
+	audioQualityOptions.Add({ name, 4 });
+	audioQualitySelector->AddOption(name);
 }
 
 
@@ -637,128 +773,265 @@ void UOptionsMenuWidget::ReturnButtonClicked() {
 	primaryHUDRef->SetMenuState(primaryHUDRef->GetPreviousActiveMenu()->GetMenuStateType());
 }
 void UOptionsMenuWidget::PopupConfirmButtonClicked() {
-
+	gameSettings->ApplySettings(false);
+	applySettingsButton->SetIsEnabled(false);
+	SetConfirmationPopupState(false);
+	auto type = primaryHUDRef->GetPreviousActiveMenu()->GetMenuStateType();
+	primaryHUDRef->SetMenuState(type);
 }
 void UOptionsMenuWidget::PopupRevertButtonClicked() {
-
+	gameSettings->ResetToCurrentSettings(); //Need a function to update all current settings upon opening the menu.
+	SetConfirmationPopupState(false);
+	auto type = primaryHUDRef->GetPreviousActiveMenu()->GetMenuStateType();
+	primaryHUDRef->SetMenuState(type);
 }
 void UOptionsMenuWidget::DisplayTabButtonClicked() {
-
+	SetActiveTab(OptionsMenuTab::DISPLAY);
 }
 void UOptionsMenuWidget::GraphicsTabButtonClicked() {
-
+	SetActiveTab(OptionsMenuTab::GRAPHICS);
 }
 void UOptionsMenuWidget::AudioTabButtonClicked() {
-
+	SetActiveTab(OptionsMenuTab::AUDIO);
 }
 void UOptionsMenuWidget::InputTabButtonClicked() {
-
+	SetActiveTab(OptionsMenuTab::INPUT);
 }
 
 
 //Display Tab Callbacks
 void UOptionsMenuWidget::ApplySettingsButtonClicked() {
-
+	gameSettings->ApplySettings(false);
+	applySettingsButton->SetIsEnabled(false);
 }
 void UOptionsMenuWidget::UpdateResolutionSelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : resolutionOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetScreenResolution(option.resolution);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateWindowModeSelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : windowModeOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetFullscreenMode(option.type);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateResolutionScaleSlider(float value) {
+	FString percentage = FString::FromInt(value * 100);
+	percentage.Append("%");
+	resolutionScalePercentageText->SetText(FText::FromString(percentage));
 
+	gameSettings->SetResolutionScaleNormalized(value);
+	applySettingsButton->SetIsEnabled(true);
 }
 void UOptionsMenuWidget::UpdateDynamicResolutionCheckbox(bool bIsChecked) {
-
+	gameSettings->SetDynamicResolutionEnabled(bIsChecked);
+	applySettingsButton->SetIsEnabled(true);
 }
 void UOptionsMenuWidget::UpdateVSyncCheckbox(bool bIsChecked) {
-
+	gameSettings->SetVSyncEnabled(bIsChecked);
+	applySettingsButton->SetIsEnabled(true);
 }
 void UOptionsMenuWidget::UpdateFramerateLimitSelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : framerateLimitOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetFrameRateLimit(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 
 
 //Graphics Tab Callbacks
 void UOptionsMenuWidget::UpdateTextureQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : textureQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetTextureQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateAntiAliasingModeSelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : antiAliasingModeOptions) {
+		if (option.key == SelectedItem) {
+			UKismetSystemLibrary::ExecuteConsoleCommand(this, "r.AntiAliasingMethod " + FString::FromInt(option.value));
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateAntiAliasingQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : antiAliasingQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetAntiAliasingQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateShadingQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : shadingQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetShadingQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateGlobalIlluminationQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : globalIlluminationQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetGlobalIlluminationQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdatePostProcessingQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : postProcessingQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetPostProcessingQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateReflectionQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : reflectionQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetReflectionQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateShadowQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : shadowQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetShadowQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateVisualEffectQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : visualEffectQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetVisualEffectQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateViewDistanceQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : viewDistanceQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetViewDistanceQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateFoliageQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : foliageQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetFoliageQuality(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 void UOptionsMenuWidget::UpdateAudioQualitySelector(FString SelectedItem, ESelectInfo::Type SelectionType) {
-
+	for (auto& option : audioQualityOptions) {
+		if (option.key == SelectedItem) {
+			gameSettings->SetAudioQualityLevel(option.value);
+			applySettingsButton->SetIsEnabled(true);
+			return;
+		}
+	}
 }
 
 
 //Audio Tab Callbacks
 void UOptionsMenuWidget::UpdateMasterVolumeSlider(float value) {
-
+	//SetMasterVolume(value)
 }
 
 
 //Input Tab Callbacks
 void UOptionsMenuWidget::UpdateForwardKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetForwardKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetForwardKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateBackwardKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetBackwardKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetBackwardKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateRightKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetRightKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetRightKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateLeftKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetLeftKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetLeftKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateDashKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetDashKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetDashKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateSlideKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetSlideKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetSlideKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateJumpKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetJumpKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetJumpKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateShootKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetShootKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetShootKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateWeaponSwitchUpKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetWeaponSwitchUpKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetWeaponSwitchUpKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateWeaponSwitchDownKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetWeaponSwitchDownKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetWeaponSwitchDownKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateReloadKeySelector(FInputChord SelectedKey) {
+	if (primaryPlayerControllerRef->GetReloadKey() == SelectedKey.Key)
+		return;
 
+	primaryPlayerControllerRef->SetReloadKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateMouseSensitivitySlider(float value) {
-
+	//primaryPlayerRef->GetPlayerMovementSystem()->SetMouseSensitivity(value);
 }
