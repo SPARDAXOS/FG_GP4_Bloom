@@ -118,7 +118,7 @@ private:
 
 	FTimerHandle TimerHandle;
 	FTimerHandle ReloadTimerHandle;
-
+	FTimerHandle VFXTimerHandle;
 	
 
 	bool bFiredWeapon = false;

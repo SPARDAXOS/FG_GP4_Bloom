@@ -1,6 +1,8 @@
 
 
 #include "PlayerHealthSystem.h"
+
+#include "WeaponManagementSystem.h"
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 
 #include "GP4Testing/Systems/PrimaryPlayer.h"
@@ -17,6 +19,8 @@ void APlayerHealthSystem::SetupStartingState() noexcept {
 
 void APlayerHealthSystem::KillPlayer()
 {
+	if (primaryPlayerRef->GetWeaponManagementSystem().GetAcquiredWeapons().Num() > 0)
+		primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->StopFire();
 	primaryPlayerRef->SetPlayerState(false);
 	primaryPlayerRef->GetPrimaryGameMode()->CompleteGame(GameResults::LOSE);
 

@@ -46,14 +46,14 @@ void APrimaryPlayer::Start() {
 void APrimaryPlayer::Update(float deltaTime) {
 	if(GetCharacterMovement()->GetLastUpdateVelocity().Length() > 0 && GetCharacterMovement()->IsMovingOnGround()) // same thing as getting the ABS
 	{
+		bIsRunning = true;
 		HandleRunningShake();
 	}
-	/*
-	else if (GetCharacterMovement()->GetLastUpdateVelocity().Length() == 0)
+	else if (GetCharacterMovement()->GetLastUpdateVelocity().Length() == 0 && bIsRunning == true)
 	{
-		StopShakeCamera(); 
+		bIsRunning = false;
+		StopShakeCamera();
 	}
-	*/
 }
 void APrimaryPlayer::SetupStartingState() noexcept {
 	//Reset all player data to default.

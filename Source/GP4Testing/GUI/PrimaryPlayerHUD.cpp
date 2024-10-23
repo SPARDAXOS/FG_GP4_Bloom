@@ -9,6 +9,7 @@
 #include "GP4Testing/PlayerSystems/WeaponManagementSystem.h"
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/Systems/PrimaryPlayer.h"
+#include "GP4Testing/PlayerSystems/PlayerMovementSystem.h"
 #include "GP4Testing/Systems/WaveManager.h"
 #include "GP4Testing/Utility/Debugging.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -36,6 +37,8 @@ void UPrimaryPlayerHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	HandleHealthBar();
 	HandleAmmoText();
 	HandleWaveCounter();
+	HandleDashCooldown();
+	HandleSlideCooldown();
 }
 
 void UPrimaryPlayerHUD::HandleHealthBar()
@@ -69,6 +72,30 @@ void UPrimaryPlayerHUD::HandleWaveCounter()
 	else
 	{
 		WaveCounter->SetText(FText::FromString(""));
+	}
+}
+
+void UPrimaryPlayerHUD::HandleDashCooldown()
+{
+	if (primaryPlayerRef->GetPlayerMovementSystem().GetCanDash())
+	{
+		DashAbility->SetColorAndOpacity(FColor::Green);
+	}
+	else
+	{
+		DashAbility->SetColorAndOpacity(FColor::Red);
+	}
+}
+
+void UPrimaryPlayerHUD::HandleSlideCooldown()
+{
+	if (primaryPlayerRef->GetPlayerMovementSystem().GetCanSlide())
+	{
+		SlideAbility->SetColorAndOpacity(FColor::Green);
+	}
+	else
+	{
+		SlideAbility->SetColorAndOpacity(FColor::Red);
 	}
 }
 

@@ -28,6 +28,10 @@ public:
 	void PlayJumpAudio() noexcept;
 
 public:
+	bool GetCanDash();
+	bool GetCanSlide();
+
+public:
 	void SetupStartingState() noexcept;
 
 public:
@@ -72,6 +76,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
 	float DashZOffset = 10.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash")
+	float SlideSpeedMultiplier = 10.0f;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideRegainedVelocity = 1.0f;
@@ -86,10 +93,19 @@ protected:
 	float SlideSpeedDecreaseRate = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideSpeedCancelRate = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideCameraZHeight = -90.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float SlideCameraTransitionSpeed = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCameraTransitionReverseSpeed = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideCameraTransitionCancelSpeed = 10.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
 	float CameraTransitionTolerans = 0.5f;
@@ -121,6 +137,12 @@ protected:
 
 	bool transitionCameraToSlide = false;
 	bool transitionCameraToNormal = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
+	float currentCameraTransitionSpeed = 0.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Debugging")
+	float currentCameraTransitionReverseSpeed = 0.0f;
 
 private:
 	
