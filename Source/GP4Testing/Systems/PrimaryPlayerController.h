@@ -189,16 +189,10 @@ private:
 	FKey reloadKey;
 
 private:
-	UPROPERTY()
 	TObjectPtr<UInputModifierSwizzleAxis> forwardMovementSwizzler;
 
-	UPROPERTY()
 	TObjectPtr<UInputModifierNegate> leftMovementNegate;
-
-	UPROPERTY()
 	TObjectPtr<UInputModifierSwizzleAxis> backwardMovementSwizzler;
-
-	UPROPERTY()
 	TObjectPtr<UInputModifierNegate> backwardMovementNegate;
 
 private:
