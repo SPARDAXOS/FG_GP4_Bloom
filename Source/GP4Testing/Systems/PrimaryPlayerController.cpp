@@ -43,7 +43,6 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 	checkf(dash, TEXT("dash action is invalid!"));
 	checkf(slide, TEXT("slide action is invalid!"));
 	checkf(shoot, TEXT("shoot action is invalid!"));
-	checkf(melee, TEXT("melee action is invalid!"));
 	checkf(pauseToggle, TEXT("pauseToggle action is invalid!"));
 	checkf(reload, TEXT("reload action is invalid!"));
 	checkf(switchNextWeapon, TEXT("switchNextWeapon action is invalid!"));

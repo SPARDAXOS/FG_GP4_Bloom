@@ -95,9 +95,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
 	TObjectPtr<UInputAction> shoot = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Combat", meta = (AllowPrivateAccess = "true"));
-	TObjectPtr<UInputAction> melee = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Actions | Options", meta = (AllowPrivateAccess = "true"));
 	TObjectPtr<UInputAction> pauseToggle = nullptr;
 
