@@ -55,11 +55,13 @@ void UPrimaryPlayerHUD::HandleAmmoText()
 		FString TotalAmmoString = FString::FromInt(UKismetMathLibrary::Round(primaryPlayerRef->GetWeaponManagementSystem().GetCurrentWeapon()->Ammo));
 		FText TextToDisplay = FText::FromString(CurrentAmmoString+"/"+TotalAmmoString);
 		AmmoText->SetText(TextToDisplay);
+		BulletTexture->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
 		FText Text = FText::FromString("");
 		AmmoText->SetText(Text);
+		BulletTexture->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 void UPrimaryPlayerHUD::HandleWaveCounter()
