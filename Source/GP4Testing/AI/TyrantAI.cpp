@@ -19,13 +19,9 @@
 ATyrantAI::ATyrantAI() {
 	PrimaryActorTick.bCanEverTick = true;
 
-	spiderArmsMesh = CreateDefaultSubobject<UStaticMeshComponent>("SpiderArms");
-	spiderEyesMesh = CreateDefaultSubobject<UStaticMeshComponent>("SpiderEyes");
-	spiderMaskMesh = CreateDefaultSubobject<UStaticMeshComponent>("SpiderMask");
+	helmetMesh = CreateDefaultSubobject<UStaticMeshComponent>("Helmet");
 
-	spiderArmsMesh->SetupAttachment(GetMesh(), "SpiderArms");
-	spiderEyesMesh->SetupAttachment(GetMesh(), "SpiderEyes");
-	spiderMaskMesh->SetupAttachment(GetMesh(), "SpiderMask");
+	helmetMesh->SetupAttachment(GetMesh(), "Helmet");
 }
 
 
@@ -63,8 +59,7 @@ void ATyrantAI::Dissolve()
 		UpdateDynamicMaterials(DissolveValue);
 }
 
-void ATyrantAI::DissolveTimer()
-{
+void ATyrantAI::DissolveTimer() {
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATyrantAI::Dissolve, 0.03f, true);
 }
 
@@ -76,45 +71,25 @@ void ATyrantAI::CreateDynamicMaterials() {
 		GetMesh()->SetMaterial(0, bodyDynamicMaterial);
 	}
 
-	UMaterialInterface* armsMaterial = spiderArmsMesh->GetMaterial(0);
-	if (armsMaterial) {
-		spiderArmsDynamicMaterial = UMaterialInstanceDynamic::Create(armsMaterial, this);
-		spiderArmsMesh->SetMaterial(0, spiderArmsDynamicMaterial);
-	}
-
-	UMaterialInterface* eyesMaterial = spiderEyesMesh->GetMaterial(0);
-	if (eyesMaterial) {
-		spiderEyesDynamicMaterial = UMaterialInstanceDynamic::Create(eyesMaterial, this);
-		spiderEyesMesh->SetMaterial(0, spiderEyesDynamicMaterial);
-	}
-
-	UMaterialInterface* maskMaterial = spiderMaskMesh->GetMaterial(0);
-	if (maskMaterial) {
-		spiderMaskDynamicMaterial = UMaterialInstanceDynamic::Create(maskMaterial, this);
-		spiderMaskMesh->SetMaterial(0, spiderMaskDynamicMaterial);
+	UMaterialInterface* helmetMaterial = helmetMesh->GetMaterial(0);
+	if (helmetMaterial) {
+		helmetDynamicMaterial = UMaterialInstanceDynamic::Create(helmetMaterial, this);
+		helmetMesh->SetMaterial(0, helmetDynamicMaterial);
 	}
 }
 void ATyrantAI::UpdateDynamicMaterials(const float& value) {
 	if (bodyDynamicMaterial)
 		bodyDynamicMaterial->SetScalarParameterValue("Progress", value);
 
-	if (spiderArmsDynamicMaterial)
-		spiderArmsDynamicMaterial->SetScalarParameterValue("Progress", value);
-
-	if (spiderEyesDynamicMaterial)
-		spiderEyesDynamicMaterial->SetScalarParameterValue("Progress", value);
-
-	if (spiderMaskDynamicMaterial)
-		spiderMaskDynamicMaterial->SetScalarParameterValue("Progress", value);
+	if (helmetDynamicMaterial)
+		helmetDynamicMaterial->SetScalarParameterValue("Progress", value);
 }
 void ATyrantAI::RandomizeVariation() {
 	int rand = FMath::RandRange(0, 1);
 	if (rand == 0) {
-		spiderEyesMesh->SetVisibility(true, true);
-		spiderMaskMesh->SetVisibility(false, true);
+		helmetMesh->SetVisibility(true, true);
 	}
 	else if (rand == 1) {
-		spiderEyesMesh->SetVisibility(false, true);
-		spiderMaskMesh->SetVisibility(true, true);
+		helmetMesh->SetVisibility(false, true);
 	}
 }

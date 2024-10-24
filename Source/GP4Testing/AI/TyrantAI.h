@@ -32,18 +32,11 @@ private:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Meshes")
-	UStaticMeshComponent* spiderArmsMesh = nullptr;
+	UStaticMeshComponent* helmetMesh = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Meshes")
-	UStaticMeshComponent* spiderEyesMesh = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Meshes")
-	UStaticMeshComponent* spiderMaskMesh = nullptr;
 
 protected:
 	TObjectPtr<UMaterialInstanceDynamic> bodyDynamicMaterial;
-	TObjectPtr<UMaterialInstanceDynamic> spiderArmsDynamicMaterial;
-	TObjectPtr<UMaterialInstanceDynamic> spiderEyesDynamicMaterial;
-	TObjectPtr<UMaterialInstanceDynamic> spiderMaskDynamicMaterial;
+	TObjectPtr<UMaterialInstanceDynamic> helmetDynamicMaterial;
 
 };
