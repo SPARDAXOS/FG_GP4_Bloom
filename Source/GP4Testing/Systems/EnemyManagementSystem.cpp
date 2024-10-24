@@ -256,6 +256,7 @@ bool AEnemyManagementSystem::SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FV
 			}
 			else {
 				enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
+				enemy->SetupStartingState();
 				enemy->SetEnemyState(true);
 			}
 			return true;
@@ -360,7 +361,7 @@ bool AEnemyManagementSystem::CreateTyrantEnemiesPool(uint32 count) {
 		newEnemy->SetEnemyState(false);
 		newEnemy->SetEnemyManagementRef(*this);
 		newEnemy->SetWaveManagerRef(*waveManagerRef);
-		newEnemy->SetEnemyType(EnemyType::RANGED);
+		newEnemy->SetEnemyType(EnemyType::TYRANT);
 		tyrantEnemiesPool.Add(newEnemy);
 	}
 
