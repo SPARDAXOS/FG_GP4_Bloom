@@ -59,11 +59,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UTextBlock> SlideKey = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UTextBlock> EnemiesLeftText = nullptr;
+
 	void HandleHealthBar();
 	void HandleAmmoText();
 	void HandleWaveCounter();
 	void HandleDashCooldown();
 	void HandleSlideCooldown();
+	void HandleEnemiesLeftText();
 
 protected:
 	ESlateVisibility visible;
