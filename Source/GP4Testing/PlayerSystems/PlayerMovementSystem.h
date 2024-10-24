@@ -36,6 +36,9 @@ public:
 
 public:
 	inline void RegisterPrimaryPlayerReference(APrimaryPlayer& player) noexcept { primaryPlayerRef = &player; }
+	inline void SetLookSensitivityModifier(float value) noexcept { lookSensitivityModifier = value; }
+
+	inline float GetLookSensitivityModifier() const noexcept { return lookSensitivityModifier; }
 
 private:
 	void UpdateSlideCameraTransition(float deltaTime);

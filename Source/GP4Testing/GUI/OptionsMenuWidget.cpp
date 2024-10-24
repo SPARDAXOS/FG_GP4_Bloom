@@ -12,6 +12,8 @@
 #include "GameFramework/GameUserSettings.h"
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
+#include "GP4Testing/PlayerSystems/PlayerMovementSystem.h"
+#include "GP4Testing/Systems/PrimaryPlayer.h"
 #include "GP4Testing/Systems/PrimaryHUD.h"
 #include "GP4Testing/Systems/PrimaryPlayerController.h"
 
@@ -423,7 +425,7 @@ void UOptionsMenuWidget::DetectCurrentKeybindings() noexcept {
 	reloadKeySelector->SetSelectedKey(FInputChord(primaryPlayerControllerRef->GetReloadKey()));
 }
 void UOptionsMenuWidget::DetectCurrentSensitivitySettings() noexcept {
-	//mouseSensitivitySlider->SetValue(primaryPlayerRef->GetMouseSensitivity());
+	mouseSensitivitySlider->SetValue(primaryPlayerRef->GetPlayerMovementSystem().GetLookSensitivityModifier());
 
 }
 
@@ -1033,5 +1035,5 @@ void UOptionsMenuWidget::UpdateReloadKeySelector(FInputChord SelectedKey) {
 	primaryPlayerControllerRef->SetReloadKey(SelectedKey.Key);
 }
 void UOptionsMenuWidget::UpdateMouseSensitivitySlider(float value) {
-	//primaryPlayerRef->GetPlayerMovementSystem()->SetMouseSensitivity(value);
+	primaryPlayerRef->GetPlayerMovementSystem().SetLookSensitivityModifier(value);
 }
