@@ -284,10 +284,10 @@ void AWeaponManagementSystem::ClearAllWeapons() noexcept
 
 AGunComponent* AWeaponManagementSystem::GetCurrentWeapon()
 {
-	AGunComponent* Weapon = nullptr;
-	if (AcquiredWeapons.Num() > 0)
+	AGunComponent* Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+	if (Weapon == nullptr)
 	{
-		Weapon = AcquiredWeapons.FindRef(EquippedWeapon);
+		return nullptr;
 	}
 	return Weapon;
 }
