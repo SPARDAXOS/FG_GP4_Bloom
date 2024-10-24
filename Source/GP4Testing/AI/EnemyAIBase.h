@@ -56,7 +56,9 @@ public:
 	UFUNCTION()
 	virtual void SetEnemyState(bool state);
 
-	bool Active = true;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool Active = false;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool MarkedForSpawn = false;
 
