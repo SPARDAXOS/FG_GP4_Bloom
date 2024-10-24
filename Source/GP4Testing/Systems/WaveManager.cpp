@@ -26,6 +26,10 @@ void AWaveManager::Update(float deltaTime) {
 	if (!active)
 		return;
 
+
+
+
+
 	for (auto& timer : spawnTimers)
 		timer.Update(deltaTime);
 }
@@ -308,7 +312,7 @@ bool AWaveManager::ValidateAllowedEnemyTypes() const noexcept {
 			if (!enemyTypes.Contains(typeSpawnSpec.type))
 				enemyTypes.Add(typeSpawnSpec.type);
 			else{
-				Debugging::CustomWarning("Failed to validate allowedEnemyTypes in the provided spec!\nTarget Wave: " + i);
+				Debugging::CustomError("Failed to validate allowedEnemyTypes in the provided spec!\nTarget Wave: " + i);
 				return false;
 			}
 		}

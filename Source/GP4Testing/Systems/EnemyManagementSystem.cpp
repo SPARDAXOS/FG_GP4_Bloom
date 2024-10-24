@@ -360,7 +360,7 @@ bool AEnemyManagementSystem::CreateTyrantEnemiesPool(uint32 count) {
 		newEnemy->SetEnemyState(false);
 		newEnemy->SetEnemyManagementRef(*this);
 		newEnemy->SetWaveManagerRef(*waveManagerRef);
-		newEnemy->SetEnemyType(EnemyType::RANGED);
+		newEnemy->SetEnemyType(EnemyType::TYRANT);
 		tyrantEnemiesPool.Add(newEnemy);
 	}
 
