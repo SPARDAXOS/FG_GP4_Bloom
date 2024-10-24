@@ -66,7 +66,7 @@ private:
 
 	bool SwitchNextWeaponTimer();
 	bool SwitchPrevWeaponTimer();
-	bool WeaponSlotTimer(int32 value);
+	bool WeaponSlotTimer(int32 MapValue, int32 weaponIndex);
 
 public:
 	void StartWeaponSwap();
