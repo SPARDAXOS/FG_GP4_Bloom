@@ -35,6 +35,8 @@ protected:
 	UStaticMeshComponent* helmetMesh = nullptr;
 
 
+	UMaterialInstanceDynamic* DynMaterial;
+
 protected:
 	TObjectPtr<UMaterialInstanceDynamic> bodyDynamicMaterial;
 	TObjectPtr<UMaterialInstanceDynamic> helmetDynamicMaterial;
