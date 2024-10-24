@@ -39,6 +39,7 @@ void UPrimaryPlayerHUD::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	HandleWaveCounter();
 	HandleDashCooldown();
 	HandleSlideCooldown();
+	HandleEnemiesLeftText();
 }
 
 void UPrimaryPlayerHUD::HandleHealthBar()
@@ -97,6 +98,13 @@ void UPrimaryPlayerHUD::HandleSlideCooldown()
 	{
 		SlideAbility->SetColorAndOpacity(FColor::Red);
 	}
+}
+
+void UPrimaryPlayerHUD::HandleEnemiesLeftText()
+{
+	int integer = primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetCurrentSpawnedEnemiesCount();
+	FString string = "Enemies Left: " + FString::FromInt(integer);
+	EnemiesLeftText->SetText(FText::FromString(string));
 }
 
 
