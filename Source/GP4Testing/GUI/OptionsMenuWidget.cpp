@@ -10,6 +10,7 @@
 #include "Components/TextBlock.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Sound/SoundClass.h"
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/PlayerSystems/PlayerMovementSystem.h"
@@ -31,6 +32,8 @@ void UOptionsMenuWidget::NativeOnInitialized() {
 	inputTabButton->button->OnClicked.AddDynamic(this, &UOptionsMenuWidget::InputTabButtonClicked);
 
 	masterVolumeSlider->OnValueChanged.AddDynamic(this, &UOptionsMenuWidget::UpdateMasterVolumeSlider);
+	musicVolumeSlider->OnValueChanged.AddDynamic(this, &UOptionsMenuWidget::UpdateMusicVolumeSlider);
+	sfxVolumeSlider->OnValueChanged.AddDynamic(this, &UOptionsMenuWidget::UpdateSFXVolumeSlider);
 
 	applySettingsButton->button->OnClicked.AddDynamic(this, &UOptionsMenuWidget::ApplySettingsButtonClicked);
 	resolutionSelector->OnSelectionChanged.AddDynamic(this, &UOptionsMenuWidget::UpdateResolutionSelector);
@@ -405,8 +408,9 @@ void UOptionsMenuWidget::DetectCurrentAudioQuality() noexcept {
 		audioQualitySelector->SetSelectedIndex(4);
 }
 void UOptionsMenuWidget::DetectCurrentAudioLevels() noexcept {
-	//masterVolumeSlider->SetValue(GetMasterVolume());
-
+	masterVolumeSlider->SetValue(masterSoundMixer->Properties.Volume);
+	musicVolumeSlider->SetValue(musicSoundMixer->Properties.Volume);
+	sfxVolumeSlider->SetValue(sfxSoundMixer->Properties.Volume);
 }
 void UOptionsMenuWidget::DetectCurrentKeybindings() noexcept {
 
@@ -426,7 +430,6 @@ void UOptionsMenuWidget::DetectCurrentKeybindings() noexcept {
 }
 void UOptionsMenuWidget::DetectCurrentSensitivitySettings() noexcept {
 	mouseSensitivitySlider->SetValue(primaryPlayerRef->GetPlayerMovementSystem().GetLookSensitivityModifier());
-
 }
 
 
@@ -963,9 +966,17 @@ void UOptionsMenuWidget::UpdateAudioQualitySelector(FString SelectedItem, ESelec
 
 //Audio Tab Callbacks
 void UOptionsMenuWidget::UpdateMasterVolumeSlider(float value) {
-	//SetMasterVolume(value)
+	masterSoundMixer->Properties.Volume = value;
+	
 }
+void UOptionsMenuWidget::UpdateMusicVolumeSlider(float value) {
+	musicSoundMixer->Properties.Volume = value;
 
+}
+void UOptionsMenuWidget::UpdateSFXVolumeSlider(float value) {
+	sfxSoundMixer->Properties.Volume = value;
+
+}
 
 //Input Tab Callbacks
 void UOptionsMenuWidget::UpdateForwardKeySelector(FInputChord SelectedKey) {

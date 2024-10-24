@@ -15,6 +15,7 @@ class UComboBoxString;
 class UCheckBox;
 class UTextBlock;
 class UInputKeySelector;
+class USoundSubmix;
 
 
 enum class OptionsMenuBackgroundType : uint8 {
@@ -238,6 +239,12 @@ private: //Audio Tab Callbacks
 	UFUNCTION()
 	void UpdateMasterVolumeSlider(float value);
 
+	UFUNCTION()
+	void UpdateMusicVolumeSlider(float value);
+
+	UFUNCTION()
+	void UpdateSFXVolumeSlider(float value);
+
 private: //Input Tab Callbacks
 	UFUNCTION()
 	void UpdateForwardKeySelector(FInputChord SelectedKey);
@@ -387,6 +394,12 @@ protected: //Audio Tab
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<USlider> masterVolumeSlider = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<USlider> musicVolumeSlider = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<USlider> sfxVolumeSlider = nullptr;
+
 protected: //Input Tab
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UInputKeySelector> forwardKeySelector = nullptr;
@@ -423,6 +436,16 @@ protected: //Input Tab
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<USlider> mouseSensitivitySlider = nullptr;
+
+private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundClass> masterSoundMixer = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundClass> musicSoundMixer = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundClass> sfxSoundMixer = nullptr;
 
 private:
 	UGameUserSettings* gameSettings = nullptr;
