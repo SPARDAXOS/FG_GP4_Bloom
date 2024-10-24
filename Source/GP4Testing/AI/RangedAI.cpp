@@ -36,13 +36,7 @@ void ARangedAI::Die()
 	}
 
 	SetEnemyState(false);
-	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
-	FOnVFXFinishedSignature callback;
-	if (DeathVFX)
-	{
-		callback.BindUFunction(this, FName("EnemyDeath"));
-		DeathVFX->SetupOnFinishedCallback(callback);
-	}
+	DeathVFX->SetActorLocation(GetActorLocation());
 	DeathVFX->Activate();
 }
 
@@ -50,6 +44,13 @@ void ARangedAI::Die()
 void ARangedAI::BeginPlay()
 {
 	Super::BeginPlay();
+	DeathVFX = GetWorld()->SpawnActor<ATriggerVFX>(TriggerVfx, DeathVFXSpawnLoc->GetComponentLocation(), GetActorRotation());
+	FOnVFXFinishedSignature callback;
+	if (DeathVFX)
+	{
+		callback.BindUFunction(this, FName("EnemyDeath"));
+		DeathVFX->SetupOnFinishedCallback(callback);
+	}
 }
 
 void ARangedAI::Attack()
