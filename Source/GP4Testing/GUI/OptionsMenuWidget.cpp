@@ -11,6 +11,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Sound/SoundClass.h"
+#include "Sound/SoundMix.h"
+#include "AudioDevice.h"
 
 #include "GP4Testing/Systems/PrimaryGameMode.h"
 #include "GP4Testing/PlayerSystems/PlayerMovementSystem.h"
@@ -408,9 +410,9 @@ void UOptionsMenuWidget::DetectCurrentAudioQuality() noexcept {
 		audioQualitySelector->SetSelectedIndex(4);
 }
 void UOptionsMenuWidget::DetectCurrentAudioLevels() noexcept {
-	masterVolumeSlider->SetValue(masterSoundMixer->Properties.Volume);
-	musicVolumeSlider->SetValue(musicSoundMixer->Properties.Volume);
-	sfxVolumeSlider->SetValue(sfxSoundMixer->Properties.Volume);
+	masterVolumeSlider->SetValue(masterSoundMixer->SoundClassEffects[0].VolumeAdjuster);
+	musicVolumeSlider->SetValue(musicSoundMixer->SoundClassEffects[0].VolumeAdjuster);
+	sfxVolumeSlider->SetValue(sfxSoundMixer->SoundClassEffects[0].VolumeAdjuster);
 }
 void UOptionsMenuWidget::DetectCurrentKeybindings() noexcept {
 
@@ -966,15 +968,22 @@ void UOptionsMenuWidget::UpdateAudioQualitySelector(FString SelectedItem, ESelec
 
 //Audio Tab Callbacks
 void UOptionsMenuWidget::UpdateMasterVolumeSlider(float value) {
-	masterSoundMixer->Properties.Volume = value;
-	
+	for (auto& mix : masterSoundMixer->SoundClassEffects)
+		mix.VolumeAdjuster = value;
+
+	GetWorld()->GetAudioDevice()->PushSoundMixModifier(masterSoundMixer);
 }
 void UOptionsMenuWidget::UpdateMusicVolumeSlider(float value) {
-	musicSoundMixer->Properties.Volume = value;
+	for (auto& mix : musicSoundMixer->SoundClassEffects)
+		mix.VolumeAdjuster = value;
 
+	GetWorld()->GetAudioDevice()->PushSoundMixModifier(musicSoundMixer);
 }
 void UOptionsMenuWidget::UpdateSFXVolumeSlider(float value) {
-	sfxSoundMixer->Properties.Volume = value;
+	for (auto& mix : sfxSoundMixer->SoundClassEffects)
+		mix.VolumeAdjuster = value;
+
+	GetWorld()->GetAudioDevice()->PushSoundMixModifier(sfxSoundMixer);
 
 }
 

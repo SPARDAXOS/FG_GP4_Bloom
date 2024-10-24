@@ -16,6 +16,7 @@ class UCheckBox;
 class UTextBlock;
 class UInputKeySelector;
 class USoundSubmix;
+class USoundMix;
 
 
 enum class OptionsMenuBackgroundType : uint8 {
@@ -439,13 +440,13 @@ protected: //Input Tab
 
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USoundClass> masterSoundMixer = nullptr;
+	TObjectPtr<USoundMix> masterSoundMixer = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USoundClass> musicSoundMixer = nullptr;
+	TObjectPtr<USoundMix> musicSoundMixer = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USoundClass> sfxSoundMixer = nullptr;
+	TObjectPtr<USoundMix> sfxSoundMixer = nullptr;
 
 private:
 	UGameUserSettings* gameSettings = nullptr;
