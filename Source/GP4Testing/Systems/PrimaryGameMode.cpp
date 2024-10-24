@@ -287,7 +287,8 @@ void APrimaryGameMode::UnpauseGame() noexcept {
 	if (!gamePaused || !gameStarted)
 		return;
 
-	gamePaused = UGameplayStatics::SetGamePaused(this, false);
+	UGameplayStatics::SetGamePaused(this, false);
+	gamePaused = false;
 	if (!gamePaused) {
 		audioComponent->SetPaused(false);
 		primaryPlayerRef->SetPlayerHUDState(true);
