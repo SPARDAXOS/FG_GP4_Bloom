@@ -80,11 +80,11 @@ void UPrimaryPlayerHUD::HandleDashCooldown()
 {
 	if (primaryPlayerRef->GetPlayerMovementSystem().GetCanDash())
 	{
-		DashAbility->SetColorAndOpacity(FColor::Green);
+		DashAbility->SetColorAndOpacity(FColor::FromHex("FFFFFFFF"));
 	}
 	else
 	{
-		DashAbility->SetColorAndOpacity(FColor::Red);
+		DashAbility->SetColorAndOpacity(FColor::FromHex("1B1B1BFF"));
 	}
 }
 
@@ -92,11 +92,11 @@ void UPrimaryPlayerHUD::HandleSlideCooldown()
 {
 	if (primaryPlayerRef->GetPlayerMovementSystem().GetCanSlide())
 	{
-		SlideAbility->SetColorAndOpacity(FColor::Green);
+		SlideAbility->SetColorAndOpacity(FColor::FromHex("FFFFFFFF"));
 	}
 	else
 	{
-		SlideAbility->SetColorAndOpacity(FColor::Red);
+		SlideAbility->SetColorAndOpacity(FColor::FromHex("1B1B1BFF"));
 	}
 }
 

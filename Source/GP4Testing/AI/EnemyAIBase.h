@@ -57,6 +57,7 @@ public:
 	virtual void SetEnemyState(bool state);
 
 	bool Active = true;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool MarkedForSpawn = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
