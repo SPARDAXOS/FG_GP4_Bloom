@@ -21,7 +21,7 @@ void UMainMenuWidget::StartButtonClicked() {
 	primaryHUDRef->SetMenuState(MenuState::LEVEL_SELECT_MENU);
 }
 void UMainMenuWidget::OptionsButtonClicked() {
-	primaryHUDRef->GetOptionsMenu()->SetBackgroundType(OptionsMenuBackgroundType::STATIC);
+	primaryHUDRef->GetOptionsMenu()->SetBackgroundType(OptionsMenuBackgroundType::DYNAMIC);
 	primaryHUDRef->SetMenuState(MenuState::OPTIONS_MENU);
 }
 void UMainMenuWidget::QuitButtonClicked() {
