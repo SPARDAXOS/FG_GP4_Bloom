@@ -45,22 +45,33 @@ void ATyrantAI::Die() {
 	bIsDead = true;
 	SetActorEnableCollision(false);
 	GetCharacterMovement()->GravityScale = 0.0f;
+	DynMaterial = UMaterialInstanceDynamic::Create(DissolveMat, this);
 	DissolveTimer();
 }
 void ATyrantAI::Dissolve()
 {
-	DissolveValue += 0.01f; //???
+	DissolveValue += 0.01f;
 
-	if (DissolveValue >= 1) //???
+	if (DissolveValue >= 1)
 	{
-		DissolveValue = 0.0f; //???
+		DissolveValue = 0.0f;
+		GetMesh()->SetMaterial(0, GetMesh()->GetMaterial(0));
 
-		UpdateDynamicMaterials(DissolveValue);
+		if (DynMaterial != nullptr)
+		{
+			DynMaterial->SetScalarParameterValue("Progress", DissolveValue);
+			GetMesh()->SetMaterial(0, DynMaterial);
+		}
+
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 		SetEnemyState(false);
 	}
-	else
-		UpdateDynamicMaterials(DissolveValue);
+
+	if (DynMaterial != nullptr)
+	{
+		DynMaterial->SetScalarParameterValue("Progress", DissolveValue);
+		GetMesh()->SetMaterial(0, DynMaterial);
+	}
 }
 
 void ATyrantAI::DissolveTimer()

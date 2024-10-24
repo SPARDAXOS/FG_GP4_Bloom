@@ -40,6 +40,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Meshes")
 	UStaticMeshComponent* spiderMaskMesh = nullptr;
 
+	UMaterialInstanceDynamic* DynMaterial;
+
 protected:
 	TObjectPtr<UMaterialInstanceDynamic> bodyDynamicMaterial;
 	TObjectPtr<UMaterialInstanceDynamic> spiderArmsDynamicMaterial;
