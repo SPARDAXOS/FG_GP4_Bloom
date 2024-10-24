@@ -30,7 +30,6 @@ AGunComponent::AGunComponent()
 void AGunComponent::BeginPlay() {
 	Super::BeginPlay();
 
-	impactVFX = GetWorld()->SpawnActor<AImpactVFX>(ImpactVFXClass);
 }
 
 void AGunComponent::Fire()
@@ -98,7 +97,7 @@ void AGunComponent::Fire()
 								Enemy->HealthComponent->TakeDamage(WeaponDamage);
 							}
 						}
-
+						impactVFX = GetWorld()->SpawnActor<AImpactVFX>(ImpactVFXClass);
 						impactVFX->SetActorLocation(Hit.Location);
 						impactVFX->SetActorRotation(Hit.Normal.ToOrientationQuat());
 						impactVFX->Activate();
@@ -263,7 +262,14 @@ void AGunComponent::AttachWeapon(APrimaryPlayer* TargetCharacter)
 		// Attach to player mesh
 		USkeletalMeshComponent* Mesh = Character->FindComponentByClass<USkeletalMeshComponent>();
 		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-		AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+		if (TypeOfWeapon == WeaponType::MACHINE_GUN)
+		{
+			AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint")));
+		}
+		else
+		{
+			AttachToComponent(Mesh, AttachmentRules, FName(TEXT("GripPoint2")));
+		}
 		if (RegisteredWeaponSpawner)
 			RegisteredWeaponSpawner->NotifyPickup(*this);
 	}

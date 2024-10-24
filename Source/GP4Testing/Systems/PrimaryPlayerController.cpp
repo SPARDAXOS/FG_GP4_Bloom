@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
+#include "PlayerMappableKeySettings.h"
 
 #include "GP4Testing/Utility/Debugging.h"
 
@@ -24,12 +25,18 @@ void APrimaryPlayerController::OnPossess(APawn* aPawn) {
 	SetupInputMappingContext();
 	SetupInputActions();
 
+	CacheKeybindings();
 	Super::OnPossess(aPawn);
 }
 void APrimaryPlayerController::OnUnPossess() {
 	enhancedInputComponentRef->ClearActionBindings();
 	Super::OnUnPossess();
 }
+void APrimaryPlayerController::BeginPlay() {
+	Super::BeginPlay();
+	SetupMovementModifiers();
+}
+
 
 
 void APrimaryPlayerController::SetupInputMappingContext() const noexcept {
@@ -68,6 +75,64 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 }
 
 
+void APrimaryPlayerController::SetupMovementModifiers() noexcept {
+	forwardMovementSwizzler = NewObject<UInputModifierSwizzleAxis>(this, TEXT("ForwardSwizzler"));
+	leftMovementNegate = NewObject<UInputModifierNegate>(this, TEXT("LeftNegate"));
+	backwardMovementSwizzler = NewObject<UInputModifierSwizzleAxis>(this, TEXT("BackwardSwizzler"));
+	backwardMovementNegate = NewObject<UInputModifierNegate>(this, TEXT("BackwardNegate"));
+
+	forwardMovementSwizzler->Order = EInputAxisSwizzle::YXZ;
+	leftMovementNegate->bX = true;
+	leftMovementNegate->bY = true;
+	leftMovementNegate->bZ = true;
+	backwardMovementSwizzler->Order = EInputAxisSwizzle::YXZ;
+	backwardMovementNegate->bX = true;
+	backwardMovementNegate->bY = true;
+	backwardMovementNegate->bZ = true;
+}
+void APrimaryPlayerController::CacheKeybindings() noexcept {
+	
+	auto movementMappings = FindMappings(movement);
+	for (auto& input : movementMappings) {
+		if (input->Modifiers.Num() == 0) {
+			Debugging::CustomLog("Found the D input - Decern movement input through modifiers!");
+			Debugging::CustomLog(input->Key.ToString());
+		}
+	}
+
+	//Bug here if position moved
+	forwardKey = movementMappings[0]->Key;
+	leftKey = movementMappings[1]->Key;
+	backwardKey = movementMappings[2]->Key;
+	rightKey = movementMappings[3]->Key;
+
+	auto dashMappings = FindMappings(dash);
+	dashKey = dashMappings[0]->Key;
+
+	auto slideMappings = FindMappings(slide);
+	slideKey = slideMappings[0]->Key;
+
+	auto jumpMappings = FindMappings(jump);
+	jumpKey = jumpMappings[0]->Key;
+
+	auto shootMappings = FindMappings(shoot);
+	shootKey = shootMappings[0]->Key;
+
+	auto weaponSwitchUpMappings = FindMappings(switchNextWeapon);
+	weaponSwitchUpKey = weaponSwitchUpMappings[0]->Key;
+
+	auto weaponSwitchDownMappings = FindMappings(switchPreviousWeapon);
+	weaponSwitchDownKey = weaponSwitchDownMappings[0]->Key;
+
+	auto reloadMappings = FindMappings(reload);
+	reloadKey = reloadMappings[0]->Key;
+}
+void APrimaryPlayerController::RebuildContextMappings() noexcept {
+	FModifyContextOptions options;
+	inputSubsystemRef->RequestRebuildControlMappings(options, EInputMappingRebuildType::RebuildWithFlush);
+}
+
+
 void APrimaryPlayerController::SetControllerInputMode(ControllerInputMode mode) noexcept {
 	currentControllerInputMode = mode;
 	switch (currentControllerInputMode) {
@@ -86,6 +151,133 @@ void APrimaryPlayerController::SetControllerInputMode(ControllerInputMode mode) 
 	default:
 		break;
 	}
+}
+
+
+void APrimaryPlayerController::SetForwardKey(FKey key) noexcept {
+	auto mapping = FindMapping(forwardKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(movement, forwardKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(movement, key);
+	keyData->Modifiers.Emplace(forwardMovementSwizzler); //This is the reason of the first rebind on game start crash
+
+	RebuildContextMappings();
+	forwardKey = key;
+}
+void APrimaryPlayerController::SetBackwardKey(FKey key) noexcept {
+	auto mapping = FindMapping(backwardKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(movement, backwardKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(movement, key);
+	keyData->Modifiers.Add(backwardMovementSwizzler);
+	keyData->Modifiers.Add(backwardMovementNegate);
+
+	RebuildContextMappings();
+	backwardKey = key;
+}
+void APrimaryPlayerController::SetRightKey(FKey key) noexcept {
+	auto mapping = FindMapping(rightKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(movement, rightKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(movement, key);
+
+	RebuildContextMappings();
+	rightKey = key;
+}
+void APrimaryPlayerController::SetLeftKey(FKey key) noexcept {
+	auto mapping = FindMapping(leftKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(movement, leftKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(movement, key);
+	keyData->Modifiers.Add(leftMovementNegate);
+
+	RebuildContextMappings();
+	leftKey = key;
+}
+void APrimaryPlayerController::SetDashKey(FKey key) noexcept {
+	auto mapping = FindMapping(dashKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(dash, dashKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(dash, key);
+
+	RebuildContextMappings();
+	dashKey = key;
+}
+void APrimaryPlayerController::SetSlideKey(FKey key) noexcept {
+	auto mapping = FindMapping(slideKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(slide, slideKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(slide, key);
+
+	RebuildContextMappings();
+	slideKey = key;
+}
+void APrimaryPlayerController::SetJumpKey(FKey key) noexcept {
+	auto mapping = FindMapping(jumpKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(jump, jumpKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(jump, key);
+
+	RebuildContextMappings();
+	jumpKey = key;
+}
+void APrimaryPlayerController::SetShootKey(FKey key) noexcept {
+	auto mapping = FindMapping(shootKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(shoot, shootKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(shoot, key);
+
+	RebuildContextMappings();
+	shootKey = key;
+}
+void APrimaryPlayerController::SetWeaponSwitchUpKey(FKey key) noexcept {
+	auto mapping = FindMapping(weaponSwitchUpKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(switchNextWeapon, weaponSwitchUpKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(switchNextWeapon, key);
+
+	RebuildContextMappings();
+	weaponSwitchUpKey = key;
+}
+void APrimaryPlayerController::SetWeaponSwitchDownKey(FKey key) noexcept {
+	auto mapping = FindMapping(weaponSwitchDownKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(switchPreviousWeapon, weaponSwitchDownKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(switchPreviousWeapon, key);
+
+	RebuildContextMappings();
+	weaponSwitchDownKey = key;
+}
+void APrimaryPlayerController::SetReloadKey(FKey key) noexcept {
+	auto mapping = FindMapping(reloadKey);
+	if (!mapping)
+		return;
+
+	defaultContextMappings->UnmapKey(reload, reloadKey);
+	FEnhancedActionKeyMapping* keyData = &defaultContextMappings->MapKey(reload, key);
+
+	RebuildContextMappings();
+	reloadKey = key;
 }
 
 
@@ -136,6 +328,32 @@ void APrimaryPlayerController::SetGameInputMode(GameInputMode mode) noexcept {
 		SetInputMode(inputMode);
 	}
 }
+FEnhancedActionKeyMapping* APrimaryPlayerController::FindMapping(const FKey& key) const noexcept {
+	TArray<FEnhancedActionKeyMapping> allMappings = defaultContextMappings->GetMappings();
+	if (allMappings.IsEmpty())
+		return nullptr;
+	//Copy
+	for (auto& mapping : allMappings) {
+		if (mapping.Key == key)
+			return &mapping;
+	}
+
+	return nullptr;
+}
+TArray<const FEnhancedActionKeyMapping*> APrimaryPlayerController::FindMappings(const TObjectPtr<UInputAction>& action) const noexcept {
+	const TArray<FEnhancedActionKeyMapping>* allMappings = &defaultContextMappings->GetMappings();
+	if (allMappings && allMappings->IsEmpty())
+		return {};
+
+	TArray<const FEnhancedActionKeyMapping*> mappings;
+	for (auto& mapping : *allMappings) {
+		if (mapping.Action == action)
+			mappings.Add(&mapping);
+	}
+
+	return mappings;
+}
+
 
 void APrimaryPlayerController::HandleMovement(const FInputActionValue& value) {
 	if (currentControllerInputMode == ControllerInputMode::PAUSED || !primaryPlayerRef->GetActiveState())

@@ -37,6 +37,9 @@ protected:
 	TObjectPtr<UImage> splashImage = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UImage> selectionFrameImage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UTextBlock> nameText = nullptr;
 
 protected:

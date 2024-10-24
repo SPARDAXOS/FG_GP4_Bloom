@@ -51,6 +51,8 @@ public:
 
 		return activeWaveManagerSpec->waves.Num();
 	}
+
+	inline int GetCurrentSpawnedEnemiesCount() const noexcept { return currentTotalSpawnedEnemies; }
 	
 
 private:
