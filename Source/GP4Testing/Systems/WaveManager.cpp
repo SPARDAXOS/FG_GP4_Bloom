@@ -102,7 +102,7 @@ void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 		currentTotalSpawnedEnemies--;
 		currentSpawnedRangedEnemies--;
 	}
-	else if (type == EnemyType::RANGED) {
+	else if (type == EnemyType::TYRANT) {
 		currentTotalSpawnedEnemies--;
 		currentSpawnedTyrantEnemies--;
 	}
