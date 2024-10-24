@@ -126,9 +126,9 @@ bool AWeaponManagementSystem::SwitchPrevWeaponTimer()
 	return false;
 }
 
-bool AWeaponManagementSystem::WeaponSlotTimer(int32 value)
+bool AWeaponManagementSystem::WeaponSlotTimer(int32 MapValue, int32 weaponIndex)
 {
-	if (AcquiredWeapons.Num() > value)
+	if (AcquiredWeapons.Num() >= MapValue)
 	{
 		AGunComponent* Weapon = GetCurrentWeapon();
 		if (!Weapon)
@@ -143,88 +143,103 @@ bool AWeaponManagementSystem::WeaponSlotTimer(int32 value)
 			weapons.Add(it->Key);
 		}
 
-		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[value]);
+		AGunComponent* NextWeapon = AcquiredWeapons.FindRef(weapons[weaponIndex]);
 		NextWeapon->SetActorHiddenInGame(false);
-		EquippedWeapon = weapons[value];
+		EquippedWeapon = weapons[weaponIndex];
 	}
 	return false;
 }
 
 bool AWeaponManagementSystem::SwitchNextWeapon() noexcept 
 {
-	StartWeaponSwap();
+	if (AcquiredWeapons.Num() >= 2)
+	{
+		StartWeaponSwap();
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]
-		{
-			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
-			SwitchNextWeaponTimer();
-		});
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([&]
+			{
+				GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+				SwitchNextWeaponTimer();
+			});
 
-	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+		GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+	}
 
 	return true;
 }
 bool AWeaponManagementSystem::SwitchPreviousWeapon() noexcept 
 {
-	StartWeaponSwap();
+	if (AcquiredWeapons.Num() >= 2)
+	{
+		StartWeaponSwap();
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]
-		{
-			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
-			SwitchPrevWeaponTimer();
-		});
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([&]
+			{
+				GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+				SwitchPrevWeaponTimer();
+			});
 
-	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+		GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+	}
 
 	return true;
 }
 
 bool AWeaponManagementSystem::WeaponSlot1() noexcept
 {
-	StartWeaponSwap();
+	if (AcquiredWeapons.Num() >= 2)
+	{
+		StartWeaponSwap();
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]
-		{
-			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
-			WeaponSlotTimer(0);
-		});
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([&]
+			{
+				GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+				WeaponSlotTimer(2, 0);
+			});
 
-	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+		GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+	}
 
 	return false;
 }
 
 bool AWeaponManagementSystem::WeaponSlot2() noexcept
 {
-	StartWeaponSwap();
+	if (AcquiredWeapons.Num() >= 2)
+	{
+		StartWeaponSwap();
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]
-		{
-			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
-			WeaponSlotTimer(1);
-		});
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([&]
+			{
+				GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+				WeaponSlotTimer(2, 1);
+			});
 
-	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+		GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+	}
 
 	return false;
 }
 
 bool AWeaponManagementSystem::WeaponSlot3() noexcept
 {
-	StartWeaponSwap();
+	if (AcquiredWeapons.Num() > 2)
+	{
+		StartWeaponSwap();
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]
-		{
-			GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
-			WeaponSlotTimer(2);
-		});
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([&]
+			{
+				GetWorld()->GetTimerManager().ClearTimer(LambdaTimerHandle);
+				WeaponSlotTimer(3, 2);
+			});
 
-	GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+		GetWorld()->GetTimerManager().SetTimer(LambdaTimerHandle, TimerDelegate, 0.3f, false);
+	}
 	
 	return false;
 }
