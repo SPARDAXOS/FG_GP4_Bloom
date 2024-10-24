@@ -42,6 +42,9 @@ protected:
 	TObjectPtr<UTextBlock> AmmoText = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<UImage> BulletTexture = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> Crosshair = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
