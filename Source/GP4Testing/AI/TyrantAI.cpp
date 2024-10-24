@@ -46,28 +46,18 @@ void ATyrantAI::Die() {
 }
 void ATyrantAI::Dissolve()
 {
-	DissolveValue += 0.01f;
+	DissolveValue += 0.01f; //???
 
-	if (DissolveValue >= 1)
+	if (DissolveValue >= 1) //???
 	{
-		DissolveValue = 0.0f;
-		GetMesh()->SetMaterial(0, GetMesh()->GetMaterial(0));
+		DissolveValue = 0.0f; //???
 
-		if (DynMaterial != nullptr)
-		{
-			DynMaterial->SetScalarParameterValue("Progress", DissolveValue);
-			GetMesh()->SetMaterial(0, DynMaterial);
-		}
-
+		UpdateDynamicMaterials(DissolveValue);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 		SetEnemyState(false);
 	}
-
-	if (DynMaterial != nullptr)
-	{
-		DynMaterial->SetScalarParameterValue("Progress", DissolveValue);
-		GetMesh()->SetMaterial(0, DynMaterial);
-	}
+	else
+		UpdateDynamicMaterials(DissolveValue);
 }
 
 void ATyrantAI::DissolveTimer() {
