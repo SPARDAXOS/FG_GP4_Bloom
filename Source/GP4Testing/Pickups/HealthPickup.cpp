@@ -7,7 +7,7 @@
 
 AHealthPickup::AHealthPickup()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	pickupType = PickupType::HEALTH;
 }
 
