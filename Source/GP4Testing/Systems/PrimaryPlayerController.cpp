@@ -76,35 +76,43 @@ void APrimaryPlayerController::SetupInputActions() noexcept {
 
 
 void APrimaryPlayerController::SetupMovementModifiers() noexcept {
-	forwardMovementSwizzler = NewObject<UInputModifierSwizzleAxis>(this, TEXT("ForwardSwizzler"));
-	leftMovementNegate = NewObject<UInputModifierNegate>(this, TEXT("LeftNegate"));
-	backwardMovementSwizzler = NewObject<UInputModifierSwizzleAxis>(this, TEXT("BackwardSwizzler"));
-	backwardMovementNegate = NewObject<UInputModifierNegate>(this, TEXT("BackwardNegate"));
-
+	
+	forwardMovementSwizzler = NewObject<UInputModifierSwizzleAxis>(defaultContextMappings->GetClass(), TEXT("ForwardSwizzler"));
 	forwardMovementSwizzler->Order = EInputAxisSwizzle::YXZ;
+
+	leftMovementNegate = NewObject<UInputModifierNegate>(defaultContextMappings->GetClass(), TEXT("LeftNegate"));
 	leftMovementNegate->bX = true;
 	leftMovementNegate->bY = true;
 	leftMovementNegate->bZ = true;
+
+	backwardMovementSwizzler = NewObject<UInputModifierSwizzleAxis>(defaultContextMappings->GetClass(), TEXT("BackwardSwizzler"));
 	backwardMovementSwizzler->Order = EInputAxisSwizzle::YXZ;
+
+	backwardMovementNegate = NewObject<UInputModifierNegate>(defaultContextMappings->GetClass(), TEXT("BackwardNegate"));
 	backwardMovementNegate->bX = true;
 	backwardMovementNegate->bY = true;
 	backwardMovementNegate->bZ = true;
 }
 void APrimaryPlayerController::CacheKeybindings() noexcept {
 	
+	
 	auto movementMappings = FindMappings(movement);
+	//Upon rebind the asset is modified permenentaly and the input bindings positions are changed. 
+	//This picks the correct binding based on the modifiers equipped.
+	//Important Note: The playerInputSettings? are overridable on each binding and can be used to mark each binding with a name. Thats the ideal solution!
 	for (auto& input : movementMappings) {
-		if (input->Modifiers.Num() == 0) {
-			Debugging::CustomLog("Found the D input - Decern movement input through modifiers!");
-			Debugging::CustomLog(input->Key.ToString());
+		if (input->Modifiers.Num() == 0)
+			rightKey = input->Key;
+		else if (input->Modifiers.Num() == 1) {
+			if (Cast<UInputModifierSwizzleAxis>(input->Modifiers[0]))
+				forwardKey = movementMappings[0]->Key;
+			else if (Cast<UInputModifierNegate>(input->Modifiers[0]))
+				leftKey = movementMappings[1]->Key;
 		}
+		else if (input->Modifiers.Num() == 2)
+			backwardKey = movementMappings[2]->Key;
 	}
 
-	//Bug here if position moved
-	forwardKey = movementMappings[0]->Key;
-	leftKey = movementMappings[1]->Key;
-	backwardKey = movementMappings[2]->Key;
-	rightKey = movementMappings[3]->Key;
 
 	auto dashMappings = FindMappings(dash);
 	dashKey = dashMappings[0]->Key;

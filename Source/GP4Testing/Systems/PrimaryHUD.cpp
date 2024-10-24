@@ -91,6 +91,7 @@ void APrimaryHUD::SetupDependencies(APrimaryGameMode& gameMode, APrimaryPlayer& 
 	mainMenuRef->SetPrimaryGameModeReference(gameMode);
 	optionsMenuRef->SetPrimaryGameModeReference(gameMode);
 	optionsMenuRef->SetPrimaryPlayerControllerReference(controller);
+	optionsMenuRef->SetPrimaryPlayerReference(player);
 	levelSelectMenuRef->SetPrimaryGameModeReference(gameMode);
 	pauseMenuRef->SetPrimaryGameModeReference(gameMode);
 	winMenuRef->SetPrimaryGameModeReference(gameMode);
