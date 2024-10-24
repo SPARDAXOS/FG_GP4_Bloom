@@ -54,6 +54,14 @@ void APrimaryPlayer::Update(float deltaTime) {
 		bIsRunning = false;
 		StopShakeCamera();
 	}
+	if (weaponManagementSystemRef->GetAcquiredWeapons().Num() == 0)
+	{
+		GetMesh()->SetHiddenInGame(true);
+	}
+	else
+	{
+		GetMesh()->SetHiddenInGame(false);
+	}
 }
 void APrimaryPlayer::SetupStartingState() noexcept {
 	//Reset all player data to default.
