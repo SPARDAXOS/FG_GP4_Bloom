@@ -256,6 +256,7 @@ bool AEnemyManagementSystem::SpawnEnemy_Internal(TArray<AEnemyAIBase*>& pool, FV
 			}
 			else {
 				enemy->SetActorLocation(location, false, nullptr, ETeleportType::ResetPhysics);
+				enemy->SetupStartingState();
 				enemy->SetEnemyState(true);
 			}
 			return true;

@@ -241,6 +241,7 @@ void AWaveManager::UpdateSpawns(EnemyType type) noexcept {
 		if (SpawnEnemy(EnemyType::RANGED, spawnLocation)) {
 			currentSpawnedRangedEnemies++;
 			currentTotalSpawnedEnemies++;
+			Debugging::CustomLog("Ranged Spawn Request Succeeded!");
 		}
 		else
 			Debugging::CustomError("Failed to spawn enemy with type Ranged! - SpawnEnemy Failed!");
