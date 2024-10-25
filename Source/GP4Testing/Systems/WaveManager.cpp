@@ -82,7 +82,7 @@ void AWaveManager::Restart() noexcept {
 
 	enemyManagementSystemRef->DespawnAllEnemies();
 	enemyManagementSystemRef->DespawnAllVFX();
-	currentWaveCursor = -1;
+	currentWaveCursor--; //StartNextWave() will increment it.
 	currentSpawnedMeleeEnemies = 0;
 	currentSpawnedSpiderEnemies = 0;
 	currentSpawnedRangedEnemies = 0;
@@ -116,6 +116,35 @@ void AWaveManager::NotifyEnemyDeath(EnemyType type) {
 }
 
 
+int AWaveManager::GetEnemiesLeftCount() const noexcept {
+	if (!active || !activeWaveManagerSpec)
+		return 0;
+
+	if (currentWaveCursor >= activeWaveManagerSpec->waves.Num())
+		return 0;
+
+	int currentCount = 0;
+	for (auto& entry : activeWaveSpecData.allowedTypes)
+		currentCount += entry.totalSpawns;
+
+	return currentCount + currentTotalSpawnedEnemies;
+}
+int AWaveManager::GetCurrentWaveEnemiesCount() const noexcept {
+	if (!active || !activeWaveManagerSpec)
+		return 0;
+
+	if (currentWaveCursor >= activeWaveManagerSpec->waves.Num())
+		return 0;
+
+	auto wave = activeWaveManagerSpec->waves[currentWaveCursor];
+	int count = 0;
+	for (auto& entry : wave->data.allowedTypes)
+		count += entry.totalSpawns;
+
+	return count;
+}
+
+
 void AWaveManager::Clear() noexcept {
 	active = false;
 	activeWaveManagerSpec = nullptr;
@@ -135,12 +164,12 @@ bool AWaveManager::StartNextWave() noexcept {
 	if (!activeWaveManagerSpec)
 		return false;
 
-	currentWaveCursor++;
-	if (currentWaveCursor >= activeWaveManagerSpec->waves.Num()) {
+	if (currentWaveCursor + 1 >= activeWaveManagerSpec->waves.Num()) {
 		Completed();
 		return false;
 	}
 
+	currentWaveCursor++;
 	activeWaveSpecData = activeWaveManagerSpec->waves[currentWaveCursor]->data;
 	if (!SetupTimers()) {
 		Debugging::CustomError("Failed to setup timers for the spawns! - Setup");

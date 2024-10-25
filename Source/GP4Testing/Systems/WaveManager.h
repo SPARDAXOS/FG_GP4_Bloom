@@ -53,7 +53,8 @@ public:
 	}
 
 	inline int GetCurrentSpawnedEnemiesCount() const noexcept { return currentTotalSpawnedEnemies; }
-	
+	int GetEnemiesLeftCount() const noexcept;
+	int GetCurrentWaveEnemiesCount() const noexcept;
 
 private:
 	void Clear() noexcept;

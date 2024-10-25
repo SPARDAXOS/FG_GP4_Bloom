@@ -128,7 +128,7 @@ private:
 	TObjectPtr<AImpactVFX> impactVFX;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Non Auto Weapon Settings", meta = (EditCondition = "TypeOfWeapon == WeaponType::SHOTGUN", EditConditionHides))
 	float ReloadLength = 0;
 
 	bool bReloading = false;

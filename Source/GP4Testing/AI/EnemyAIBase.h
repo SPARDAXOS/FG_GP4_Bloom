@@ -72,7 +72,7 @@ public:
 	bool bJumped;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int Damage = 30;
+	int Damage = 10;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AttackRange = 140;

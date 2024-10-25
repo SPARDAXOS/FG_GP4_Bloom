@@ -84,7 +84,7 @@ void APrimaryPlayer::SetPlayerState(bool state) noexcept {
 	GetCapsuleComponent()->SetEnableGravity(state);
 	GetCharacterMovement()->SetActive(state);
 	if (state)
-		GetCharacterMovement()->GravityScale =	1.0f;	//defaultGravityScale;
+		GetCharacterMovement()->GravityScale = defaultGravity;	//defaultGravityScale;
 	else
 		GetCharacterMovement()->GravityScale = 0.0f;
 

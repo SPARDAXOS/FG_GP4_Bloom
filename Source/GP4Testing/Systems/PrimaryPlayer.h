@@ -108,6 +108,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Audio", meta = (AllowPrivateAccess = "true"))
 	USoundBase* fallLandSound;
 
+private: //Movement
+	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float defaultGravity = 3.0f;
+
 private: //Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Camera", meta = (AllowPrivateAccess = "true"))
 	FTransform cameraInitialTransform;

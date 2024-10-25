@@ -70,7 +70,7 @@ void UPrimaryPlayerHUD::HandleWaveCounter()
 	{
 		FString CurrentWave = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetCurrentWaveIndex() + 1);
 		FString MaxWaves = FString::FromInt(primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetMaxWaveCount());
-		WaveCounter->SetText(FText::FromString(CurrentWave+"/"+MaxWaves));
+		WaveCounter->SetText(FText::FromString("Wave: " + CurrentWave + " / " + MaxWaves));
 	}
 	else
 	{
@@ -104,8 +104,8 @@ void UPrimaryPlayerHUD::HandleSlideCooldown()
 
 void UPrimaryPlayerHUD::HandleEnemiesLeftText()
 {
-	int integer = primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetCurrentSpawnedEnemiesCount();
-	FString string = "Enemies Left: " + FString::FromInt(integer);
+	int enemiesLeftCount = primaryPlayerRef->GetPrimaryGameMode()->GetWaveManager()->GetEnemiesLeftCount();
+	FString string = "Enemies Left: " + FString::FromInt(enemiesLeftCount);
 	EnemiesLeftText->SetText(FText::FromString(string));
 }
 
